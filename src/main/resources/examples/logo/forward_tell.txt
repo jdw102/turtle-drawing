@@ -1,0 +1,7 @@
+# turtles 1, 2, and 3 go forward together
+tell 1 2 3
+fd 50
+
+# turtle 4 is now the only one to go forward
+tell 4   
+fd 50

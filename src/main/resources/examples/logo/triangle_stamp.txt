@@ -1,0 +1,19 @@
+# stamp turtles at the corners of a triangle
+pu
+fd 100
+stamp
+home
+
+lt 90
+fd 50
+rt 90
+stamp
+home
+
+rt 90
+fd 50
+lt 90
+stamp
+home
+
+ht

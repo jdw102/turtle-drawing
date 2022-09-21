@@ -1,0 +1,18 @@
+# draw a square
+tell 2
+pu
+fd 100
+rt 90
+
+tell 3
+pu
+rt 90
+fd 100
+lt 90
+
+tell 4
+rt 90
+
+tell 1 2 3 4
+pd
+fd 100
