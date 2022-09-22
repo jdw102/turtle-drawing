@@ -9,7 +9,7 @@ import java.util.ArrayList;
  * @author Aditya Paul
  */
 public class Command {
-  public CmdName name;
+  public CmdName prefix;
   public enum CmdName {
     FORWARD, BACK, LEFT, RIGHT,
     PENDOWN, PENUP, SHOWT, HIDET,
