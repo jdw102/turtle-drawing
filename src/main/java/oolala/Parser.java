@@ -1,6 +1,9 @@
 package oolala;
 
 import java.util.ArrayList;
+import java.util.Scanner;
+import javax.swing.SpringLayout;
+import oolala.Command.CmdName;
 
 /**
  * The internal parser for each Logo command.
@@ -22,49 +25,58 @@ public class Parser {
   public ArrayList<Command> parse(String commandString) {
     ArrayList<Command> program = new ArrayList<Command>();
 
-    String[] programTokens = commandString.split("\\s+");  // Regex to split on all whitespace
-    int currToken = 0;
-    while (currToken < programTokens.length){
+    Scanner scan = new Scanner(commandString);
+    while (scan.hasNext()){
       Command c = new Command();
-      String prefix = programTokens[currToken];
-      currToken++;
+      String prefix = scan.next();
       switch(prefix) {
         case "fd":
-
+          c.prefix = CmdName.FORWARD;
+          c.param = scan.nextInt();
           break;
         case "bk":
-
+          c.prefix = CmdName.BACK;
+          c.param = scan.nextInt();
           break;
         case "lt":
-
+          c.prefix = CmdName.LEFT;
+          c.param = scan.nextInt();
           break;
         case "rt":
-
+          c.prefix = CmdName.RIGHT;
+          c.param = scan.nextInt();
           break;
         case "pd":
-
+          c.prefix = CmdName.PENDOWN;
           break;
         case "pu":
-
+          c.prefix = CmdName.PENUP;
           break;
         case "st":
-
+          c.prefix = CmdName.SHOWT;
           break;
         case "ht":
-
+          c.prefix = CmdName.HIDET;
           break;
         case "home":
-
+          c.prefix = CmdName.HOME;
           break;
         case "stamp":
-
+          c.prefix = CmdName.STAMP;
           break;
         case "tell":
-
+          c.prefix = CmdName.TELL;
+          c.params = new ArrayList<Integer>();
+          while (scan.hasNextInt())
+            c.params.add(scan.nextInt());
+          break;
+        default:
+          // TODO: Handle bad input
+          System.err.println("Unrecognized Command!");
           break;
       }
+      program.add(c);
     }
-
     return program;
   }
 }
