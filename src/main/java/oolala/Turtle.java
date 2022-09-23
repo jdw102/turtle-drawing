@@ -17,8 +17,8 @@ import java.util.ArrayList;
 public class Turtle {
 
   public static final int DEFAULT_ID = 0; //TODO: Will we init this in the canvas?
-  public static final int HOME_X = 400; //TODO: Will we init this in the canvas?
-  public static final int HOME_Y = 400; //TODO: Will we init this in the canvas?
+  public static final int HOME_X = 0; //TODO: Will we init this in the canvas?
+  public static final int HOME_Y = 0; //TODO: Will we init this in the canvas?
   public static final int DEFAULT_THICKNESS = 3;
   public static final int DEFAULT_ANGLE = 0;
   public static final Color DEFAULT_COLOR = Color.BLACK;

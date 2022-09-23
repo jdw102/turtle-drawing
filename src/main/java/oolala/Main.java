@@ -11,8 +11,8 @@ import javafx.stage.Stage;
  * Feel free to completely change this code or delete it entirely.
  */
 public class Main extends Application{
-    private static final int SIZE_WIDTH = 480;
-    private static final int SIZE_HEIGHT = 768;
+    private static final int SIZE_WIDTH = 700;
+    private static final int SIZE_HEIGHT = 500;
     private static final Paint BACKGROUND = Color.BLACK;
     private Stage stage;
     private OolalaView view;

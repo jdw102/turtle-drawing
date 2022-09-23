@@ -27,6 +27,7 @@ public class OolalaView {
     private int SIZE_WIDTH;
     private int SIZE_HEIGHT;
     private Paint BACKGROUND;
+    private Paint BRUSH_COLOR;
     private BorderPane root;
     private Group canvas;
     TextField textBox;
@@ -104,14 +105,14 @@ public class OolalaView {
 
     public void drawLine(double x, double y, int length, int direction, double thickness, Color color) {
         Line line = new Line();
-//        line.setStartX(SIZE_WIDTH / 2.0 + x + x);
-//        line.setStartY(SIZE_HEIGHT / 2.0 + y + y);
-        line.setStartX(x);
-        line.setStartY(y);
-//        line.setEndX(SIZE_WIDTH / 2.0 + x + length * Math.cos(direction));
-//        line.setEndY(SIZE_HEIGHT / 2.0 + y + length * Math.sin(direction));
-        line.setEndX(x + length * Math.cos(Math.toRadians(direction)));
-        line.setEndY(y - length * Math.sin(Math.toRadians(direction)));
+        line.setStartX(SIZE_WIDTH / 2.0 + x);
+        line.setStartY(SIZE_HEIGHT / 2.0 - y);
+//        line.setStartX(x);
+//        line.setStartY(y);
+        line.setEndX(SIZE_WIDTH / 2.0 + x + length * Math.cos(Math.toRadians(direction)));
+        line.setEndY(SIZE_HEIGHT / 2.0 - y - length * Math.sin(Math.toRadians(direction)));
+//        line.setEndX(x + length * Math.cos(Math.toRadians(direction)));
+//        line.setEndY(y - length * Math.sin(Math.toRadians(direction)));
         line.setStrokeWidth(thickness);
         line.setFill(color);
         canvas.getChildren().add(0, line);
