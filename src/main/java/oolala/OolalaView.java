@@ -57,12 +57,11 @@ public class OolalaView {
         EventHandler<ActionEvent> textHandler = event -> {
             commands = parser.parse(textBox.getText());
             textBox.clear();
-            System.out.println(commands.get(0).prefix.toString());
             turtle.readInstruction(commands.get(0), this);
         };
         EventHandler<ActionEvent> clearHandler = event -> {
             clearPaint();
-            turtle.resetTurtle();
+            turtle.resetTurtle(this);
         };
         textBox = new TextField();
         textBox.setOnAction(textHandler);
@@ -103,7 +102,7 @@ public class OolalaView {
      * @author Luyao Wang
      */
 
-    public void drawLine(double x, double y, int length, int direction, double thickness) {
+    public void drawLine(double x, double y, int length, int direction, double thickness, Color color) {
         Line line = new Line();
 //        line.setStartX(SIZE_WIDTH / 2.0 + x + x);
 //        line.setStartY(SIZE_HEIGHT / 2.0 + y + y);
@@ -114,6 +113,10 @@ public class OolalaView {
         line.setEndX(x + length * Math.cos(Math.toRadians(direction)));
         line.setEndY(y - length * Math.sin(Math.toRadians(direction)));
         line.setStrokeWidth(thickness);
-        canvas.getChildren().add(line);
+        line.setFill(color);
+        canvas.getChildren().add(0, line);
+    }
+    public Group getCanvas() {
+        return canvas;
     }
 }
