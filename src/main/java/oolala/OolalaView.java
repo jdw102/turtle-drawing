@@ -15,6 +15,8 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.layout.HBox;
 
+import java.util.ArrayList;
+
 
 /**
  * @Author Luyao Wang
@@ -28,6 +30,9 @@ public class OolalaView {
     private BorderPane root;
     private Group canvas;
     TextField textBox;
+    private Parser parser = new Parser();
+    private ArrayList<Command> commands;
+    private Turtle turtle;
 
     public Scene setUpScene(int SIZE_WIDTH, int SIZE_HEIGHT) {
         this.SIZE_WIDTH = SIZE_WIDTH;
@@ -37,6 +42,7 @@ public class OolalaView {
         root.getChildren().add(canvas);
         root.setBottom(makeInputPanel());
         Scene scene = new Scene(root, SIZE_WIDTH, SIZE_HEIGHT);
+        turtle = new Turtle();
         return scene;
     }
 
@@ -47,7 +53,11 @@ public class OolalaView {
      */
     private Node makeInputPanel() {
         HBox result = new HBox();
-        EventHandler<ActionEvent> textHandler = event -> showPaint(textBox.getText());
+        EventHandler<ActionEvent> textHandler = event -> {
+            commands = parser.parse(textBox.getText());
+            System.out.println(commands.get(0).prefix.toString());
+            turtle.readInstruction(commands.get(0), this);
+        };
         EventHandler<ActionEvent> clearHandler = event -> clearPaint();
         textBox = new TextField();
         textBox.setOnAction(textHandler);
@@ -62,7 +72,7 @@ public class OolalaView {
         clearButton.setOnAction(clearHandler);
         result.getChildren().add(clearButton);
 
-        drawLine(0, 0, 230, 0);
+//        drawLine(0, 0, 230, 0);
 
         return result;
     }
@@ -90,10 +100,14 @@ public class OolalaView {
 
     public void drawLine(int x, int y, int length, int direction) {
         Line line = new Line();
-        line.setStartX(SIZE_WIDTH / 2.0 + x + x);
-        line.setStartY(SIZE_HEIGHT / 2.0 + y + y);
-        line.setEndX(SIZE_WIDTH / 2.0 + x + length * Math.cos(direction));
-        line.setEndY(SIZE_HEIGHT / 2.0 + y + length * Math.sin(direction));
+//        line.setStartX(SIZE_WIDTH / 2.0 + x + x);
+//        line.setStartY(SIZE_HEIGHT / 2.0 + y + y);
+        line.setStartX(x);
+        line.setStartY(y);
+//        line.setEndX(SIZE_WIDTH / 2.0 + x + length * Math.cos(direction));
+//        line.setEndY(SIZE_HEIGHT / 2.0 + y + length * Math.sin(direction));
+        line.setEndX(x + length * Math.cos(Math.toRadians(direction)));
+        line.setEndY(x + length * Math.sin(Math.toRadians(direction)));
         canvas.getChildren().add(line);
     }
 }
