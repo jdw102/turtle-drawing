@@ -41,8 +41,9 @@ public class OolalaView {
         canvas = new Group();
         root.getChildren().add(canvas);
         root.setBottom(makeInputPanel());
-        Scene scene = new Scene(root, SIZE_WIDTH, SIZE_HEIGHT);
         turtle = new Turtle();
+        root.getChildren().add(turtle.getIcon());
+        Scene scene = new Scene(root, SIZE_WIDTH, SIZE_HEIGHT);
         return scene;
     }
 
@@ -55,10 +56,14 @@ public class OolalaView {
         HBox result = new HBox();
         EventHandler<ActionEvent> textHandler = event -> {
             commands = parser.parse(textBox.getText());
+            textBox.clear();
             System.out.println(commands.get(0).prefix.toString());
             turtle.readInstruction(commands.get(0), this);
         };
-        EventHandler<ActionEvent> clearHandler = event -> clearPaint();
+        EventHandler<ActionEvent> clearHandler = event -> {
+            clearPaint();
+            turtle.resetTurtle();
+        };
         textBox = new TextField();
         textBox.setOnAction(textHandler);
         textBox.setPrefWidth(390);
@@ -98,7 +103,7 @@ public class OolalaView {
      * @author Luyao Wang
      */
 
-    public void drawLine(int x, int y, int length, int direction) {
+    public void drawLine(double x, double y, int length, int direction) {
         Line line = new Line();
 //        line.setStartX(SIZE_WIDTH / 2.0 + x + x);
 //        line.setStartY(SIZE_HEIGHT / 2.0 + y + y);
@@ -107,7 +112,7 @@ public class OolalaView {
 //        line.setEndX(SIZE_WIDTH / 2.0 + x + length * Math.cos(direction));
 //        line.setEndY(SIZE_HEIGHT / 2.0 + y + length * Math.sin(direction));
         line.setEndX(x + length * Math.cos(Math.toRadians(direction)));
-        line.setEndY(x + length * Math.sin(Math.toRadians(direction)));
+        line.setEndY(y - length * Math.sin(Math.toRadians(direction)));
         canvas.getChildren().add(line);
     }
 }
