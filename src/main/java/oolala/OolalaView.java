@@ -103,7 +103,7 @@ public class OolalaView {
      * @author Luyao Wang
      */
 
-    public void drawLine(double x, double y, int length, int direction) {
+    public void drawLine(double x, double y, int length, int direction, double thickness) {
         Line line = new Line();
 //        line.setStartX(SIZE_WIDTH / 2.0 + x + x);
 //        line.setStartY(SIZE_HEIGHT / 2.0 + y + y);
@@ -113,6 +113,7 @@ public class OolalaView {
 //        line.setEndY(SIZE_HEIGHT / 2.0 + y + length * Math.sin(direction));
         line.setEndX(x + length * Math.cos(Math.toRadians(direction)));
         line.setEndY(y - length * Math.sin(Math.toRadians(direction)));
+        line.setStrokeWidth(thickness);
         canvas.getChildren().add(line);
     }
 }

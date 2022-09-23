@@ -7,6 +7,8 @@ import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 
+import java.util.ArrayList;
+
 /**
  * A turtle/cursor to draw things with.
  *
@@ -17,10 +19,13 @@ public class Turtle {
   public static final int DEFAULT_ID = 0; //TODO: Will we init this in the canvas?
   public static final int HOME_X = 400; //TODO: Will we init this in the canvas?
   public static final int HOME_Y = 400; //TODO: Will we init this in the canvas?
+  public static final int DEFAULT_THICKNESS = 10;
   public static final int DEFAULT_ANGLE = 0;
   public static final Color DEFAULT_COLOR = Color.BLACK;
   public String turtleImage = "C:\\Users\\User\\IdeaProjects\\oolala_team09\\src\\main\\resources\\examples\\turtleicon.png";
+  private double iconSize = 40;
   public ImageView icon;
+  public ArrayList<ImageView> stamps;
 
   private int id; //TODO: Is this variable needed?
   private double posX;
@@ -28,6 +33,7 @@ public class Turtle {
   private int angle;
   private boolean penDown;
   private Color color;
+  private double thickness;
 
   public Turtle() {
     this.id = DEFAULT_ID;
@@ -35,11 +41,9 @@ public class Turtle {
     this.posY = HOME_Y;
     this.angle = DEFAULT_ANGLE;
     this.color = Color.BLACK;
-    this.icon = new ImageView(new Image(turtleImage));
-    this.icon.setFitHeight(40);
-    this.icon.setFitWidth(40);
-    this.icon.setX(HOME_X - this.icon.getFitWidth() / 2);
-    this.icon.setY(HOME_Y - this.icon.getFitHeight() / 2);
+    this.penDown = true;
+    this.thickness = DEFAULT_THICKNESS;
+    this.icon = createIcon(this.posX, this.posY, iconSize);
 
   }
   public Turtle(int id, int posX, int posY, int angle){
@@ -48,6 +52,9 @@ public class Turtle {
     this.posY = posY;
     this.angle = angle;
     this.penDown = true;
+    this.color = Color.BLACK;
+    this.thickness = DEFAULT_THICKNESS;
+    this.icon = createIcon(this.posX, this.posY, iconSize);
   }
 
   public void readInstruction(Command command, OolalaView display){
@@ -56,19 +63,23 @@ public class Turtle {
       case BACK -> moveBack(command.param, display);
       case LEFT -> leftTurn(command.param);
       case RIGHT -> rightTurn(command.param);
+      case PENDOWN -> putPenDown();
+      case PENUP -> putPenUp();
     }
   }
 
   public void moveForward(int dist, OolalaView display){
-    System.out.println(dist);
-    display.drawLine(this.posX, this.posY, dist, this.angle + 90);
+    if (penDown){
+      display.drawLine(this.posX, this.posY, dist, this.angle + 90, thickness);
+    }
     this.posY = this.posY - dist * Math.sin(Math.toRadians(this.angle + 90));
     this.posX = this.posX + dist * Math.cos(Math.toRadians(this.angle + 90));
     moveIcon();
   }
   public void moveBack(int dist, OolalaView display){
-    System.out.println(dist);
-    display.drawLine(this.posX, this.posY, dist, this.angle + 270);
+    if (penDown){
+      display.drawLine(this.posX, this.posY, dist, this.angle + 270, thickness);
+    }
     this.posY = this.posY - dist * Math.sin(Math.toRadians(this.angle + 270));
     this.posX = this.posX + dist * Math.cos(Math.toRadians(this.angle + 270));
     moveIcon();
@@ -81,6 +92,12 @@ public class Turtle {
     angle = - newAngle;
     rotateIcon();
   }
+  public void putPenDown(){
+    penDown = true;
+  }
+  public void putPenUp(){
+    penDown = false;
+  }
   public void resetTurtle(){
     this.posX = HOME_X;
     this.posY = HOME_Y;
@@ -92,10 +109,20 @@ public class Turtle {
     return icon;
   }
   private void moveIcon(){
-    this.icon.setX(this.posX - this.icon.getFitWidth() / 2);
-    this.icon.setY(this.posY - this.icon.getFitHeight() / 2);
+    this.icon.setX(this.posX - iconSize / 2);
+    this.icon.setY(this.posY - iconSize / 2);
   }
   private void rotateIcon(){
     this.icon.setRotate(-angle);
   }
+
+  private ImageView createIcon(double x, double y, double size){
+    ImageView i = new ImageView(new Image(turtleImage));
+    i.setFitHeight(size);
+    i.setFitWidth(size);
+    i.setX(x- size / 2);
+    i.setY(y- size / 2);
+    return i;
+  }
 }
+
