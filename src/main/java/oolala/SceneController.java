@@ -5,6 +5,11 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.stage.Stage;
 
+
+/**
+ * @Author Luyao Wang
+ * This class might not be needed.
+ */
 public class SceneController {
 
     private static final int SIZE_WIDTH = 480;

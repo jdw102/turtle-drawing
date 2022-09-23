@@ -15,29 +15,36 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.layout.HBox;
 
+
+/**
+ * @Author Luyao Wang
+ * Setting up of the UI.
+ * The origin is at the center of the screen.
+ */
 public class OolalaView {
     private int SIZE_WIDTH;
     private int SIZE_HEIGHT;
     private Paint BACKGROUND;
     private BorderPane root;
-    private Group paint;
+    private Group canvas;
     TextField textBox;
 
     public Scene setUpScene(int SIZE_WIDTH, int SIZE_HEIGHT) {
         this.SIZE_WIDTH = SIZE_WIDTH;
         this.SIZE_HEIGHT = SIZE_HEIGHT;
         root = new BorderPane();
-        paint = new Group();
-        root.getChildren().add(paint);
+        canvas = new Group();
+        root.getChildren().add(canvas);
         root.setBottom(makeInputPanel());
         Scene scene = new Scene(root, SIZE_WIDTH, SIZE_HEIGHT);
         return scene;
     }
 
-    private void clearPaint() {
-        paint.getChildren().clear();
-    }
-
+    /**
+     * A method to remove everything on the canvas.
+     *
+     * @author Luyao Wang
+     */
     private Node makeInputPanel() {
         HBox result = new HBox();
         EventHandler<ActionEvent> textHandler = event -> showPaint(textBox.getText());
@@ -60,12 +67,26 @@ public class OolalaView {
         return result;
     }
 
+    private void clearPaint() {
+        canvas.getChildren().clear();
+    }
+
     private void showPaint(String text) {
         Text showText = new Text(30, 60, text);
         showText.setFont(new Font(15));
         showText.setFill(Color.RED);
-        paint.getChildren().add(showText);
+        canvas.getChildren().add(showText);
     }
+
+    /**
+     * A method to draw a new line on the canvas.
+     *
+     * @param x         x coordinate of the start point
+     * @param y         y coordinate of the end point
+     * @param length    length of the line
+     * @param direction angle between the line and the positive x-axis
+     * @author Luyao Wang
+     */
 
     public void drawLine(int x, int y, int length, int direction) {
         Line line = new Line();
@@ -73,6 +94,6 @@ public class OolalaView {
         line.setStartY(SIZE_HEIGHT / 2.0 + y + y);
         line.setEndX(SIZE_WIDTH / 2.0 + x + length * Math.cos(direction));
         line.setEndY(SIZE_HEIGHT / 2.0 + y + length * Math.sin(direction));
-        paint.getChildren().add(line);
+        canvas.getChildren().add(line);
     }
 }
