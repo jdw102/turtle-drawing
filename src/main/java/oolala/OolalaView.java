@@ -2,6 +2,8 @@ package oolala;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -16,6 +18,7 @@ import javafx.scene.text.Text;
 import javafx.scene.layout.HBox;
 
 import java.util.ArrayList;
+import java.util.ResourceBundle;
 
 
 /**
@@ -30,18 +33,24 @@ public class OolalaView {
     private Paint BRUSH_COLOR;
     private BorderPane root;
     private Group canvas;
-    TextField textBox;
-    private Parser parser = new Parser();
+    private TextBox textBox;
     private ArrayList<Command> commands;
     private Turtle turtle;
+    public static ResourceBundle myResources;
+    private static final String DEFAULT_RESOURCE_PACKAGE = "Properties.";
 
-    public Scene setUpScene(int SIZE_WIDTH, int SIZE_HEIGHT) {
+
+    public Scene setUpScene(int SIZE_WIDTH, int SIZE_HEIGHT, String language) {
+        myResources = ResourceBundle.getBundle(DEFAULT_RESOURCE_PACKAGE + language);
         this.SIZE_WIDTH = SIZE_WIDTH;
         this.SIZE_HEIGHT = SIZE_HEIGHT;
         root = new BorderPane();
         canvas = new Group();
         root.getChildren().add(canvas);
-        root.setBottom(makeInputPanel());
+        makeTextBox();
+        BorderPane.setAlignment(textBox.get(), Pos.CENTER);
+        root.setPadding(new Insets(10, 10, 10, 10));
+        root.setLeft(textBox.get());
         turtle = new Turtle();
         root.getChildren().add(turtle.getIcon());
         Scene scene = new Scene(root, SIZE_WIDTH, SIZE_HEIGHT);
@@ -53,34 +62,37 @@ public class OolalaView {
      *
      * @author Luyao Wang
      */
-    private Node makeInputPanel() {
-        HBox result = new HBox();
-        EventHandler<ActionEvent> textHandler = event -> {
-            commands = parser.parse(textBox.getText());
-            textBox.clear();
-            turtle.readInstruction(commands.get(0), this);
-        };
-        EventHandler<ActionEvent> clearHandler = event -> {
-            clearPaint();
-            turtle.resetTurtle(this);
-        };
-        textBox = new TextField();
-        textBox.setOnAction(textHandler);
-        textBox.setPrefWidth(390);
-        result.getChildren().add(textBox);
-        Button enterButton = new Button();
-        enterButton.setText("Draw");
-        enterButton.setOnAction(textHandler);
-        result.getChildren().add(enterButton);
-        Button clearButton = new Button();
-        clearButton.setText("Clear");
-        clearButton.setOnAction(clearHandler);
-        result.getChildren().add(clearButton);
-
-//        drawLine(0, 0, 230, 0);
-
-        return result;
+    private void makeTextBox(){
+        textBox = new TextBox();
     }
+//    private Node makeInputPanel() {
+//        HBox result = new HBox();
+//        EventHandler<ActionEvent> textHandler = event -> {
+//            commands = parser.parse(textBox.getText());
+//            textBox.clear();
+//            turtle.readInstruction(commands.get(0), this);
+//        };
+//        EventHandler<ActionEvent> clearHandler = event -> {
+//            clearPaint();
+//            turtle.resetTurtle(this);
+//        };
+//        textBox = new TextField();
+//        textBox.setOnAction(textHandler);
+//        textBox.setPrefWidth(390);
+//        result.getChildren().add(textBox);
+//        Button enterButton = new Button();
+//        enterButton.setText("Draw");
+//        enterButton.setOnAction(textHandler);
+//        result.getChildren().add(enterButton);
+//        Button clearButton = new Button();
+//        clearButton.setText("Clear");
+//        clearButton.setOnAction(clearHandler);
+//        result.getChildren().add(clearButton);
+//
+////        drawLine(0, 0, 230, 0);
+//
+//        return result;
+//    }
 
     private void clearPaint() {
         canvas.getChildren().clear();
