@@ -23,7 +23,7 @@ public class Turtle {
   public static final int DEFAULT_ANGLE = 0;
   public static final Color DEFAULT_COLOR = Color.BLACK;
   public static final double DEFAULT_ICON_SIZE = 30;
-  public String turtleImage = "C:\\Users\\User\\IdeaProjects\\oolala_team09\\src\\main\\resources\\examples\\turtleicon.png";
+  public String turtleImage = "Images/turtleicon.png";
   public ImageView icon;
   public ArrayList<ImageView> stamps;
 
