@@ -6,6 +6,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import javafx.scene.shape.Rectangle;
 
 import java.util.ArrayList;
 
@@ -17,8 +18,8 @@ import java.util.ArrayList;
 public class Turtle {
 
   public static final int DEFAULT_ID = 0; //TODO: Will we init this in the canvas?
-  public static final int HOME_X = 0; //TODO: Will we init this in the canvas?
-  public static final int HOME_Y = 0; //TODO: Will we init this in the canvas?
+  public int homeX = 0; //TODO: Will we init this in the canvas?
+  public int homeY = 0; //TODO: Will we init this in the canvas?
   public static final int DEFAULT_THICKNESS = 3;
   public static final int DEFAULT_ANGLE = 0;
   public static final Color DEFAULT_COLOR = Color.BLACK;
@@ -35,11 +36,16 @@ public class Turtle {
   private Color color;
   private double thickness;
   private double iconSize;
+  private double xMax;
+  private double xMin;
+  private double yMax;
+  private double yMin;
+
 
   public Turtle() {
     this.id = DEFAULT_ID;
-    this.posX = HOME_X;
-    this.posY = HOME_Y;
+    this.posX = 0;
+    this.posY = 0;
     this.angle = DEFAULT_ANGLE;
     this.color = Color.BLACK;
     this.penDown = true;
@@ -47,19 +53,24 @@ public class Turtle {
     this.iconSize = DEFAULT_ICON_SIZE;
     this.icon = createIcon(this.posX, this.posY, iconSize);
     this.stamps = new ArrayList<>();
+    Rectangle r = new Rectangle();
+    calcBounds(r);
 
   }
-  public Turtle(int id, int posX, int posY, int angle){
+  public Turtle(int id, int posX, int posY, Rectangle r){
+    homeX = posX;
+    homeY = posY;
     this.id = id;
-    this.posX = posX;
-    this.posY = posY;
-    this.angle = angle;
+    this.posX = homeX;
+    this.posY = homeY;
+    this.angle = DEFAULT_ANGLE;
     this.penDown = true;
     this.color = Color.BLACK;
     this.thickness = DEFAULT_THICKNESS;
     this.iconSize = DEFAULT_ICON_SIZE;
     this.icon = createIcon(this.posX, this.posY, iconSize);
     this.stamps = new ArrayList<>();
+    calcBounds(r);
   }
 
   public void readInstruction(Command command, OolalaView display){
@@ -78,16 +89,44 @@ public class Turtle {
   }
 
   public void moveForward(int dist, OolalaView display){
-    if (penDown){
-      display.drawLine(this.posX, this.posY, dist, this.angle + 90, thickness, color);
+    double x = this.posX + dist * Math.cos(Math.toRadians(this.angle + 90));
+    double y = this.posY - dist * Math.sin(Math.toRadians(this.angle + 90));
+    if (x > xMax){
+      x = xMax;
     }
-    this.posY = this.posY - dist * Math.sin(Math.toRadians(this.angle + 90));
-    this.posX = this.posX + dist * Math.cos(Math.toRadians(this.angle + 90));
+    if (x < xMin){
+      x = xMin;
+    }
+    if (y > yMax){
+      y = yMax;
+    }
+    if (y < yMin){
+      y = yMin;
+    }
+    if (penDown){
+      display.drawLine(this.posX, this.posY, x, y, thickness, color);
+    }
+    this.posY = y;
+    this.posX = x;
     moveIcon();
   }
   public void moveBack(int dist, OolalaView display){
+    double x = this.posX + dist * Math.cos(Math.toRadians(this.angle + 90));
+    double y = this.posY - dist * Math.sin(Math.toRadians(this.angle + 90));
+    if (x > xMax){
+      x = xMax;
+    }
+    if (x < xMin){
+      x = xMin;
+    }
+    if (y > yMax){
+      y = yMax;
+    }
+    if (y < yMin){
+      y = yMin;
+    }
     if (penDown){
-      display.drawLine(this.posX, this.posY, dist, this.angle + 270, thickness, color);
+      display.drawLine(this.posX, this.posY, x, y, thickness, color);
     }
     this.posY = this.posY - dist * Math.sin(Math.toRadians(this.angle + 270));
     this.posX = this.posX + dist * Math.cos(Math.toRadians(this.angle + 270));
@@ -114,8 +153,8 @@ public class Turtle {
     icon.setVisible(false);
   }
   public void home(){
-    this.posX = HOME_X;
-    this.posY = HOME_Y;
+    this.posX = homeX;
+    this.posY = homeY;
     this.angle = DEFAULT_ANGLE;
     moveIcon();
     rotateIcon();
@@ -148,6 +187,12 @@ public class Turtle {
     i.setY(y- size / 2);
     i.setRotate(-angle);
     return i;
+  }
+  private void calcBounds(Rectangle r){
+    xMin = r.getX();
+    xMax = r.getX() + r.getWidth();
+    yMin = r.getY();
+    yMax = r.getY() + r.getHeight();
   }
 }
 
