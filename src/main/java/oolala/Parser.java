@@ -25,6 +25,7 @@ public class Parser {
   public ArrayList<Command> parse(String commandString) {
     ArrayList<Command> program = new ArrayList<>();
 
+    commandString = commandString.toLowerCase();
     Scanner scan = new Scanner(commandString);
     while (scan.hasNext()){
       Command c = new Command();
