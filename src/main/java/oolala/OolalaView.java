@@ -19,7 +19,13 @@ import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 
@@ -42,10 +48,13 @@ public class OolalaView {
     public static ResourceBundle myResources;
     private static final String DEFAULT_RESOURCE_PACKAGE = "Properties.";
     private Parser parser = new Parser();
+    private FileChooser fileChooser;
+    private Stage stage;
 
 
 
-    public Scene setUpScene(int SIZE_WIDTH, int SIZE_HEIGHT, String language) {
+    public Scene setUpScene(int SIZE_WIDTH, int SIZE_HEIGHT, String language, Stage stage) {
+        this.stage = stage;
         myResources = ResourceBundle.getBundle(DEFAULT_RESOURCE_PACKAGE + language);
         this.SIZE_WIDTH = SIZE_WIDTH;
         this.SIZE_HEIGHT = SIZE_HEIGHT;
@@ -54,22 +63,8 @@ public class OolalaView {
         root.getChildren().add(canvas);
         makeTextBox();
         BorderPane.setAlignment(textBox.get(), Pos.CENTER);
-        VBox box = new VBox();
-        root.setRight(box);
-        box.setPrefWidth(400);
-        System.out.println(box.getLayoutX());
-        System.out.println(box.getLayoutY());
-        BorderPane.setAlignment(box, Pos.CENTER);
-        String cssLayout = "-fx-border-color: red;\n" +
-                "-fx-border-insets: 5;\n" +
-                "-fx-border-width: 3;\n" +
-                "-fx-border-style: solid;\n";
-        box.setStyle(cssLayout);
         root.setPadding(new Insets(10, 30, 10, 10));
-        root.setRight(box);
         root.setLeft(textBox.get());
-        turtle = new Turtle();
-        root.getChildren().add(turtle.getIcon());
         Scene scene = new Scene(root, SIZE_WIDTH, SIZE_HEIGHT);
         return scene;
     }
@@ -83,9 +78,22 @@ public class OolalaView {
         textBox = new TextBox();
         EventHandler<ActionEvent> passCommands = event -> {
             ArrayList<Command> commands = parser.parse(textBox.getTextArea().getText());
-            myCanvas.setCommands(commands);
+            System.out.println(commands.toString());
+        };
+        fileChooser = new FileChooser();
+        fileChooser.setTitle(myResources.getString("FileChooser"));
+        EventHandler<ActionEvent> openFileChooser = event -> {
+            File f = fileChooser.showOpenDialog(stage);
+            Path filePath = Path.of(f.getPath());
+            try {
+                String content = Files.readString(filePath);
+                textBox.getTextArea().setText(content);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         };
         textBox.getRunButton().setOnAction(passCommands);
+        textBox.getFileChooserButton().setOnAction(openFileChooser);
     }
 //    private Node makeInputPanel() {
 //        HBox result = new HBox();

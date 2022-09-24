@@ -35,7 +35,7 @@ public class Main extends Application{
     public void start(Stage stage) {
         this.stage = stage;
         view = new OolalaView();
-        scene = view.setUpScene(SIZE_WIDTH, SIZE_HEIGHT, "English");
+        scene = view.setUpScene(SIZE_WIDTH, SIZE_HEIGHT, "English", stage);
         scene.getStylesheets().add(getClass().getResource(DEFAULT_RESOURCE_FOLDER + STYLESHEET).toExternalForm());
         stage.setTitle(TITLE);
         stage.setScene(scene);
