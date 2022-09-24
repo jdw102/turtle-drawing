@@ -33,7 +33,7 @@ public class Main extends Application{
     public void start(Stage stage) {
         this.stage = stage;
         view = new OolalaView();
-        scene = view.setUpScene(SIZE_WIDTH, SIZE_HEIGHT);
+        scene = view.setUpScene(SIZE_WIDTH, SIZE_HEIGHT, "English");
         stage.setTitle(TITLE);
         stage.setScene(scene);
         stage.show();
