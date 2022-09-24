@@ -18,6 +18,8 @@ public class Main extends Application{
     private OolalaView view;
     private Scene scene;
     String TITLE = "Oolala";
+    public static final String STYLESHEET = "default.css";
+    public static final String DEFAULT_RESOURCE_FOLDER = "/Properties/";
 
     /**
      * A method to test (and a joke :).
@@ -34,6 +36,7 @@ public class Main extends Application{
         this.stage = stage;
         view = new OolalaView();
         scene = view.setUpScene(SIZE_WIDTH, SIZE_HEIGHT, "English");
+        scene.getStylesheets().add(getClass().getResource(DEFAULT_RESOURCE_FOLDER + STYLESHEET).toExternalForm());
         stage.setTitle(TITLE);
         stage.setScene(scene);
         stage.show();
