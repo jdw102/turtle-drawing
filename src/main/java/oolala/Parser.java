@@ -23,12 +23,16 @@ public class Parser {
    * @return An ArrayList of the parsed commands
    */
   public ArrayList<Command> parse(String commandString) {
-    ArrayList<Command> program = new ArrayList<Command>();
+    ArrayList<Command> program = new ArrayList<>();
 
     Scanner scan = new Scanner(commandString);
     while (scan.hasNext()){
       Command c = new Command();
       String prefix = scan.next();
+      if(prefix.charAt(0) == '#'){
+        scan.nextLine();
+        continue;
+      }
       switch(prefix) {
         case "fd":
           c.prefix = CmdName.FORWARD;
