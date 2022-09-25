@@ -22,8 +22,7 @@ import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -63,7 +62,6 @@ public class OolalaView {
         root.getChildren().add(canvas);
         makeTextBox();
         BorderPane.setAlignment(textBox.get(), Pos.CENTER);
-        root.setPadding(new Insets(10, 30, 10, 10));
         root.setLeft(textBox.get());
         Scene scene = new Scene(root, SIZE_WIDTH, SIZE_HEIGHT);
         return scene;
@@ -75,54 +73,48 @@ public class OolalaView {
      * @author Luyao Wang
      */
     private void makeTextBox(){
-        textBox = new TextBox();
+        textBox = new TextBox(300, 400);
         EventHandler<ActionEvent> passCommands = event -> {
+            textBox.updateRecentlyUsed();
             ArrayList<Command> commands = parser.parse(textBox.getTextArea().getText());
             System.out.println(commands.toString());
         };
         fileChooser = new FileChooser();
         fileChooser.setTitle(myResources.getString("FileChooser"));
+        FileChooser.ExtensionFilter extFilter =
+                new FileChooser.ExtensionFilter("TXT files (*.txt)", "*.txt");
+        fileChooser.getExtensionFilters().add(extFilter);
         EventHandler<ActionEvent> openFileChooser = event -> {
             File f = fileChooser.showOpenDialog(stage);
-            Path filePath = Path.of(f.getPath());
-            try {
-                String content = Files.readString(filePath);
-                textBox.getTextArea().setText(content);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
+            if (f != null){
+                try {
+                    Path filePath = Path.of(f.getPath());
+                    String content = Files.readString(filePath);
+                    textBox.getTextArea().setText(content);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        };
+        EventHandler<ActionEvent> saveFile = event -> {
+            File f = fileChooser.showSaveDialog(stage);
+            if (f != null) {
+                try {
+                    textBox.updateRecentlyUsed();
+                    FileWriter writer = new FileWriter(f);
+                    writer.write(textBox.getTextArea().getText());
+                    writer.close();
+                } catch (FileNotFoundException e) {
+                    throw new RuntimeException(e);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
             }
         };
         textBox.getRunButton().setOnAction(passCommands);
         textBox.getFileChooserButton().setOnAction(openFileChooser);
+        textBox.getSaveButton().setOnAction(saveFile);
     }
-//    private Node makeInputPanel() {
-//        HBox result = new HBox();
-//        EventHandler<ActionEvent> textHandler = event -> {
-//            commands = parser.parse(textBox.getText());
-//            textBox.clear();
-//            turtle.readInstruction(commands.get(0), this);
-//        };
-//        EventHandler<ActionEvent> clearHandler = event -> {
-//            clearPaint();
-//            turtle.resetTurtle(this);
-//        };
-//        textBox = new TextField();
-//        textBox.setOnAction(textHandler);
-//        textBox.setPrefWidth(390);
-//        result.getChildren().add(textBox);
-//        Button enterButton = new Button();
-//        enterButton.setText("Draw");
-//        enterButton.setOnAction(textHandler);
-//        result.getChildren().add(enterButton);
-//        Button clearButton = new Button();
-//        clearButton.setText("Clear");
-//        clearButton.setOnAction(clearHandler);
-//        result.getChildren().add(clearButton);
-//
-////        drawLine(0, 0, 230, 0);
-//
-//        return result;
-//    }
 
     private void clearPaint() {
         canvas.getChildren().clear();
