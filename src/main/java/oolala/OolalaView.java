@@ -50,13 +50,19 @@ public class OolalaView {
         myResources = ResourceBundle.getBundle(DEFAULT_RESOURCE_PACKAGE + language);
         this.SIZE_WIDTH = SIZE_WIDTH;
         this.SIZE_HEIGHT = SIZE_HEIGHT;
+
         root = new BorderPane();
+
         makeTextBox();
-        BorderPane.setAlignment(textBox.get(), Pos.CENTER);
+        //BorderPane.setAlignment(textBox.get(), Pos.CENTER);
+        // TODO: can the above commented line be deleted?
+        root.setLeft(textBox.get());
 
         makeCanvasScene();
         root.setCenter(canvasVBox);
         root.getChildren().add(canvasShapes);
+
+        root.setPadding(new Insets(10, 30, 10, 10));
 
 
 //        VBox box = new VBox();
@@ -70,9 +76,9 @@ public class OolalaView {
 //                "-fx-border-width: 3;\n" +
 //                "-fx-border-style: solid;\n";
 //        box.setStyle(cssLayout);
-        root.setPadding(new Insets(10, 30, 10, 10));
-//        root.setRight(box);
-        root.setLeft(textBox.get());
+        //        root.setRight(box);
+
+
 //        turtle = new Turtle();
 //        root.getChildren().add(turtle.getIcon());
         Scene scene = new Scene(root, SIZE_WIDTH, SIZE_HEIGHT);

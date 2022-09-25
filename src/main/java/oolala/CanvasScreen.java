@@ -8,6 +8,7 @@ import javafx.scene.Group;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBar;
 import javafx.scene.image.WritableImage;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -50,8 +51,12 @@ public class CanvasScreen {
         EventHandler<ActionEvent> saveCommand = event -> screenShot();
         saveButton.setOnAction(saveCommand);
 
-        HBox Buttons = new HBox(clearButton, resetButton, saveButton);
-        Buttons.setAlignment(Pos.TOP_RIGHT);
+        ButtonBar buttonBar = new ButtonBar();
+        buttonBar.getButtons().add(clearButton);
+        buttonBar.getButtons().add(resetButton);
+        buttonBar.getButtons().add(saveButton);
+//        HBox Buttons = new HBox(clearButton, resetButton, saveButton);
+//        Buttons.setAlignment(Pos.TOP_RIGHT);
 
 
         //Area indicator
@@ -63,7 +68,7 @@ public class CanvasScreen {
 //        borderRectangle.translateXProperty().bind((vBox.widthProperty().divide(2)).subtract((borderRectangle.widthProperty().divide(2))));
 //        borderRectangle.translateYProperty().bind((vBox.heightProperty().divide(2)).subtract((borderRectangle.heightProperty().divide(2))));
 
-        vBox.getChildren().add(Buttons);
+        vBox.getChildren().add(buttonBar);
         borderRectangle = new Rectangle(260, 50, 500, 500);
         shapes.getChildren().add(borderRectangle);
         borderRectangle.setFill(Color.AZURE);
