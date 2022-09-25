@@ -22,6 +22,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import static oolala.OolalaView.myResources;
+
 public class CanvasScreen {
 
     //ArrayList
@@ -40,16 +42,13 @@ public class CanvasScreen {
 //        vBox.setPrefWidth(500);
         vBox.setMinSize(400, 500);
 
-
-        Button clearButton = makeButtons("clear");
-        Button resetButton = makeButtons("reset");
-        Button saveButton = makeButtons("save");
         EventHandler<ActionEvent> clearCommand = event -> clear();
-        clearButton.setOnAction(clearCommand);
         EventHandler<ActionEvent> resetCommand = event -> reset();
-        resetButton.setOnAction(resetCommand);
         EventHandler<ActionEvent> saveCommand = event -> screenShot();
-        saveButton.setOnAction(saveCommand);
+        Button clearButton = makeButtons("ClearCanvasButton", clearCommand);
+        Button resetButton = makeButtons("ResetTurtleButton", resetCommand);
+        Button saveButton = makeButtons("SaveButton", saveCommand);
+
 
         ButtonBar buttonBar = new ButtonBar();
         buttonBar.getButtons().add(clearButton);
@@ -89,7 +88,7 @@ public class CanvasScreen {
 
     private void screenShot() {
         WritableImage snapshot = shapes.snapshot(null, null);
-        File file = new File("snapshot");
+        File file = new File("snapshot.png");
         try {
             ImageIO.write(SwingFXUtils.fromFXImage(snapshot, null), "png", file);
         } catch (IOException e) {
@@ -152,8 +151,11 @@ public class CanvasScreen {
         return shapes;
     }
 
-    private Button makeButtons(String property) {
-        Button button = new Button(property);
-        return button;
+    private Button makeButtons(String property, EventHandler<ActionEvent> handler) {
+        Button result = new Button();
+        String label = myResources.getString(property);
+        result.setText(label);
+        result.setOnAction(handler);
+        return result;
     }
 }
