@@ -5,10 +5,11 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
-import javafx.scene.control.ButtonBar;
+import javafx.scene.control.ComboBox;
 import javafx.scene.image.WritableImage;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -19,23 +20,26 @@ import javafx.scene.shape.Rectangle;
 import javax.imageio.ImageIO;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.*;
 
-import static oolala.OolalaView.myResources;
 
 public class CanvasScreen {
 
     //ArrayList
     private Canvas canvas;
     private Rectangle borderRectangle;
-    VBox vBox;
-    Group shapes;
+    private VBox vBox;
+    private Group shapes;
+    private HBox hBox;
     private GraphicsContext gc;
     Turtle turtle;
+    private ComboBox<String> languagesComboBox;
+    private ResourceBundle myResources;
+    ArrayList<String> labels = new ArrayList<String>(Arrays.asList("ClearCanvasButton", "ResetTurtleButton", "SaveButton"));
 
-    public CanvasScreen() {
 
+    public CanvasScreen(ResourceBundle myResources) {
+        this.myResources = myResources;
         shapes = new Group();
         vBox = new VBox();
 //        vBox.setPrefHeight(600);
@@ -45,17 +49,18 @@ public class CanvasScreen {
         EventHandler<ActionEvent> clearCommand = event -> clear();
         EventHandler<ActionEvent> resetCommand = event -> reset();
         EventHandler<ActionEvent> saveCommand = event -> screenShot();
-        Button clearButton = makeButtons("ClearCanvasButton", clearCommand);
-        Button resetButton = makeButtons("ResetTurtleButton", resetCommand);
-        Button saveButton = makeButtons("SaveButton", saveCommand);
+        Button clearButton = makeButtons(labels.get(0), clearCommand);
+        Button resetButton = makeButtons(labels.get(1), resetCommand);
+        Button saveButton = makeButtons(labels.get(2), saveCommand);
+        languagesComboBox = makeComboBox();
 
 
-        ButtonBar buttonBar = new ButtonBar();
-        buttonBar.getButtons().add(clearButton);
-        buttonBar.getButtons().add(resetButton);
-        buttonBar.getButtons().add(saveButton);
-//        HBox Buttons = new HBox(clearButton, resetButton, saveButton);
-//        Buttons.setAlignment(Pos.TOP_RIGHT);
+//        hBox = new HBox(clearButton, resetButton, saveButton, languagesComboBox);
+//        hBox.setAlignment(Pos.TOP_RIGHT);
+
+        hBox = new HBox(clearButton, resetButton, saveButton, languagesComboBox);
+        hBox.setAlignment(Pos.TOP_RIGHT);
+        hBox.setSpacing(10);
 
 
         //Area indicator
@@ -67,7 +72,7 @@ public class CanvasScreen {
 //        borderRectangle.translateXProperty().bind((vBox.widthProperty().divide(2)).subtract((borderRectangle.widthProperty().divide(2))));
 //        borderRectangle.translateYProperty().bind((vBox.heightProperty().divide(2)).subtract((borderRectangle.heightProperty().divide(2))));
 
-        vBox.getChildren().add(buttonBar);
+        vBox.getChildren().add(hBox);
         borderRectangle = new Rectangle(260, 50, 500, 500);
         shapes.getChildren().add(borderRectangle);
         borderRectangle.setFill(Color.AZURE);
@@ -151,11 +156,44 @@ public class CanvasScreen {
         return shapes;
     }
 
+    public ComboBox<String> getLanguagesComboBox() {
+        return languagesComboBox;
+    }
+
+    private ComboBox<String> makeComboBox() {
+        ComboBox<String> languages = new ComboBox<>();
+        ArrayList<String> langs = new ArrayList<>();
+        langs.add("English");
+        langs.add("简体中文");
+        langs.add("繁體中文");
+        langs.add("日本語");
+        languages.getItems().addAll(langs);
+        languages.setValue("English");//Default language
+
+        return languages;
+    }
+
     private Button makeButtons(String property, EventHandler<ActionEvent> handler) {
         Button result = new Button();
         String label = myResources.getString(property);
         result.setText(label);
         result.setOnAction(handler);
         return result;
+    }
+
+    public void setLanguage(ResourceBundle resources) {
+        myResources = resources;
+        int i = 0;
+        for (Node n : hBox.getChildren()) {
+            if (n instanceof Button) {
+                updateButtonLanguage((Button) n, labels.get(i));
+                i++;
+            }
+        }
+    }
+
+    public void updateButtonLanguage(Button button, String property) {
+        String label = myResources.getString(property);
+        button.setText(label);
     }
 }

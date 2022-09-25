@@ -1,24 +1,13 @@
 package oolala;
 
 import javafx.event.ActionEvent;
-import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.Group;
-import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.canvas.Canvas;
-import javafx.scene.control.Button;
-import javafx.scene.control.TextField;
+import javafx.scene.control.ComboBox;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
-import javafx.scene.shape.Box;
-import javafx.scene.shape.Line;
-import javafx.scene.shape.Rectangle;
-import javafx.scene.text.Font;
-import javafx.scene.text.Text;
 
 import java.util.ArrayList;
 import java.util.ResourceBundle;
@@ -44,9 +33,9 @@ public class OolalaView {
     private CanvasScreen canvasScreen;
     private VBox canvasVBox;
     private Group canvasShapes;
+    private String language = "English";
 
-
-    public Scene setUpScene(int SIZE_WIDTH, int SIZE_HEIGHT, String language) {
+    public Scene setUpScene(int SIZE_WIDTH, int SIZE_HEIGHT) {
         myResources = ResourceBundle.getBundle(DEFAULT_RESOURCE_PACKAGE + language);
         this.SIZE_WIDTH = SIZE_WIDTH;
         this.SIZE_HEIGHT = SIZE_HEIGHT;
@@ -97,14 +86,28 @@ public class OolalaView {
      */
 
 
-    private void makeCanvasScene(){
-        canvasScreen = new CanvasScreen();
+    private void setLanguage(String lang) {
+        language = lang;
+        myResources = ResourceBundle.getBundle(DEFAULT_RESOURCE_PACKAGE + language);
+        canvasScreen.setLanguage(myResources);
+        textBox.setLanguage(myResources);
+    }
+
+    private void makeCanvasScene() {
+        canvasScreen = new CanvasScreen(myResources);
         canvasVBox = canvasScreen.getVBox();
         canvasShapes = canvasScreen.getShapes();
+
+        ComboBox<String> languages = canvasScreen.getLanguagesComboBox();
+
+        EventHandler<ActionEvent> langCommand = event -> {
+            setLanguage(languages.getValue());
+        };
+        languages.setOnAction(langCommand);
     }
 
     private void makeTextBox() {
-        textBox = new TextBox();
+        textBox = new TextBox(myResources);
         EventHandler<ActionEvent> passCommands = event -> {
             ArrayList<Command> commands = parser.parse(textBox.getTextArea().getText());
             canvasScreen.setCommands(commands, this);
