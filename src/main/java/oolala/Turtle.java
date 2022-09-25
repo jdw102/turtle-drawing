@@ -171,6 +171,7 @@ public class Turtle {
   private void moveIcon(){
     this.icon.setX(this.posX - iconSize / 2);
     this.icon.setY(this.posY - iconSize / 2);
+    this.icon.toFront();
   }
   private void rotateIcon(){
     this.icon.setRotate(-angle);
