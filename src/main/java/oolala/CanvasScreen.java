@@ -11,6 +11,7 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar;
+import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -79,10 +80,10 @@ public class CanvasScreen {
 
     turtles = new HashMap<>();
     currTurtleIdxs = new ArrayList<>();
-    turtles.put(0, new Turtle(0, 0, 0, borderRectangle));
-    currTurtleIdxs.add(0);
+    turtles.put(1, new Turtle(1, 0, 0, borderRectangle));
+    currTurtleIdxs.add(1);
     System.out.println(borderRectangle.heightProperty());
-    shapes.getChildren().add(turtles.get(0).getIcon()); // TODO: Check this; potential bug source
+    shapes.getChildren().add(turtles.get(1).getIcon()); // TODO: Check this; potential bug source
   }
 
   public void setCommands(ArrayList<Command> commands, OolalaView display) {
@@ -164,9 +165,9 @@ public class CanvasScreen {
     turtles.clear(); // TODO: Check if this is correct functionality
     currTurtleIdxs.clear();
 
-    turtles.put(0, new Turtle(0, 0, 0, borderRectangle));
-    shapes.getChildren().add(turtles.get(0).getIcon()); // TODO: We should probably refactor this for scalability
-    currTurtleIdxs.add(0);
+    turtles.put(1, new Turtle(1, 0, 0, borderRectangle));
+    shapes.getChildren().add(turtles.get(1).getIcon()); // TODO: We should probably refactor this for scalability
+    currTurtleIdxs.add(1);
   }
 
   public void clear() {
@@ -176,6 +177,8 @@ public class CanvasScreen {
 //                shapes.getChildren().remove(i);
 //        }
     shapes.getChildren().removeIf(i -> i instanceof Line);
+    shapes.getChildren().removeIf(i -> i instanceof ImageView);
+    reset();
   }
 
   public VBox getVBox() {
