@@ -187,6 +187,7 @@ public class Turtle {
     i.setX(x- size / 2);
     i.setY(y- size / 2);
     i.setRotate(-angle);
+    System.out.println("Creating icon");
     return i;
   }
   private void calcBounds(Rectangle r){
