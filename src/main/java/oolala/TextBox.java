@@ -9,32 +9,36 @@ import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.VBox;
 
 import javax.imageio.ImageIO;
+
+import java.util.ArrayList;
 
 import static oolala.OolalaView.myResources;
 
 public class TextBox {
-    private Parser parser = new Parser();
     private TextArea textArea;
     private GridPane buttons;
     private ButtonBar buttonBar;
-    private GridPane box;
+    private VBox box;
+    private Button runButton;
 
     public TextBox(){
         textArea = new TextArea("");
         textArea.setPrefSize(200, 300);
         textArea.setMaxHeight(300);
         buttonBar = createButtonBar();
-        box = new GridPane();
-        box.add(buttonBar, 0, 0);
-        box.add(textArea, 0, 1);
+        box = new VBox();
+        box.getChildren().add(buttonBar);
+        box.getChildren().add(textArea);
     }
     public TextArea getTextArea(){
         return textArea;
     }
     public ButtonBar createButtonBar(){
-        Button runButton = makeButton("RunButton", event -> runScript());
+        Button runButton = makeButton("RunButton", event -> System.out.println("test"));
+        this.runButton = runButton;
         Button clearTextButton = makeButton("ClearTextButton", event -> textArea.clear());
         ButtonBar b = new ButtonBar();
         b.getButtons().add(runButton);
@@ -51,10 +55,11 @@ public class TextBox {
         result.setOnAction(handler);
         return result;
     }
-    public void runScript(){
-        System.out.println(textArea.getText());
-    }
-    public GridPane get(){
+
+    public VBox get(){
         return box;
+    }
+    public Button getRunButton(){
+        return runButton;
     }
 }
