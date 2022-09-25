@@ -106,7 +106,7 @@ public class OolalaView {
     private void makeTextBox() {
         textBox = new TextBox();
         EventHandler<ActionEvent> passCommands = event -> {
-            ArrayList<Command> commands = parser.parse(textBox.getTextArea().getText());
+            ArrayList<Command> commands = parser.parse(textBox);
             canvasScreen.setCommands(commands, this);
             //canvasScreen.getTurtle().readInstruction(commands.get(0), this);
         };
