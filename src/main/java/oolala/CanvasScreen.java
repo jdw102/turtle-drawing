@@ -1,5 +1,7 @@
 package oolala;
 
+import java.sql.Array;
+import java.util.HashMap;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -21,6 +23,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
+import oolala.Command.CmdName;
 
 public class CanvasScreen {
 
@@ -30,7 +33,8 @@ public class CanvasScreen {
   VBox vBox;
   Group shapes;
   private GraphicsContext gc;
-  Turtle turtle;
+  private HashMap<Integer, Turtle> turtles;
+  private ArrayList<Integer> currTurtleIdxs;
 
   public CanvasScreen() {
 
@@ -73,16 +77,33 @@ public class CanvasScreen {
     shapes.getChildren().add(borderRectangle);
     borderRectangle.setFill(Color.AZURE);
 
-    turtle = new Turtle(0, 0, 0, borderRectangle);
+    turtles = new HashMap<>();
+    currTurtleIdxs = new ArrayList<>();
+    turtles.put(0, new Turtle(0, 0, 0, borderRectangle));
+    currTurtleIdxs.add(0);
     System.out.println(borderRectangle.heightProperty());
-    shapes.getChildren().add(turtle.getIcon());
+    shapes.getChildren().add(turtles.get(0).getIcon()); // TODO: Check this; potential bug source
   }
 
   public void setCommands(ArrayList<Command> commands, OolalaView display) {
     Iterator<Command> itCmd = commands.iterator();
     while (itCmd.hasNext()) {
       Command instruction = itCmd.next();
-      turtle.readInstruction(instruction, display);
+      // Handle tell command
+      if(instruction.prefix == CmdName.TELL){
+        currTurtleIdxs.clear();
+        currTurtleIdxs.addAll(instruction.params);
+        for (Integer param : instruction.params){
+          if (!turtles.containsKey(param)){
+            System.out.println("Creating new turtle");
+            turtles.put(param, new Turtle(param, 0, 0, borderRectangle));
+            shapes.getChildren().add(turtles.get(param).getIcon());
+          }
+        }
+      }
+      for(Integer idx : currTurtleIdxs){
+        turtles.get(idx).readInstruction(instruction, display);
+      }
       itCmd.remove();
     }
   }
@@ -97,8 +118,11 @@ public class CanvasScreen {
     }
   }
 
-  public Turtle getTurtle() {
-    return turtle;
+  public Turtle[] getTurtles() {
+    Turtle[] currTurtles = new Turtle[currTurtleIdxs.size()];
+    for(int i = 0; i < currTurtleIdxs.size(); i++)
+      currTurtles[i] = turtles.get(currTurtleIdxs.get(i));
+    return currTurtles;
   }
 
   /**
@@ -131,8 +155,18 @@ public class CanvasScreen {
     shapes.getChildren().add(line);
   }
 
+  /**
+   * to starting positions.
+   *
+   * @author Aditya Paul
+   */
   public void reset() {
-    turtle.home();
+    turtles.clear(); // TODO: Check if this is correct functionality
+    currTurtleIdxs.clear();
+
+    turtles.put(0, new Turtle(0, 0, 0, borderRectangle));
+    shapes.getChildren().add(turtles.get(0).getIcon()); // TODO: We should probably refactor this for scalability
+    currTurtleIdxs.add(0);
   }
 
   public void clear() {
