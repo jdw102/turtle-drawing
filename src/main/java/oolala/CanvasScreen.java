@@ -1,5 +1,7 @@
 package oolala;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -8,14 +10,17 @@ import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.TextField;
 import javafx.scene.image.WritableImage;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
+import javafx.util.StringConverter;
 
 import javax.imageio.ImageIO;
 import java.io.File;
@@ -25,7 +30,7 @@ import java.util.*;
 
 public class CanvasScreen {
 
-    //ArrayList
+    //TODO: ArrayList of turtles
     private Canvas canvas;
     private Rectangle borderRectangle;
     private VBox vBox;
@@ -34,9 +39,13 @@ public class CanvasScreen {
     private GraphicsContext gc;
     Turtle turtle;
     private ComboBox<String> languagesComboBox;
+    private ComboBox<ColorChoice> colorsComboBox;
     private ResourceBundle myResources;
+    private Color COLOR = Color.BLACK;
+    private Double THICKNESS = 3.0;
     ArrayList<String> labels = new ArrayList<String>(Arrays.asList("ClearCanvasButton", "ResetTurtleButton", "SaveButton"));
-
+    ArrayList<String> langs = new ArrayList<String>(Arrays.asList("English", "简体中文", "繁體中文", "日本語"));
+    ArrayList<ColorChoice> colors = new ArrayList<ColorChoice>(Arrays.asList(new ColorChoice("Black", Color.BLACK), new ColorChoice("Red", Color.RED), new ColorChoice("Blue", Color.BLUE)));
 
     public CanvasScreen(ResourceBundle myResources) {
         this.myResources = myResources;
@@ -52,13 +61,24 @@ public class CanvasScreen {
         Button clearButton = makeButtons(labels.get(0), clearCommand);
         Button resetButton = makeButtons(labels.get(1), resetCommand);
         Button saveButton = makeButtons(labels.get(2), saveCommand);
-        languagesComboBox = makeComboBox();
 
+        languagesComboBox = makeComboBoxArrayList(langs);
+        colorsComboBox = makeComboBoxColor(colors);
+
+        TextField thicknessTextField = makeTextField();
+        EventHandler<ActionEvent> thicknessCommand = event -> setThickness(thicknessTextField.getText());
+        thicknessTextField.setOnAction(thicknessCommand);
+
+        EventHandler<ActionEvent> colorCommand = event -> {
+            Color clr = colorsComboBox.getValue().getColor();
+            changeColor(clr);
+        };
+        colorsComboBox.setOnAction(colorCommand);
 
 //        hBox = new HBox(clearButton, resetButton, saveButton, languagesComboBox);
 //        hBox.setAlignment(Pos.TOP_RIGHT);
 
-        hBox = new HBox(clearButton, resetButton, saveButton, languagesComboBox);
+        hBox = new HBox(clearButton, resetButton, saveButton, languagesComboBox, colorsComboBox, thicknessTextField);
         hBox.setAlignment(Pos.TOP_RIGHT);
         hBox.setSpacing(10);
 
@@ -89,6 +109,24 @@ public class CanvasScreen {
             turtle.readInstruction(instruction, display);
             itCmd.remove();
         }
+    }
+
+    private void setThickness(String value) {
+        Alert alert = new Alert(Alert.AlertType.ERROR,
+                myResources.getString("NumberFormatException"));
+        try {
+            double doubleValue = Double.parseDouble(value);
+            if (doubleValue > 0)
+                THICKNESS = doubleValue;
+            else
+                alert.showAndWait();
+        } catch (NumberFormatException e) {
+            alert.showAndWait();
+        }
+    }
+
+    private void changeColor(Color clr) {
+        COLOR = clr;
     }
 
     private void screenShot() {
@@ -130,8 +168,10 @@ public class CanvasScreen {
 //        line.setEndY(SIZE_HEIGHT / 2.0 - y - length * Math.sin(Math.toRadians(direction)));
         line.setEndX(xEnd);
         line.setEndY(yEnd);
-        line.setStrokeWidth(thickness);
-        line.setFill(color);
+        line.setStrokeWidth(THICKNESS);
+        //line.setFill(color);
+        line.setStroke(COLOR);
+        //TODO: is color an attribute of a turtle?
         shapes.getChildren().add(line);
     }
 
@@ -160,18 +200,29 @@ public class CanvasScreen {
         return languagesComboBox;
     }
 
-    private ComboBox<String> makeComboBox() {
-        ComboBox<String> languages = new ComboBox<>();
-        ArrayList<String> langs = new ArrayList<>();
-        langs.add("English");
-        langs.add("简体中文");
-        langs.add("繁體中文");
-        langs.add("日本語");
-        languages.getItems().addAll(langs);
-        languages.setValue("English");//Default language
+    private TextField makeTextField() {
+        TextField textField = new TextField("Thickness");
+        textField.setPrefWidth(40);
 
-        return languages;
+        return textField;
     }
+
+    private ComboBox<String> makeComboBoxArrayList(ArrayList<String> items) {
+        ComboBox<String> comboBox = new ComboBox<>();
+        comboBox.getItems().addAll(items);
+        comboBox.setValue(items.get(0));//Default language
+
+        return comboBox;
+    }
+
+    private ComboBox<ColorChoice> makeComboBoxColor(ArrayList<ColorChoice> items) {
+        ComboBox<ColorChoice> comboBox = new ComboBox<>();
+        comboBox.getItems().addAll(items);
+        comboBox.setValue(items.get(0));//Default color
+
+        return comboBox;
+    }
+
 
     private Button makeButtons(String property, EventHandler<ActionEvent> handler) {
         Button result = new Button();

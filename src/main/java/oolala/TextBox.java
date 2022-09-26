@@ -47,7 +47,7 @@ public class TextBox {
     public ButtonBar createButtonBar() {
         Button runButton = makeButton(labels.get(0), event -> System.out.println("test"));
         this.runButton = runButton;
-        Button clearTextButton = makeButton(labels.get(0), event -> textArea.clear());
+        Button clearTextButton = makeButton(labels.get(1), event -> textArea.clear());
         ButtonBar b = new ButtonBar();
         b.getButtons().add(runButton);
         b.getButtons().add(clearTextButton);
