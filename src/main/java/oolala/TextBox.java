@@ -22,10 +22,7 @@ import javafx.stage.FileChooser;
 
 import javax.imageio.ImageIO;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.ResourceBundle;
-import java.util.List;
+import java.util.*;
 
 import static oolala.OolalaView.myResources;
 
@@ -139,20 +136,20 @@ public class TextBox {
     public Button getSaveButton(){
         return saveButton;
     }
-    public void updateRecentlyUsed(){
-        String text = textArea.getText();
-        String[] lines = text.split("\n");
-        List<String> linesList = new ArrayList<>();
-        for (String s: lines){
-            if (!s.isBlank() && !s.isEmpty()){
-                linesList.add(s);
-            }
+    public void updateRecentlyUsed(ArrayList<Command> commands){
+        HashSet<String> commandSet = new HashSet<>();
+        for (Command c: commands){
+            commandSet.add(c.toString());
         }
         ObservableList<String> displayedLines = FXCollections.observableArrayList(recentlyUsed.getItems());
-        int min = (linesList.size() < 6) ? 0: linesList.size() - 6;
-        for (int i = linesList.size() - 1; i >= min; i--){
-            if (!displayedLines.contains(linesList.get(i))){
-                displayedLines.add(0, linesList.get(i));
+        List<String> commandList = new ArrayList<>();
+        for (String s: commandSet){
+            commandList.add(s);
+        }
+        int min = (commandList.size() < 6) ? 0: commandList.size() - 6;
+        for (int i = commandList.size() - 1; i >= min; i--){
+            if (!displayedLines.contains(commandList.get(i))){
+                displayedLines.add(0, commandList.get(i));
             }
         }
         recentlyUsed.setItems(displayedLines);

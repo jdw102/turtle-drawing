@@ -117,8 +117,8 @@ public class OolalaView {
         });
 
         EventHandler<ActionEvent> passCommands = event -> {
-            textBox.updateRecentlyUsed();
             ArrayList<Command> commands = parser.parse(textBox);
+            textBox.updateRecentlyUsed(commands);
             canvasScreen.setCommands(commands, this);
         };
         fileChooser = new FileChooser();
@@ -142,7 +142,6 @@ public class OolalaView {
             File f = fileChooser.showSaveDialog(stage);
             if (f != null) {
                 try {
-                    textBox.updateRecentlyUsed();
                     FileWriter writer = new FileWriter(f);
                     writer.write(textBox.getTextArea().getText());
                     writer.close();

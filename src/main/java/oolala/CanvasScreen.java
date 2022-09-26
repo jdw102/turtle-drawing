@@ -19,6 +19,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Text;
 import javafx.util.StringConverter;
 
 import javax.imageio.ImageIO;
@@ -45,7 +46,6 @@ public class CanvasScreen {
     private Color COLOR = Color.BLACK;
     private Color backgroundColor = Color.AZURE;
     private Double THICKNESS = 3.0;
-    private double buttonSpacing;
     private ArrayList<String> labels = new ArrayList<String>(Arrays.asList("ClearCanvasButton", "ResetTurtleButton", "SaveButton"));
     private ArrayList<String> langs = new ArrayList<String>(Arrays.asList("English", "简体中文", "繁體中文", "日本語"));
 
@@ -56,8 +56,6 @@ public class CanvasScreen {
         borderRectangle = new Rectangle(300, 50, 500, 540);
         shapes.getChildren().add(borderRectangle);
         borderRectangle.setFill(backgroundColor);
-
-        buttonSpacing = borderRectangle.getWidth();
 
         createHBox();
         hBox.setMinSize(400, 500);
@@ -73,7 +71,7 @@ public class CanvasScreen {
         //vBox.getChildren().add(hBox);
         turtles = new HashMap<>();
         currTurtleIdxs = new ArrayList<>();
-        turtles.put(1, new Turtle(1, 0, 0, borderRectangle));
+        turtles.put(1, new Turtle(1, 0, 0, this));
         currTurtleIdxs.add(1);
         shapes.getChildren().add(turtles.get(1).getIcon());
     }
@@ -89,7 +87,7 @@ public class CanvasScreen {
                 for (Integer param : instruction.params) {
                     if (!turtles.containsKey(param)) {
                         System.out.println("Creating new turtle");
-                        turtles.put(param, new Turtle(param, 0, 0, borderRectangle));
+                        turtles.put(param, new Turtle(param, 0, 0, this));
                         shapes.getChildren().add(turtles.get(param).getIcon());
                     }
                 }
@@ -171,7 +169,7 @@ public class CanvasScreen {
         turtles.clear(); // TODO: Check if this is correct functionality
         currTurtleIdxs.clear();
 
-        turtles.put(1, new Turtle(1, 0, 0, borderRectangle));
+        turtles.put(1, new Turtle(1, 0, 0, this));
         shapes.getChildren().add(turtles.get(1).getIcon()); // TODO: We should probably refactor this for scalability
         currTurtleIdxs.add(1);
     }
@@ -213,16 +211,6 @@ public class CanvasScreen {
 
         return comboBox;
     }
-
-    private ComboBox<ColorChoice> makeComboBoxColor(ArrayList<ColorChoice> items) {
-        ComboBox<ColorChoice> comboBox = new ComboBox<>();
-        comboBox.getItems().addAll(items);
-        comboBox.setValue(items.get(0));//Default color
-
-        return comboBox;
-    }
-
-
     private Button makeButtons(String property, EventHandler<ActionEvent> handler) {
         Button result = new Button();
         String label = myResources.getString(property);
@@ -268,7 +256,7 @@ public class CanvasScreen {
             COLOR = colorPicker.getValue();
         };
         colorPicker.setOnAction(setColor);
-
+        Tooltip.install(colorPicker, new Tooltip(myResources.getString("BrushColorPicker")));
         ColorPicker colorPickerBackGround = new ColorPicker();
         colorPickerBackGround.setValue(Color.AZURE);
         EventHandler<ActionEvent> setColorBackGround = event -> {
@@ -276,8 +264,15 @@ public class CanvasScreen {
             borderRectangle.setFill(backgroundColor);
         };
         colorPickerBackGround.setOnAction(setColorBackGround);
+        Tooltip.install(colorPickerBackGround, new Tooltip(myResources.getString("CanvasColorPicker")));
 
         hBox = new HBox(colorPickerBackGround, colorPicker, thicknessTextField, clearButton, resetButton, saveButton, languagesComboBox);
         hBox.setAlignment(Pos.TOP_RIGHT);
+    }
+    public Color getColor(){
+        return COLOR;
+    }
+    public Rectangle getBorderRectangle(){
+        return borderRectangle;
     }
 }
