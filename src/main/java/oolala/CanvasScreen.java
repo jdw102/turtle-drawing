@@ -43,6 +43,7 @@ public class CanvasScreen {
     private ComboBox<String> languagesComboBox;
     private ResourceBundle myResources;
     private Color COLOR = Color.BLACK;
+    private Color backgroundColor = Color.AZURE;
     private Double THICKNESS = 3.0;
     private double buttonSpacing;
     private ArrayList<String> labels = new ArrayList<String>(Arrays.asList("ClearCanvasButton", "ResetTurtleButton", "SaveButton"));
@@ -54,7 +55,7 @@ public class CanvasScreen {
 
         borderRectangle = new Rectangle(300, 50, 500, 540);
         shapes.getChildren().add(borderRectangle);
-        borderRectangle.setFill(Color.AZURE);
+        borderRectangle.setFill(backgroundColor);
 
         buttonSpacing = borderRectangle.getWidth();
 
@@ -268,7 +269,15 @@ public class CanvasScreen {
         };
         colorPicker.setOnAction(setColor);
 
-        hBox = new HBox(colorPicker, thicknessTextField, clearButton, resetButton, saveButton, languagesComboBox);
+        ColorPicker colorPickerBackGround = new ColorPicker();
+        colorPickerBackGround.setValue(Color.AZURE);
+        EventHandler<ActionEvent> setColorBackGround = event -> {
+            backgroundColor = colorPickerBackGround.getValue();
+            borderRectangle.setFill(backgroundColor);
+        };
+        colorPickerBackGround.setOnAction(setColorBackGround);
+
+        hBox = new HBox(colorPickerBackGround, colorPicker, thicknessTextField, clearButton, resetButton, saveButton, languagesComboBox);
         hBox.setAlignment(Pos.TOP_RIGHT);
     }
 }

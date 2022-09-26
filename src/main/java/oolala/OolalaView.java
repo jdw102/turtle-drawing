@@ -6,6 +6,9 @@ import javafx.geometry.Insets;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.ComboBox;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Box;
@@ -104,6 +107,15 @@ public class OolalaView {
 
     private void makeTextBox() {
         textBox = new TextBox(myResources);
+
+        KeyCombination keyCombination = new KeyCodeCombination(KeyCode.ENTER, KeyCombination.ALT_DOWN);
+        textBox.getTextArea().setOnKeyPressed(event -> {
+            if (keyCombination.match(event)) {
+                ArrayList<Command> commands = parser.parse(textBox);
+                canvasScreen.setCommands(commands, this);
+            }
+        });
+
         EventHandler<ActionEvent> passCommands = event -> {
             textBox.updateRecentlyUsed();
             ArrayList<Command> commands = parser.parse(textBox);
@@ -116,7 +128,7 @@ public class OolalaView {
         fileChooser.getExtensionFilters().add(extFilter);
         EventHandler<ActionEvent> openFileChooser = event -> {
             File f = fileChooser.showOpenDialog(stage);
-            if (f != null){
+            if (f != null) {
                 try {
                     Path filePath = Path.of(f.getPath());
                     String content = Files.readString(filePath);
