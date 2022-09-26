@@ -40,12 +40,12 @@ public class TextBox {
     private Button runButton;
     private Button fileOpenButton;
     private Button saveButton;
-    private static final int DEFAULT_WIDTH = 200;
+    private static final int DEFAULT_WIDTH = 275;
     private static final int DEFAULT_HEIGHT = 600;
     private int width;
     private int height;
-    private int buttonHeight = 40;
     private ResourceBundle myResources;
+    private ArrayList<String> labels = new ArrayList<String>(Arrays.asList("ImportButton", "SaveButton", "RunButton", "ClearTextButton"));
 
     public TextBox(ResourceBundle myResources){
         this.width = DEFAULT_WIDTH;
@@ -54,7 +54,7 @@ public class TextBox {
         recentlyUsed.setOnMouseClicked(event -> {
             addLine(recentlyUsed.getSelectionModel().getSelectedItem());
         });
-        recentlyUsed.setPrefHeight(150);
+        recentlyUsed.setMaxHeight(200);
         historyLabel = new Label(historyText);
         historyTitle = new HBox(historyLabel);
         historyTitle.setAlignment(Pos.CENTER);
@@ -65,6 +65,7 @@ public class TextBox {
         textArea.setPrefSize(width, 3 * height / 4);
         buttonBox = createButtonBox();
         box = new VBox();
+        box.setPrefSize(width, 3 * height / 4);
         box.getChildren().add(buttonBox);
         box.getChildren().add(textArea);
         box.getChildren().add(historyTitle);
@@ -80,7 +81,7 @@ public class TextBox {
         Button clearTextButton = makeButton("ClearTextButton");
         clearTextButton.setOnAction(event -> textArea.clear());
 
-        fileOpenButton = makeButton("FileChooser");
+        fileOpenButton = makeButton("ImportButton");
 
         HBox b = new HBox();
         b.setAlignment(Pos.CENTER);
@@ -88,13 +89,9 @@ public class TextBox {
 
         saveButton = makeButton("SaveButton");
         saveButton.setMinWidth(width / 4);
-        saveButton.setMinHeight(buttonHeight);
         runButton.setMinWidth(width / 4);
-        runButton.setMinHeight(buttonHeight);
         clearTextButton.setMinWidth(width / 4);
-        clearTextButton.setMinHeight(buttonHeight);
         fileOpenButton.setMinWidth(width / 4);
-        fileOpenButton.setMinHeight(buttonHeight);
         b.getChildren().add(runButton);
         b.getChildren().add(clearTextButton);
         b.getChildren().add(fileOpenButton);
@@ -113,13 +110,14 @@ public class TextBox {
 
     public void setLanguage(ResourceBundle resources) {
         myResources = resources;
+        int i = 0;
         for (Node n : buttonBox.getChildren()) {
-            updateButtonLanguage((Button) n);
+            updateButtonLanguage((Button) n, labels.get(i));
+            i++;
         }
     }
 
-    public void updateButtonLanguage(Button button) {
-        String property = button.getText();
+    public void updateButtonLanguage(Button button, String property) {
         String label = myResources.getString(property);
         button.setText(label);
     }

@@ -10,6 +10,7 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -22,6 +23,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
+import static oolala.Command.CmdName.TELL;
+
 
 public class CanvasScreen {
 
@@ -32,7 +35,9 @@ public class CanvasScreen {
     private Group shapes;
     private HBox hBox;
     private GraphicsContext gc;
-    Turtle turtle;
+    private HashMap<Integer, Turtle> turtles;
+    private ArrayList<Integer> currTurtleIdxs;
+
     private ComboBox<String> languagesComboBox;
     private ResourceBundle myResources;
     ArrayList<String> labels = new ArrayList<String>(Arrays.asList("ClearCanvasButton", "ResetTurtleButton", "SaveButton"));
@@ -73,23 +78,41 @@ public class CanvasScreen {
 //        borderRectangle.translateYProperty().bind((vBox.heightProperty().divide(2)).subtract((borderRectangle.heightProperty().divide(2))));
 
         vBox.getChildren().add(hBox);
-        borderRectangle = new Rectangle(260, 50, 500, 500);
+        borderRectangle = new Rectangle(300, 50, 500, 540);
         shapes.getChildren().add(borderRectangle);
         borderRectangle.setFill(Color.AZURE);
 
-        turtle = new Turtle(0, 0, 0, borderRectangle);
+        turtles = new HashMap<>();
+        currTurtleIdxs = new ArrayList<>();
+        turtles.put(1, new Turtle(1, 0, 0, borderRectangle));
+        currTurtleIdxs.add(1);
         System.out.println(borderRectangle.heightProperty());
-        shapes.getChildren().add(turtle.getIcon());
+        shapes.getChildren().add(turtles.get(1).getIcon());
     }
 
     public void setCommands(ArrayList<Command> commands, OolalaView display) {
         Iterator<Command> itCmd = commands.iterator();
         while (itCmd.hasNext()) {
             Command instruction = itCmd.next();
-            turtle.readInstruction(instruction, display);
+            // Handle tell command
+            if(instruction.prefix == TELL){
+                currTurtleIdxs.clear();
+                currTurtleIdxs.addAll(instruction.params);
+                for (Integer param : instruction.params){
+                    if (!turtles.containsKey(param)){
+                        System.out.println("Creating new turtle");
+                        turtles.put(param, new Turtle(param, 0, 0, borderRectangle));
+                        shapes.getChildren().add(turtles.get(param).getIcon());
+                    }
+                }
+            }
+            for(Integer idx : currTurtleIdxs){
+                turtles.get(idx).readInstruction(instruction, display);
+            }
             itCmd.remove();
         }
     }
+
 
     private void screenShot() {
         WritableImage snapshot = shapes.snapshot(null, null);
@@ -101,9 +124,13 @@ public class CanvasScreen {
         }
     }
 
-    public Turtle getTurtle() {
-        return turtle;
+    public Turtle[] getTurtles() {
+        Turtle[] currTurtles = new Turtle[currTurtleIdxs.size()];
+        for(int i = 0; i < currTurtleIdxs.size(); i++)
+            currTurtles[i] = turtles.get(currTurtleIdxs.get(i));
+        return currTurtles;
     }
+
 
     /**
      * A method to draw a new line on the canvas.
@@ -136,8 +163,14 @@ public class CanvasScreen {
     }
 
     public void reset() {
-        turtle.home();
+        turtles.clear(); // TODO: Check if this is correct functionality
+        currTurtleIdxs.clear();
+
+        turtles.put(1, new Turtle(1, 0, 0, borderRectangle));
+        shapes.getChildren().add(turtles.get(1).getIcon()); // TODO: We should probably refactor this for scalability
+        currTurtleIdxs.add(1);
     }
+
 
     public void clear() {
         //same way of implementing
@@ -146,7 +179,10 @@ public class CanvasScreen {
 //                shapes.getChildren().remove(i);
 //        }
         shapes.getChildren().removeIf(i -> i instanceof Line);
+        shapes.getChildren().removeIf(i -> i instanceof ImageView);
+        reset();
     }
+
 
     public VBox getVBox() {
         return vBox;

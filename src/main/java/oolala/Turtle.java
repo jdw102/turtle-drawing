@@ -24,7 +24,7 @@ public class Turtle {
   public static final int DEFAULT_ANGLE = 0;
   public static final Color DEFAULT_COLOR = Color.BLACK;
   public static final double DEFAULT_ICON_SIZE = 30;
-  public String turtleImage = "/Images/turtleicon.png";
+  public String turtleImage = "Images/turtleicon.png";
   public ImageView icon;
   public ArrayList<ImageView> stamps;
 
@@ -129,8 +129,8 @@ public class Turtle {
     if (penDown){
       display.getCanvasScreen().drawLine(this.posX, this.posY, x, y, thickness, color);
     }
-    this.posY = this.posY - dist * Math.sin(Math.toRadians(this.angle + 270));
-    this.posX = this.posX + dist * Math.cos(Math.toRadians(this.angle + 270));
+    this.posY = y;
+    this.posX = x;
     moveIcon();
   }
   public void leftTurn(int newAngle){
@@ -171,6 +171,7 @@ public class Turtle {
   private void moveIcon(){
     this.icon.setX(this.posX - iconSize / 2);
     this.icon.setY(this.posY - iconSize / 2);
+    this.icon.toFront();
   }
   private void rotateIcon(){
     this.icon.setRotate(-angle);
@@ -187,6 +188,8 @@ public class Turtle {
     i.setX(x- size / 2);
     i.setY(y- size / 2);
     i.setRotate(-angle);
+    i.toFront();
+    System.out.println("Creating icon");
     return i;
   }
   private void calcBounds(Rectangle r){

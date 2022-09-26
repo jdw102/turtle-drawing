@@ -107,11 +107,11 @@ public class OolalaView {
         textBox = new TextBox(myResources);
         EventHandler<ActionEvent> passCommands = event -> {
             textBox.updateRecentlyUsed();
-            ArrayList<Command> commands = parser.parse(textBox.getTextArea().getText());
+            ArrayList<Command> commands = parser.parse(textBox);
             canvasScreen.setCommands(commands, this);
         };
         fileChooser = new FileChooser();
-        fileChooser.setTitle(myResources.getString("FileChooser"));
+        fileChooser.setTitle(myResources.getString("ImportButton"));
         FileChooser.ExtensionFilter extFilter =
                 new FileChooser.ExtensionFilter("TXT files (*.txt)", "*.txt");
         fileChooser.getExtensionFilters().add(extFilter);
