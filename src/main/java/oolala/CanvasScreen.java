@@ -45,7 +45,7 @@ public class CanvasScreen {
     private Double THICKNESS = 3.0;
     ArrayList<String> labels = new ArrayList<String>(Arrays.asList("ClearCanvasButton", "ResetTurtleButton", "SaveButton"));
     ArrayList<String> langs = new ArrayList<String>(Arrays.asList("English", "简体中文", "繁體中文", "日本語"));
-    ArrayList<ColorChoice> colors = new ArrayList<ColorChoice>(Arrays.asList(new ColorChoice("Black", Color.BLACK), new ColorChoice("Red", Color.RED), new ColorChoice("Blue", Color.BLUE)));
+    ArrayList<ColorChoice> colors;
 
     public CanvasScreen(ResourceBundle myResources) {
         this.myResources = myResources;
@@ -63,8 +63,10 @@ public class CanvasScreen {
         Button saveButton = makeButtons(labels.get(2), saveCommand);
 
         languagesComboBox = makeComboBoxArrayList(langs);
+        colors = new ArrayList<ColorChoice>(Arrays.asList(new ColorChoice(myResources.getString("Black"), Color.BLACK), new ColorChoice(myResources.getString("Red"), Color.RED), new ColorChoice(myResources.getString("Blue"), Color.BLUE)));
         colorsComboBox = makeComboBoxColor(colors);
 
+    
         TextField thicknessTextField = makeTextField();
         EventHandler<ActionEvent> thicknessCommand = event -> setThickness(thicknessTextField.getText());
         thicknessTextField.setOnAction(thicknessCommand);
@@ -234,6 +236,13 @@ public class CanvasScreen {
 
     public void setLanguage(ResourceBundle resources) {
         myResources = resources;
+
+        colors = new ArrayList<ColorChoice>(Arrays.asList(new ColorChoice(myResources.getString("Black"), Color.BLACK), new ColorChoice(myResources.getString("Red"), Color.RED), new ColorChoice(myResources.getString("Blue"), Color.BLUE)));
+        colorsComboBox.getItems().addAll(colors);
+        colorsComboBox.getItems().subList(0, 3).clear();
+        //Have to do it in such way since the ComboBox action is invoked whenever the ComboBox value property is changed. To avoid the situation that the items of combobox is null, we have to add new items and remove old items.
+        colorsComboBox.setValue(colors.get(0));//Default color
+
         int i = 0;
         for (Node n : hBox.getChildren()) {
             if (n instanceof Button) {
