@@ -1,25 +1,27 @@
 package oolala;
 
 import javafx.event.ActionEvent;
-import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.Group;
-import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.canvas.Canvas;
-import javafx.scene.control.Button;
-import javafx.scene.control.TextField;
+import javafx.scene.control.ComboBox;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Box;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 
@@ -33,54 +35,40 @@ public class OolalaView {
     private int SIZE_WIDTH;
     private int SIZE_HEIGHT;
     private Paint BACKGROUND;
-    private Paint BRUSH_COLOR;
     private BorderPane root;
     private TextBox textBox;
-    private ArrayList<Command> commands;
-    private Turtle turtle;
     public static ResourceBundle myResources;
     private static final String DEFAULT_RESOURCE_PACKAGE = "Properties.";
-    private Parser parser = new Parser();
+    private Parser parser;
+    private FileChooser fileChooser;
+    private Stage stage;
+
     private CanvasScreen canvasScreen;
     private VBox canvasVBox;
+    private HBox canvasHBox;
     private Group canvasShapes;
+    private static final String DEFAULT_LANGUAGE = "English";
+    private String language;
 
 
-    public Scene setUpScene(int SIZE_WIDTH, int SIZE_HEIGHT, String language) {
+    public Scene setUpScene(int SIZE_WIDTH, int SIZE_HEIGHT, Stage stage) {
+        this.stage = stage;
+        this.language = DEFAULT_LANGUAGE;
         myResources = ResourceBundle.getBundle(DEFAULT_RESOURCE_PACKAGE + language);
+        parser = new Parser(myResources);
         this.SIZE_WIDTH = SIZE_WIDTH;
         this.SIZE_HEIGHT = SIZE_HEIGHT;
 
         root = new BorderPane();
 
         makeTextBox();
-        //BorderPane.setAlignment(textBox.get(), Pos.CENTER);
-        // TODO: can the above commented line be deleted?
         root.setLeft(textBox.get());
 
         makeCanvasScene();
-        root.setCenter(canvasVBox);
+        root.setCenter(canvasHBox);
         root.getChildren().add(canvasShapes);
 
-        root.setPadding(new Insets(10, 30, 10, 10));
-
-
-//        VBox box = new VBox();
-//        root.setRight(box);
-//        box.setPrefWidth(400);
-//        System.out.println(box.getLayoutX());
-//        System.out.println(box.getLayoutY());
-//        BorderPane.setAlignment(box, Pos.CENTER);
-//        String cssLayout = "-fx-border-color: red;\n" +
-//                "-fx-border-insets: 5;\n" +
-//                "-fx-border-width: 3;\n" +
-//                "-fx-border-style: solid;\n";
-//        box.setStyle(cssLayout);
-        //        root.setRight(box);
-
-
-//        turtle = new Turtle();
-//        root.getChildren().add(turtle.getIcon());
+        root.setPadding(new Insets(10, 10, 10, 10));
         Scene scene = new Scene(root, SIZE_WIDTH, SIZE_HEIGHT);
         return scene;
     }
@@ -96,49 +84,78 @@ public class OolalaView {
      * @author Luyao Wang
      */
 
+    private void setLanguage(String lang) {
+        language = lang;
+        myResources = ResourceBundle.getBundle(DEFAULT_RESOURCE_PACKAGE + language);
+        canvasScreen.setLanguage(myResources);
+        textBox.setLanguage(myResources);
+        parser.setLanguage(myResources);
+    }
 
-    private void makeCanvasScene(){
-        canvasScreen = new CanvasScreen();
-        canvasVBox = canvasScreen.getVBox();
+    private void makeCanvasScene() {
+        canvasScreen = new CanvasScreen(myResources);
+        canvasHBox = canvasScreen.getHBox();
         canvasShapes = canvasScreen.getShapes();
+
+        ComboBox<String> languages = canvasScreen.getLanguagesComboBox();
+
+        EventHandler<ActionEvent> langCommand = event -> {
+            setLanguage(languages.getValue());
+        };
+        languages.setOnAction(langCommand);
     }
 
     private void makeTextBox() {
-        textBox = new TextBox();
+        textBox = new TextBox(myResources);
+
+        KeyCombination keyCombination = new KeyCodeCombination(KeyCode.ENTER, KeyCombination.ALT_DOWN);
+        textBox.getTextArea().setOnKeyPressed(event -> {
+            if (keyCombination.match(event)) {
+                ArrayList<Command> commands = parser.parse(textBox);
+                canvasScreen.setCommands(commands, this);
+            }
+        });
+
         EventHandler<ActionEvent> passCommands = event -> {
-            ArrayList<Command> commands = parser.parse(textBox.getTextArea().getText());
+            textBox.updateRecentlyUsed();
+            ArrayList<Command> commands = parser.parse(textBox);
             canvasScreen.setCommands(commands, this);
-            //canvasScreen.getTurtle().readInstruction(commands.get(0), this);
+        };
+        fileChooser = new FileChooser();
+        fileChooser.setTitle(myResources.getString("ImportButton"));
+        FileChooser.ExtensionFilter extFilter =
+                new FileChooser.ExtensionFilter("TXT files (*.txt)", "*.txt");
+        fileChooser.getExtensionFilters().add(extFilter);
+        EventHandler<ActionEvent> openFileChooser = event -> {
+            File f = fileChooser.showOpenDialog(stage);
+            if (f != null) {
+                try {
+                    Path filePath = Path.of(f.getPath());
+                    String content = Files.readString(filePath);
+                    textBox.getTextArea().setText(content);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        };
+        EventHandler<ActionEvent> saveFile = event -> {
+            File f = fileChooser.showSaveDialog(stage);
+            if (f != null) {
+                try {
+                    textBox.updateRecentlyUsed();
+                    FileWriter writer = new FileWriter(f);
+                    writer.write(textBox.getTextArea().getText());
+                    writer.close();
+                } catch (FileNotFoundException e) {
+                    throw new RuntimeException(e);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
         };
         textBox.getRunButton().setOnAction(passCommands);
+        textBox.getFileChooserButton().setOnAction(openFileChooser);
+        textBox.getSaveButton().setOnAction(saveFile);
     }
-}
-//    private Node makeInputPanel() {
-//        HBox result = new HBox();
-//        EventHandler<ActionEvent> textHandler = event -> {
-//            commands = parser.parse(textBox.getText());
-//            textBox.clear();
-//            turtle.readInstruction(commands.get(0), this);
-//        };
-//        EventHandler<ActionEvent> clearHandler = event -> {
-//            clearPaint();
-//            turtle.resetTurtle(this);
-//        };
-//        textBox = new TextField();
-//        textBox.setOnAction(textHandler);
-//        textBox.setPrefWidth(390);
-//        result.getChildren().add(textBox);
-//        Button enterButton = new Button();
-//        enterButton.setText("Draw");
-//        enterButton.setOnAction(textHandler);
-//        result.getChildren().add(enterButton);
-//        Button clearButton = new Button();
-//        clearButton.setText("Clear");
-//        clearButton.setOnAction(clearHandler);
-//        result.getChildren().add(clearButton);
-//
-////        drawLine(0, 0, 230, 0);
-//
-//        return result;
-//    }
 
+}

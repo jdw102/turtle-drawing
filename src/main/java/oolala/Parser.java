@@ -1,8 +1,13 @@
 package oolala;
 
 import java.util.ArrayList;
+import java.util.ResourceBundle;
 import java.util.Scanner;
 import javax.swing.SpringLayout;
+
+import javafx.scene.Node;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import oolala.Command.CmdName;
 
 /**
@@ -11,6 +16,10 @@ import oolala.Command.CmdName;
  * @author Aditya Paul
  */
 public class Parser {
+  ResourceBundle myResources;
+  public Parser(ResourceBundle resourceBundle){
+    myResources = resourceBundle;
+  }
 
   /**
    * A method to parse user-given Logo commands from the app console.
@@ -18,33 +27,62 @@ public class Parser {
    * for list of supported commands.
    *
    * @author Aditya Paul
-   * @param commandString - A string from the console containing all the
-   *                        commands given to the application by the user
+   * @param textbox - The IDE's textbox. In the future, we plan on making this
+   *                  a rich text area for syntax error highlighting.
    * @return An ArrayList of the parsed commands
    */
-  public ArrayList<Command> parse(String commandString) {
-    ArrayList<Command> program = new ArrayList<Command>();
+  public ArrayList<Command> parse(TextBox textbox) {
+    ArrayList<Command> program = new ArrayList<>();
 
+    String commandString = textbox.getTextArea().getText().toLowerCase();
     Scanner scan = new Scanner(commandString);
     while (scan.hasNext()){
       Command c = new Command();
       String prefix = scan.next();
+      if(prefix.charAt(0) == '#'){
+        scan.nextLine();
+        continue;
+      }
       switch(prefix) {
         case "fd":
           c.prefix = CmdName.FORWARD;
-          c.param = scan.nextInt();
+          if (scan.hasNextInt())
+            c.param = scan.nextInt();
+          else {
+            // TODO: Handle
+            System.err.println("Missing parameters for FD command!");
+            return new ArrayList<>();
+          }
           break;
         case "bk":
           c.prefix = CmdName.BACK;
-          c.param = scan.nextInt();
+          if (scan.hasNextInt())
+            c.param = scan.nextInt();
+          else {
+            // TODO: Handle
+            System.err.println("Missing parameters for BK command!");
+            return new ArrayList<>();
+          }
           break;
         case "lt":
           c.prefix = CmdName.LEFT;
-          c.param = scan.nextInt();
+          if (scan.hasNextInt())
+            c.param = scan.nextInt();
+          else {
+            // TODO: Handle
+            System.err.println("Missing parameters for LT command!");
+            return new ArrayList<>();
+          }
           break;
         case "rt":
           c.prefix = CmdName.RIGHT;
-          c.param = scan.nextInt();
+          if (scan.hasNextInt())
+            c.param = scan.nextInt();
+          else {
+            // TODO: Handle
+            System.err.println("Missing parameters for RT command!");
+            return new ArrayList<>();
+          }
           break;
         case "pd":
           c.prefix = CmdName.PENDOWN;
@@ -67,16 +105,27 @@ public class Parser {
         case "tell":
           c.prefix = CmdName.TELL;
           c.params = new ArrayList<Integer>();
+          if (!scan.hasNextInt()){
+            // TODO: Handle
+            System.err.println("Missing parameters for TELL command!");
+            return new ArrayList<>();
+          }
           while (scan.hasNextInt())
             c.params.add(scan.nextInt());
           break;
         default:
           // TODO: Handle bad input
-          System.err.println("Unrecognized Command!");
-          break;
+          Alert alert = new Alert(Alert.AlertType.ERROR,
+                  myResources.getString("CommandError"));
+          alert.showAndWait();
+          return new ArrayList<>();
       }
       program.add(c);
     }
     return program;
+  }
+
+  public void setLanguage(ResourceBundle resources) {
+    myResources = resources;
   }
 }
