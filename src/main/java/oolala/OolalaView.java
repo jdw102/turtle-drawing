@@ -6,6 +6,9 @@ import javafx.geometry.Insets;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.ComboBox;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Box;
@@ -32,19 +35,17 @@ public class OolalaView {
     private int SIZE_WIDTH;
     private int SIZE_HEIGHT;
     private Paint BACKGROUND;
-    private Paint BRUSH_COLOR;
     private BorderPane root;
     private TextBox textBox;
-    private ArrayList<Command> commands;
-    private Turtle turtle;
     public static ResourceBundle myResources;
     private static final String DEFAULT_RESOURCE_PACKAGE = "Properties.";
-    private Parser parser = new Parser();
+    private Parser parser;
     private FileChooser fileChooser;
     private Stage stage;
 
     private CanvasScreen canvasScreen;
     private VBox canvasVBox;
+    private HBox canvasHBox;
     private Group canvasShapes;
     private static final String DEFAULT_LANGUAGE = "English";
     private String language;
@@ -54,6 +55,7 @@ public class OolalaView {
         this.stage = stage;
         this.language = DEFAULT_LANGUAGE;
         myResources = ResourceBundle.getBundle(DEFAULT_RESOURCE_PACKAGE + language);
+        parser = new Parser(myResources);
         this.SIZE_WIDTH = SIZE_WIDTH;
         this.SIZE_HEIGHT = SIZE_HEIGHT;
 
@@ -63,7 +65,7 @@ public class OolalaView {
         root.setLeft(textBox.get());
 
         makeCanvasScene();
-        root.setCenter(canvasVBox);
+        root.setCenter(canvasHBox);
         root.getChildren().add(canvasShapes);
 
         root.setPadding(new Insets(10, 10, 10, 10));
@@ -84,15 +86,15 @@ public class OolalaView {
 
     private void setLanguage(String lang) {
         language = lang;
-        System.out.println(language);
         myResources = ResourceBundle.getBundle(DEFAULT_RESOURCE_PACKAGE + language);
         canvasScreen.setLanguage(myResources);
         textBox.setLanguage(myResources);
+        parser.setLanguage(myResources);
     }
 
     private void makeCanvasScene() {
         canvasScreen = new CanvasScreen(myResources);
-        canvasVBox = canvasScreen.getVBox();
+        canvasHBox = canvasScreen.getHBox();
         canvasShapes = canvasScreen.getShapes();
 
         ComboBox<String> languages = canvasScreen.getLanguagesComboBox();
@@ -105,9 +107,18 @@ public class OolalaView {
 
     private void makeTextBox() {
         textBox = new TextBox(myResources);
+
+        KeyCombination keyCombination = new KeyCodeCombination(KeyCode.ENTER, KeyCombination.ALT_DOWN);
+        textBox.getTextArea().setOnKeyPressed(event -> {
+            if (keyCombination.match(event)) {
+                ArrayList<Command> commands = parser.parse(textBox);
+                canvasScreen.setCommands(commands, this);
+            }
+        });
+
         EventHandler<ActionEvent> passCommands = event -> {
-            textBox.updateRecentlyUsed();
             ArrayList<Command> commands = parser.parse(textBox);
+            textBox.updateRecentlyUsed(commands);
             canvasScreen.setCommands(commands, this);
         };
         fileChooser = new FileChooser();
@@ -117,7 +128,7 @@ public class OolalaView {
         fileChooser.getExtensionFilters().add(extFilter);
         EventHandler<ActionEvent> openFileChooser = event -> {
             File f = fileChooser.showOpenDialog(stage);
-            if (f != null){
+            if (f != null) {
                 try {
                     Path filePath = Path.of(f.getPath());
                     String content = Files.readString(filePath);
@@ -131,7 +142,6 @@ public class OolalaView {
             File f = fileChooser.showSaveDialog(stage);
             if (f != null) {
                 try {
-                    textBox.updateRecentlyUsed();
                     FileWriter writer = new FileWriter(f);
                     writer.write(textBox.getTextArea().getText());
                     writer.close();

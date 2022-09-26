@@ -19,6 +19,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Text;
 import javafx.util.StringConverter;
 
 import javax.imageio.ImageIO;
@@ -30,11 +31,9 @@ import static oolala.Command.CmdName.TELL;
 
 
 public class CanvasScreen {
-
     //TODO: ArrayList of turtles
     private Canvas canvas;
     private Rectangle borderRectangle;
-    private VBox vBox;
     private Group shapes;
     private HBox hBox;
     private HBox stylingBox;
@@ -42,44 +41,24 @@ public class CanvasScreen {
     private GraphicsContext gc;
     private HashMap<Integer, Turtle> turtles;
     private ArrayList<Integer> currTurtleIdxs;
-
     private ComboBox<String> languagesComboBox;
-    private ComboBox<ColorChoice> colorsComboBox;
     private ResourceBundle myResources;
     private Color COLOR = Color.BLACK;
+    private Color backgroundColor = Color.AZURE;
     private Double THICKNESS = 3.0;
-    private double buttonSpacing;
     private ArrayList<String> labels = new ArrayList<String>(Arrays.asList("ClearCanvasButton", "ResetTurtleButton", "SaveButton"));
     private ArrayList<String> langs = new ArrayList<String>(Arrays.asList("English", "简体中文", "繁體中文", "日本語"));
-    private ArrayList<ColorChoice> colors = new ArrayList<ColorChoice>(Arrays.asList(new ColorChoice("Black", Color.BLACK), new ColorChoice("Red", Color.RED), new ColorChoice("Blue", Color.BLUE)));
 
     public CanvasScreen(ResourceBundle myResources) {
         this.myResources = myResources;
         shapes = new Group();
-        vBox = new VBox();
-//        vBox.setPrefHeight(600);
-//        vBox.setPrefWidth(500);
-        vBox.setMinSize(400, 500);
-
-//        colorsComboBox = makeComboBoxColor(colors);
-
-//        EventHandler<ActionEvent> colorCommand = event -> {
-//            Color clr = colorsComboBox.getValue().getColor();
-//            changeColor(clr);
-//        };
-//        colorsComboBox.setOnAction(colorCommand);
-
-//        hBox = new HBox(clearButton, resetButton, saveButton, languagesComboBox);
-//        hBox.setAlignment(Pos.TOP_RIGHT);
 
         borderRectangle = new Rectangle(300, 50, 500, 540);
         shapes.getChildren().add(borderRectangle);
-        borderRectangle.setFill(Color.AZURE);
-
-        buttonSpacing = borderRectangle.getWidth();
+        borderRectangle.setFill(backgroundColor);
 
         createHBox();
-
+        hBox.setMinSize(400, 500);
         //Area indicator
 //        vBox.getChildren().add(Buttons);
 //        borderRectangle = new Rectangle();
@@ -89,12 +68,10 @@ public class CanvasScreen {
 //        borderRectangle.translateXProperty().bind((vBox.widthProperty().divide(2)).subtract((borderRectangle.widthProperty().divide(2))));
 //        borderRectangle.translateYProperty().bind((vBox.heightProperty().divide(2)).subtract((borderRectangle.heightProperty().divide(2))));
 
-        vBox.getChildren().add(hBox);
-
-
+        //vBox.getChildren().add(hBox);
         turtles = new HashMap<>();
         currTurtleIdxs = new ArrayList<>();
-        turtles.put(1, new Turtle(1, 0, 0, borderRectangle));
+        turtles.put(1, new Turtle(1, 0, 0, this));
         currTurtleIdxs.add(1);
         shapes.getChildren().add(turtles.get(1).getIcon());
     }
@@ -103,19 +80,19 @@ public class CanvasScreen {
         Iterator<Command> itCmd = commands.iterator();
         while (itCmd.hasNext()) {
             Command instruction = itCmd.next();
-            // Handle tell command
-            if(instruction.prefix == TELL){
+            //TODO: Handle tell command
+            if (instruction.prefix == TELL) {
                 currTurtleIdxs.clear();
                 currTurtleIdxs.addAll(instruction.params);
-                for (Integer param : instruction.params){
-                    if (!turtles.containsKey(param)){
+                for (Integer param : instruction.params) {
+                    if (!turtles.containsKey(param)) {
                         System.out.println("Creating new turtle");
-                        turtles.put(param, new Turtle(param, 0, 0, borderRectangle));
+                        turtles.put(param, new Turtle(param, 0, 0, this));
                         shapes.getChildren().add(turtles.get(param).getIcon());
                     }
                 }
             }
-            for(Integer idx : currTurtleIdxs){
+            for (Integer idx : currTurtleIdxs) {
                 turtles.get(idx).readInstruction(instruction, display);
             }
             itCmd.remove();
@@ -152,7 +129,7 @@ public class CanvasScreen {
 
     public Turtle[] getTurtles() {
         Turtle[] currTurtles = new Turtle[currTurtleIdxs.size()];
-        for(int i = 0; i < currTurtleIdxs.size(); i++)
+        for (int i = 0; i < currTurtleIdxs.size(); i++)
             currTurtles[i] = turtles.get(currTurtleIdxs.get(i));
         return currTurtles;
     }
@@ -161,7 +138,7 @@ public class CanvasScreen {
     /**
      * A method to draw a new line on the canvas.
      *
-     * @param xStart    x coordinate of the start point
+     * @param xStart x coordinate of the start point
      * @param yStart
      * @param xEnd
      * @param yEnd
@@ -192,7 +169,7 @@ public class CanvasScreen {
         turtles.clear(); // TODO: Check if this is correct functionality
         currTurtleIdxs.clear();
 
-        turtles.put(1, new Turtle(1, 0, 0, borderRectangle));
+        turtles.put(1, new Turtle(1, 0, 0, this));
         shapes.getChildren().add(turtles.get(1).getIcon()); // TODO: We should probably refactor this for scalability
         currTurtleIdxs.add(1);
     }
@@ -208,8 +185,8 @@ public class CanvasScreen {
         reset();
     }
 
-    public VBox getVBox() {
-        return vBox;
+    public HBox getHBox() {
+        return hBox;
     }
 
     public Group getShapes() {
@@ -219,6 +196,7 @@ public class CanvasScreen {
     public ComboBox<String> getLanguagesComboBox() {
         return languagesComboBox;
     }
+
     private TextField makeTextField() {
         TextField textField = new TextField("Thickness");
         textField.setPrefWidth(40);
@@ -233,16 +211,6 @@ public class CanvasScreen {
 
         return comboBox;
     }
-
-    private ComboBox<ColorChoice> makeComboBoxColor(ArrayList<ColorChoice> items) {
-        ComboBox<ColorChoice> comboBox = new ComboBox<>();
-        comboBox.getItems().addAll(items);
-        comboBox.setValue(items.get(0));//Default color
-
-        return comboBox;
-    }
-
-
     private Button makeButtons(String property, EventHandler<ActionEvent> handler) {
         Button result = new Button();
         String label = myResources.getString(property);
@@ -266,7 +234,8 @@ public class CanvasScreen {
         String label = myResources.getString(property);
         button.setText(label);
     }
-    public void createHBox(){
+
+    public void createHBox() {
         EventHandler<ActionEvent> clearCommand = event -> clear();
         EventHandler<ActionEvent> resetCommand = event -> reset();
         EventHandler<ActionEvent> saveCommand = event -> screenShot();
@@ -287,8 +256,23 @@ public class CanvasScreen {
             COLOR = colorPicker.getValue();
         };
         colorPicker.setOnAction(setColor);
+        Tooltip.install(colorPicker, new Tooltip(myResources.getString("BrushColorPicker")));
+        ColorPicker colorPickerBackGround = new ColorPicker();
+        colorPickerBackGround.setValue(Color.AZURE);
+        EventHandler<ActionEvent> setColorBackGround = event -> {
+            backgroundColor = colorPickerBackGround.getValue();
+            borderRectangle.setFill(backgroundColor);
+        };
+        colorPickerBackGround.setOnAction(setColorBackGround);
+        Tooltip.install(colorPickerBackGround, new Tooltip(myResources.getString("CanvasColorPicker")));
 
-        hBox = new HBox(colorPicker, thicknessTextField, clearButton, resetButton, saveButton);
+        hBox = new HBox(colorPickerBackGround, colorPicker, thicknessTextField, clearButton, resetButton, saveButton, languagesComboBox);
         hBox.setAlignment(Pos.TOP_RIGHT);
+    }
+    public Color getColor(){
+        return COLOR;
+    }
+    public Rectangle getBorderRectangle(){
+        return borderRectangle;
     }
 }

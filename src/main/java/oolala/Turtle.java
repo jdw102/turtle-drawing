@@ -2,12 +2,17 @@ package oolala;
 
 import javafx.scene.Group;
 import javafx.scene.Node;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
+import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Text;
 
+import java.awt.*;
 import java.util.ArrayList;
 
 /**
@@ -38,7 +43,10 @@ public class Turtle {
   private double xMin;
   private double yMax;
   private double yMin;
-
+  private double relX;
+  private double relY;
+  private Rectangle border;
+  private Tooltip position;
 
   public Turtle() {
     this.id = DEFAULT_ID;
@@ -47,25 +55,24 @@ public class Turtle {
     this.angle = DEFAULT_ANGLE;
     this.penDown = true;
     this.iconSize = DEFAULT_ICON_SIZE;
-    this.icon = createIcon(this.posX, this.posY, iconSize);
     this.stamps = new ArrayList<>();
     Rectangle r = new Rectangle();
     calcBounds(r);
 
   }
-  public Turtle(int id, int posX, int posY, Rectangle r){
-    System.out.println(r.getWidth());
-    homeX = posX + r.getX() + r.getWidth()/2;
-    homeY = posY + r.getY() + r.getHeight()/2;
+  public Turtle(int id, int posX, int posY, CanvasScreen screen){
+    border = screen.getBorderRectangle();
+    homeX = posX + border.getX() + border.getWidth()/2;
+    homeY = posY + border.getY() + border.getHeight()/2;
     this.id = id;
     this.posX = homeX;
     this.posY = homeY;
     this.angle = DEFAULT_ANGLE;
     this.penDown = true;
     this.iconSize = DEFAULT_ICON_SIZE;
-    this.icon = createIcon(this.posX, this.posY, iconSize);
+    this.icon = createIcon(this.posX, this.posY, iconSize, screen);
     this.stamps = new ArrayList<>();
-    calcBounds(r);
+    calcBounds(screen.getBorderRectangle());
   }
 
   public void readInstruction(Command command, OolalaView display){
@@ -83,20 +90,28 @@ public class Turtle {
     }
   }
 
-  public void moveForward(int dist, OolalaView display){
+  public void moveForward(double dist, OolalaView display){
     double x = this.posX + dist * Math.cos(Math.toRadians(this.angle + 90));
     double y = this.posY - dist * Math.sin(Math.toRadians(this.angle + 90));
     if (x > xMax){
+      double distX = xMax - this.posX;
       x = xMax;
+      y = this.posY - distX * Math.tan(Math.toRadians(this.angle + 90));
     }
     if (x < xMin){
+      double distX = xMin - this.posX;
       x = xMin;
+      y = this.posY - distX * Math.tan(Math.toRadians(this.angle + 90));
     }
     if (y > yMax){
+      double distY = this.posY - yMax;
       y = yMax;
+      x = this.posX + distY / Math.tan(Math.toRadians(this.angle + 90));
     }
     if (y < yMin){
+      double distY = this.posY - yMin;
       y = yMin;
+      x = this.posX + distY / Math.tan(Math.toRadians(this.angle + 90));
     }
     if (penDown){
       display.getCanvasScreen().drawLine(this.posX, this.posY, x, y);
@@ -109,16 +124,24 @@ public class Turtle {
     double x = this.posX - dist * Math.cos(Math.toRadians(this.angle + 90));
     double y = this.posY + dist * Math.sin(Math.toRadians(this.angle + 90));
     if (x > xMax){
+      double distX = xMax - this.posX;
       x = xMax;
+      y = this.posY - distX * Math.tan(Math.toRadians(this.angle + 90));
     }
     if (x < xMin){
+      double distX = xMin - this.posX;
       x = xMin;
+      y = this.posY - distX * Math.tan(Math.toRadians(this.angle + 90));
     }
     if (y > yMax){
+      double distY = this.posY - yMax;
       y = yMax;
+      x = this.posX + distY / Math.tan(Math.toRadians(this.angle + 90));
     }
     if (y < yMin){
+      double distY = this.posY - yMin;
       y = yMin;
+      x = this.posX + distY / Math.tan(Math.toRadians(this.angle + 90));
     }
     if (penDown){
       display.getCanvasScreen().drawLine(this.posX, this.posY, x, y);
@@ -155,7 +178,7 @@ public class Turtle {
     rotateIcon();
   }
   public void stamp(OolalaView view){
-    ImageView s = createIcon(this.posX, this.posY, iconSize);
+    ImageView s = createIcon(this.posX, this.posY, iconSize, view.getCanvasScreen());
     stamps.add(s);
     view.getCanvasScreen().getShapes().getChildren().add(s);
   }
@@ -166,6 +189,7 @@ public class Turtle {
     this.icon.setX(this.posX - iconSize / 2);
     this.icon.setY(this.posY - iconSize / 2);
     this.icon.toFront();
+    updateRelativePosition();
   }
   private void rotateIcon(){
     this.icon.setRotate(-angle);
@@ -175,7 +199,7 @@ public class Turtle {
     view.getCanvasScreen().getShapes().getChildren().removeAll(stamps);
     stamps.removeAll(stamps);
   }
-  private ImageView createIcon(double x, double y, double size){
+  private ImageView createIcon(double x, double y, double size, CanvasScreen canvas){
     ImageView i = new ImageView(new Image(turtleImage));
     i.setFitHeight(size);
     i.setFitWidth(size);
@@ -184,13 +208,20 @@ public class Turtle {
     i.setRotate(-angle);
     i.toFront();
     System.out.println("Creating icon");
+    position = new Tooltip("x: " + Double.toString(Math.round(relX)) + " y: " + Double.toString(Math.round(relY)));
+    Tooltip.install(i, position);
     return i;
   }
   private void calcBounds(Rectangle r){
-    xMin = r.getX() + iconSize;
-    xMax = r.getX() + r.getWidth() - iconSize;
-    yMin = r.getY() + iconSize;
-    yMax = r.getY() + r.getHeight() - iconSize;
+    xMin = r.getX() + iconSize / 2;
+    xMax = r.getX() + r.getWidth() - iconSize / 2;
+    yMin = r.getY() + iconSize / 2;
+    yMax = r.getY() + r.getHeight() - iconSize / 2;
+  }
+  private void updateRelativePosition(){
+    relX = posX - border.getX();
+    relY = (border.getY() + border.getHeight()) - posY;
+    position.setText("x: " + Double.toString(Math.round(relX)) + " y: " + Double.toString(Math.round(relY)));
   }
 }
 

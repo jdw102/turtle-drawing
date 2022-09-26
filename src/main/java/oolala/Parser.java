@@ -1,8 +1,13 @@
 package oolala;
 
 import java.util.ArrayList;
+import java.util.ResourceBundle;
 import java.util.Scanner;
 import javax.swing.SpringLayout;
+
+import javafx.scene.Node;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import oolala.Command.CmdName;
 
 /**
@@ -11,6 +16,10 @@ import oolala.Command.CmdName;
  * @author Aditya Paul
  */
 public class Parser {
+  ResourceBundle myResources;
+  public Parser(ResourceBundle resourceBundle){
+    myResources = resourceBundle;
+  }
 
   /**
    * A method to parse user-given Logo commands from the app console.
@@ -106,11 +115,17 @@ public class Parser {
           break;
         default:
           // TODO: Handle bad input
-          System.err.println("Unrecognized Command!");
+          Alert alert = new Alert(Alert.AlertType.ERROR,
+                  myResources.getString("CommandError"));
+          alert.showAndWait();
           return new ArrayList<>();
       }
       program.add(c);
     }
     return program;
+  }
+
+  public void setLanguage(ResourceBundle resources) {
+    myResources = resources;
   }
 }
