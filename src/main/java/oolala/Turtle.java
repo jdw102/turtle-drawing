@@ -33,8 +33,6 @@ public class Turtle {
   private double posY;
   private int angle;
   private boolean penDown;
-  private Color color;
-  private double thickness;
   private double iconSize;
   private double xMax;
   private double xMin;
@@ -47,9 +45,7 @@ public class Turtle {
     this.posX = 0;
     this.posY = 0;
     this.angle = DEFAULT_ANGLE;
-    this.color = Color.BLACK;
     this.penDown = true;
-    this.thickness = DEFAULT_THICKNESS;
     this.iconSize = DEFAULT_ICON_SIZE;
     this.icon = createIcon(this.posX, this.posY, iconSize);
     this.stamps = new ArrayList<>();
@@ -66,8 +62,6 @@ public class Turtle {
     this.posY = homeY;
     this.angle = DEFAULT_ANGLE;
     this.penDown = true;
-    this.color = Color.BLACK;
-    this.thickness = DEFAULT_THICKNESS;
     this.iconSize = DEFAULT_ICON_SIZE;
     this.icon = createIcon(this.posX, this.posY, iconSize);
     this.stamps = new ArrayList<>();
@@ -105,7 +99,7 @@ public class Turtle {
       y = yMin;
     }
     if (penDown){
-      display.getCanvasScreen().drawLine(this.posX, this.posY, x, y, thickness, color);
+      display.getCanvasScreen().drawLine(this.posX, this.posY, x, y);
     }
     this.posY = y;
     this.posX = x;
@@ -127,7 +121,7 @@ public class Turtle {
       y = yMin;
     }
     if (penDown){
-      display.getCanvasScreen().drawLine(this.posX, this.posY, x, y, thickness, color);
+      display.getCanvasScreen().drawLine(this.posX, this.posY, x, y);
     }
     this.posY = y;
     this.posX = x;
@@ -193,10 +187,10 @@ public class Turtle {
     return i;
   }
   private void calcBounds(Rectangle r){
-    xMin = r.getX();
-    xMax = r.getX() + r.getWidth();
-    yMin = r.getY();
-    yMax = r.getY() + r.getHeight();
+    xMin = r.getX() + iconSize;
+    xMax = r.getX() + r.getWidth() - iconSize;
+    yMin = r.getY() + iconSize;
+    yMax = r.getY() + r.getHeight() - iconSize;
   }
 }
 

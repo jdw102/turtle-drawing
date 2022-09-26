@@ -20,3 +20,11 @@
     -fx-font-size: 10pt;
     -fx-min-height: 40;
 }
+.text-field {
+    -fx-min-height: 40;
+    -fx-min-width: 20;
+}
+.color-picker {
+    -fx-min-height: 40;
+    -fx-max-width: 50;
+}
