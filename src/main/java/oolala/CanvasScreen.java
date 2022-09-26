@@ -10,11 +10,10 @@ import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
+import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -27,64 +26,40 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
+import static oolala.Command.CmdName.TELL;
+
 
 public class CanvasScreen {
-
     //TODO: ArrayList of turtles
     private Canvas canvas;
     private Rectangle borderRectangle;
-    private VBox vBox;
     private Group shapes;
     private HBox hBox;
+    private HBox stylingBox;
+    private HBox settingsBox;
     private GraphicsContext gc;
-    Turtle turtle;
+    private HashMap<Integer, Turtle> turtles;
+    private ArrayList<Integer> currTurtleIdxs;
     private ComboBox<String> languagesComboBox;
-    private ComboBox<ColorChoice> colorsComboBox;
     private ResourceBundle myResources;
     private Color COLOR = Color.BLACK;
     private Double THICKNESS = 3.0;
-    ArrayList<String> labels = new ArrayList<String>(Arrays.asList("ClearCanvasButton", "ResetTurtleButton", "SaveButton"));
-    ArrayList<String> langs = new ArrayList<String>(Arrays.asList("English", "简体中文", "繁體中文", "日本語"));
-    ArrayList<ColorChoice> colors;
+    private double buttonSpacing;
+    private ArrayList<String> labels = new ArrayList<String>(Arrays.asList("ClearCanvasButton", "ResetTurtleButton", "SaveButton"));
+    private ArrayList<String> langs = new ArrayList<String>(Arrays.asList("English", "简体中文", "繁體中文", "日本語"));
 
     public CanvasScreen(ResourceBundle myResources) {
         this.myResources = myResources;
         shapes = new Group();
-        vBox = new VBox();
-//        vBox.setPrefHeight(600);
-//        vBox.setPrefWidth(500);
-        vBox.setMinSize(400, 500);
 
-        EventHandler<ActionEvent> clearCommand = event -> clear();
-        EventHandler<ActionEvent> resetCommand = event -> reset();
-        EventHandler<ActionEvent> saveCommand = event -> screenShot();
-        Button clearButton = makeButtons(labels.get(0), clearCommand);
-        Button resetButton = makeButtons(labels.get(1), resetCommand);
-        Button saveButton = makeButtons(labels.get(2), saveCommand);
+        borderRectangle = new Rectangle(300, 50, 500, 540);
+        shapes.getChildren().add(borderRectangle);
+        borderRectangle.setFill(Color.AZURE);
 
-        languagesComboBox = makeComboBoxArrayList(langs);
-        colors = new ArrayList<ColorChoice>(Arrays.asList(new ColorChoice(myResources.getString("Black"), Color.BLACK), new ColorChoice(myResources.getString("Red"), Color.RED), new ColorChoice(myResources.getString("Blue"), Color.BLUE)));
-        colorsComboBox = makeComboBoxColor(colors);
+        buttonSpacing = borderRectangle.getWidth();
 
-    
-        TextField thicknessTextField = makeTextField();
-        EventHandler<ActionEvent> thicknessCommand = event -> setThickness(thicknessTextField.getText());
-        thicknessTextField.setOnAction(thicknessCommand);
-
-        EventHandler<ActionEvent> colorCommand = event -> {
-            Color clr = colorsComboBox.getValue().getColor();
-            changeColor(clr);
-        };
-        colorsComboBox.setOnAction(colorCommand);
-
-//        hBox = new HBox(clearButton, resetButton, saveButton, languagesComboBox);
-//        hBox.setAlignment(Pos.TOP_RIGHT);
-
-        hBox = new HBox(clearButton, resetButton, saveButton, languagesComboBox, colorsComboBox, thicknessTextField);
-        hBox.setAlignment(Pos.TOP_RIGHT);
-        hBox.setSpacing(10);
-
-
+        createHBox();
+        hBox.setMinSize(400, 500);
         //Area indicator
 //        vBox.getChildren().add(Buttons);
 //        borderRectangle = new Rectangle();
@@ -94,21 +69,33 @@ public class CanvasScreen {
 //        borderRectangle.translateXProperty().bind((vBox.widthProperty().divide(2)).subtract((borderRectangle.widthProperty().divide(2))));
 //        borderRectangle.translateYProperty().bind((vBox.heightProperty().divide(2)).subtract((borderRectangle.heightProperty().divide(2))));
 
-        vBox.getChildren().add(hBox);
-        borderRectangle = new Rectangle(260, 50, 500, 500);
-        shapes.getChildren().add(borderRectangle);
-        borderRectangle.setFill(Color.AZURE);
-
-        turtle = new Turtle(0, 0, 0, borderRectangle);
-        System.out.println(borderRectangle.heightProperty());
-        shapes.getChildren().add(turtle.getIcon());
+        //vBox.getChildren().add(hBox);
+        turtles = new HashMap<>();
+        currTurtleIdxs = new ArrayList<>();
+        turtles.put(1, new Turtle(1, 0, 0, borderRectangle));
+        currTurtleIdxs.add(1);
+        shapes.getChildren().add(turtles.get(1).getIcon());
     }
 
     public void setCommands(ArrayList<Command> commands, OolalaView display) {
         Iterator<Command> itCmd = commands.iterator();
         while (itCmd.hasNext()) {
             Command instruction = itCmd.next();
-            turtle.readInstruction(instruction, display);
+            //TODO: Handle tell command
+            if (instruction.prefix == TELL) {
+                currTurtleIdxs.clear();
+                currTurtleIdxs.addAll(instruction.params);
+                for (Integer param : instruction.params) {
+                    if (!turtles.containsKey(param)) {
+                        System.out.println("Creating new turtle");
+                        turtles.put(param, new Turtle(param, 0, 0, borderRectangle));
+                        shapes.getChildren().add(turtles.get(param).getIcon());
+                    }
+                }
+            }
+            for (Integer idx : currTurtleIdxs) {
+                turtles.get(idx).readInstruction(instruction, display);
+            }
             itCmd.remove();
         }
     }
@@ -141,22 +128,24 @@ public class CanvasScreen {
         }
     }
 
-    public Turtle getTurtle() {
-        return turtle;
+    public Turtle[] getTurtles() {
+        Turtle[] currTurtles = new Turtle[currTurtleIdxs.size()];
+        for (int i = 0; i < currTurtleIdxs.size(); i++)
+            currTurtles[i] = turtles.get(currTurtleIdxs.get(i));
+        return currTurtles;
     }
+
 
     /**
      * A method to draw a new line on the canvas.
      *
-     * @param xStart    x coordinate of the start point
+     * @param xStart x coordinate of the start point
      * @param yStart
      * @param xEnd
      * @param yEnd
-     * @param thickness
-     * @param color
      * @author Luyao Wang
      */
-    public void drawLine(double xStart, double yStart, double xEnd, double yEnd, double thickness, Color color) {
+    public void drawLine(double xStart, double yStart, double xEnd, double yEnd) {
         System.out.println(xStart);
         System.out.println(yStart);
         System.out.println(xEnd);
@@ -178,7 +167,12 @@ public class CanvasScreen {
     }
 
     public void reset() {
-        turtle.home();
+        turtles.clear(); // TODO: Check if this is correct functionality
+        currTurtleIdxs.clear();
+
+        turtles.put(1, new Turtle(1, 0, 0, borderRectangle));
+        shapes.getChildren().add(turtles.get(1).getIcon()); // TODO: We should probably refactor this for scalability
+        currTurtleIdxs.add(1);
     }
 
     public void clear() {
@@ -188,10 +182,12 @@ public class CanvasScreen {
 //                shapes.getChildren().remove(i);
 //        }
         shapes.getChildren().removeIf(i -> i instanceof Line);
+        shapes.getChildren().removeIf(i -> i instanceof ImageView);
+        reset();
     }
 
-    public VBox getVBox() {
-        return vBox;
+    public HBox getHBox() {
+        return hBox;
     }
 
     public Group getShapes() {
@@ -236,13 +232,6 @@ public class CanvasScreen {
 
     public void setLanguage(ResourceBundle resources) {
         myResources = resources;
-
-        colors = new ArrayList<ColorChoice>(Arrays.asList(new ColorChoice(myResources.getString("Black"), Color.BLACK), new ColorChoice(myResources.getString("Red"), Color.RED), new ColorChoice(myResources.getString("Blue"), Color.BLUE)));
-        colorsComboBox.getItems().addAll(colors);
-        colorsComboBox.getItems().subList(0, 3).clear();
-        //Have to do it in such way since the ComboBox action is invoked whenever the ComboBox value property is changed. To avoid the situation that the items of combobox is null, we have to add new items and remove old items.
-        colorsComboBox.setValue(colors.get(0));//Default color
-
         int i = 0;
         for (Node n : hBox.getChildren()) {
             if (n instanceof Button) {
@@ -255,5 +244,31 @@ public class CanvasScreen {
     public void updateButtonLanguage(Button button, String property) {
         String label = myResources.getString(property);
         button.setText(label);
+    }
+
+    public void createHBox() {
+        EventHandler<ActionEvent> clearCommand = event -> clear();
+        EventHandler<ActionEvent> resetCommand = event -> reset();
+        EventHandler<ActionEvent> saveCommand = event -> screenShot();
+        Button clearButton = makeButtons(labels.get(0), clearCommand);
+        Button resetButton = makeButtons(labels.get(1), resetCommand);
+        Button saveButton = makeButtons(labels.get(2), saveCommand);
+
+        languagesComboBox = makeComboBoxArrayList(langs);
+
+        TextField thicknessTextField = makeTextField();
+        thicknessTextField.setText("1");
+        EventHandler<ActionEvent> thicknessCommand = event -> setThickness(thicknessTextField.getText());
+        thicknessTextField.setOnAction(thicknessCommand);
+
+        ColorPicker colorPicker = new ColorPicker();
+        colorPicker.setValue(Color.BLACK);
+        EventHandler<ActionEvent> setColor = event -> {
+            COLOR = colorPicker.getValue();
+        };
+        colorPicker.setOnAction(setColor);
+
+        hBox = new HBox(colorPicker, thicknessTextField, clearButton, resetButton, saveButton, languagesComboBox);
+        hBox.setAlignment(Pos.TOP_RIGHT);
     }
 }

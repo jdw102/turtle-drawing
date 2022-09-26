@@ -23,7 +23,7 @@ public class SceneController {
     public SceneController(Stage stage) {
         this.stage = stage;
         view = new OolalaView();
-        scene = view.setUpScene(SIZE_WIDTH, SIZE_HEIGHT);
+        scene = view.setUpScene(SIZE_WIDTH, SIZE_HEIGHT,  stage);
         stage.setTitle(TITLE);
         stage.setScene(scene);
         stage.show();

@@ -24,7 +24,7 @@ public class Turtle {
   public static final int DEFAULT_ANGLE = 0;
   public static final Color DEFAULT_COLOR = Color.BLACK;
   public static final double DEFAULT_ICON_SIZE = 30;
-  public String turtleImage = "/Images/turtleicon.png";
+  public String turtleImage = "Images/turtleicon.png";
   public ImageView icon;
   public ArrayList<ImageView> stamps;
 
@@ -33,8 +33,6 @@ public class Turtle {
   private double posY;
   private int angle;
   private boolean penDown;
-  private Color color;
-  private double thickness;
   private double iconSize;
   private double xMax;
   private double xMin;
@@ -47,9 +45,7 @@ public class Turtle {
     this.posX = 0;
     this.posY = 0;
     this.angle = DEFAULT_ANGLE;
-    this.color = Color.BLACK;
     this.penDown = true;
-    this.thickness = DEFAULT_THICKNESS;
     this.iconSize = DEFAULT_ICON_SIZE;
     this.icon = createIcon(this.posX, this.posY, iconSize);
     this.stamps = new ArrayList<>();
@@ -58,7 +54,6 @@ public class Turtle {
 
   }
   public Turtle(int id, int posX, int posY, Rectangle r){
-    System.out.println(r.getWidth());
     homeX = posX + r.getX() + r.getWidth()/2;
     homeY = posY + r.getY() + r.getHeight()/2;
     this.id = id;
@@ -66,8 +61,6 @@ public class Turtle {
     this.posY = homeY;
     this.angle = DEFAULT_ANGLE;
     this.penDown = true;
-    this.color = Color.BLACK;
-    this.thickness = DEFAULT_THICKNESS;
     this.iconSize = DEFAULT_ICON_SIZE;
     this.icon = createIcon(this.posX, this.posY, iconSize);
     this.stamps = new ArrayList<>();
@@ -105,7 +98,7 @@ public class Turtle {
       y = yMin;
     }
     if (penDown){
-      display.getCanvasScreen().drawLine(this.posX, this.posY, x, y, thickness, color);
+      display.getCanvasScreen().drawLine(this.posX, this.posY, x, y);
     }
     this.posY = y;
     this.posX = x;
@@ -127,10 +120,10 @@ public class Turtle {
       y = yMin;
     }
     if (penDown){
-      display.getCanvasScreen().drawLine(this.posX, this.posY, x, y, thickness, color);
+      display.getCanvasScreen().drawLine(this.posX, this.posY, x, y);
     }
-    this.posY = this.posY - dist * Math.sin(Math.toRadians(this.angle + 270));
-    this.posX = this.posX + dist * Math.cos(Math.toRadians(this.angle + 270));
+    this.posY = y;
+    this.posX = x;
     moveIcon();
   }
   public void leftTurn(int newAngle){
@@ -171,6 +164,7 @@ public class Turtle {
   private void moveIcon(){
     this.icon.setX(this.posX - iconSize / 2);
     this.icon.setY(this.posY - iconSize / 2);
+    this.icon.toFront();
   }
   private void rotateIcon(){
     this.icon.setRotate(-angle);
@@ -187,13 +181,15 @@ public class Turtle {
     i.setX(x- size / 2);
     i.setY(y- size / 2);
     i.setRotate(-angle);
+    i.toFront();
+    System.out.println("Creating icon");
     return i;
   }
   private void calcBounds(Rectangle r){
-    xMin = r.getX();
-    xMax = r.getX() + r.getWidth();
-    yMin = r.getY();
-    yMax = r.getY() + r.getHeight();
+    xMin = r.getX() + iconSize;
+    xMax = r.getX() + r.getWidth() - iconSize;
+    yMin = r.getY() + iconSize;
+    yMax = r.getY() + r.getHeight() - iconSize;
   }
 }
 
