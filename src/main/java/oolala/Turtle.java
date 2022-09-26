@@ -18,13 +18,13 @@ import java.util.ArrayList;
 public class Turtle {
 
   public static final int DEFAULT_ID = 0; //TODO: Will we init this in the canvas?
-  public int homeX = 0; //TODO: Will we init this in the canvas?
-  public int homeY = 0; //TODO: Will we init this in the canvas?
+  public double homeX = 0; //TODO: Will we init this in the canvas?
+  public double homeY = 0; //TODO: Will we init this in the canvas?
   public static final int DEFAULT_THICKNESS = 3;
   public static final int DEFAULT_ANGLE = 0;
   public static final Color DEFAULT_COLOR = Color.BLACK;
   public static final double DEFAULT_ICON_SIZE = 30;
-  public String turtleImage = "C:\\Users\\User\\IdeaProjects\\oolala_team09\\src\\main\\resources\\Images\\turtleicon.png";
+  public String turtleImage = "/Images/turtleicon.png";
   public ImageView icon;
   public ArrayList<ImageView> stamps;
 
@@ -58,8 +58,9 @@ public class Turtle {
 
   }
   public Turtle(int id, int posX, int posY, Rectangle r){
-    homeX = posX;
-    homeY = posY;
+    System.out.println(r.getWidth());
+    homeX = posX + r.getX() + r.getWidth()/2;
+    homeY = posY + r.getY() + r.getHeight()/2;
     this.id = id;
     this.posX = homeX;
     this.posY = homeY;
@@ -104,15 +105,15 @@ public class Turtle {
       y = yMin;
     }
     if (penDown){
-      display.drawLine(this.posX, this.posY, x, y, thickness, color);
+      display.getCanvasScreen().drawLine(this.posX, this.posY, x, y, thickness, color);
     }
     this.posY = y;
     this.posX = x;
     moveIcon();
   }
   public void moveBack(int dist, OolalaView display){
-    double x = this.posX + dist * Math.cos(Math.toRadians(this.angle + 90));
-    double y = this.posY - dist * Math.sin(Math.toRadians(this.angle + 90));
+    double x = this.posX - dist * Math.cos(Math.toRadians(this.angle + 90));
+    double y = this.posY + dist * Math.sin(Math.toRadians(this.angle + 90));
     if (x > xMax){
       x = xMax;
     }
@@ -126,7 +127,7 @@ public class Turtle {
       y = yMin;
     }
     if (penDown){
-      display.drawLine(this.posX, this.posY, x, y, thickness, color);
+      display.getCanvasScreen().drawLine(this.posX, this.posY, x, y, thickness, color);
     }
     this.posY = this.posY - dist * Math.sin(Math.toRadians(this.angle + 270));
     this.posX = this.posX + dist * Math.cos(Math.toRadians(this.angle + 270));
@@ -162,7 +163,7 @@ public class Turtle {
   public void stamp(OolalaView view){
     ImageView s = createIcon(this.posX, this.posY, iconSize);
     stamps.add(s);
-    view.getCanvas().getChildren().add(s);
+    view.getCanvasScreen().getShapes().getChildren().add(s);
   }
   public Node getIcon(){
     return icon;
@@ -176,7 +177,7 @@ public class Turtle {
   }
   public void resetTurtle(OolalaView view){
     home();
-    view.getCanvas().getChildren().removeAll(stamps);
+    view.getCanvasScreen().getShapes().getChildren().removeAll(stamps);
     stamps.removeAll(stamps);
   }
   private ImageView createIcon(double x, double y, double size){

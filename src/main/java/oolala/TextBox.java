@@ -7,6 +7,10 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
+import javafx.scene.Node;
+import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBar;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -19,6 +23,8 @@ import javafx.stage.FileChooser;
 import javax.imageio.ImageIO;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.ResourceBundle;
 import java.util.List;
 
 import static oolala.OolalaView.myResources;
@@ -34,13 +40,16 @@ public class TextBox {
     private Button runButton;
     private Button fileOpenButton;
     private Button saveButton;
+    private static final int DEFAULT_WIDTH = 200;
+    private static final int DEFAULT_HEIGHT = 600;
     private int width;
     private int height;
     private int buttonHeight = 40;
+    private ResourceBundle myResources;
 
-    public TextBox(int width, int height){
-        this.width = width;
-        this.height = height;
+    public TextBox(ResourceBundle myResources){
+        this.width = DEFAULT_WIDTH;
+        this.height = DEFAULT_HEIGHT;
         recentlyUsed = new ListView<String>();
         recentlyUsed.setOnMouseClicked(event -> {
             addLine(recentlyUsed.getSelectionModel().getSelectedItem());
@@ -50,8 +59,10 @@ public class TextBox {
         historyTitle = new HBox(historyLabel);
         historyTitle.setAlignment(Pos.CENTER);
         historyTitle.getStyleClass().add("box");
+
+        this.myResources = myResources;
         textArea = new TextArea("");
-        textArea.setPrefSize(width, height);
+        textArea.setPrefSize(width, 3 * height / 4);
         buttonBox = createButtonBox();
         box = new VBox();
         box.getChildren().add(buttonBox);
@@ -59,7 +70,8 @@ public class TextBox {
         box.getChildren().add(historyTitle);
         box.getChildren().add(recentlyUsed);
     }
-    public TextArea getTextArea(){
+
+    public TextArea getTextArea() {
         return textArea;
     }
     public HBox createButtonBox(){
@@ -99,10 +111,25 @@ public class TextBox {
         return result;
     }
 
-    public VBox get(){
+    public void setLanguage(ResourceBundle resources) {
+        myResources = resources;
+        for (Node n : buttonBox.getChildren()) {
+            updateButtonLanguage((Button) n);
+        }
+    }
+
+    public void updateButtonLanguage(Button button) {
+        String property = button.getText();
+        String label = myResources.getString(property);
+        button.setText(label);
+    }
+
+
+    public VBox get() {
         return box;
     }
-    public Button getRunButton(){
+
+    public Button getRunButton() {
         return runButton;
     }
     public Button getFileChooserButton(){
