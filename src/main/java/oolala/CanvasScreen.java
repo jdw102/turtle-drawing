@@ -86,7 +86,6 @@ public class CanvasScreen {
 //        return currTurtles;
 //    }
 
-
     /**
      * A method to draw a new line on the canvas.
      *
@@ -120,7 +119,6 @@ public class CanvasScreen {
 //                shapes.getChildren().remove(i);
 //        }
         shapes.getChildren().removeIf(i -> i instanceof Line);
-        shapes.getChildren().removeIf(i -> i instanceof ImageView);
     }
 
     public Group getShapes() {
@@ -157,11 +155,6 @@ public class CanvasScreen {
         result.setOnAction(handler);
         return result;
     }
-
-    public Color getColor() {
-        return brushColor;
-    }
-
     public Rectangle getBorderRectangle() {
         return borderRectangle;
     }

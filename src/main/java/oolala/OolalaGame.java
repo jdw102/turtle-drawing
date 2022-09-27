@@ -8,6 +8,7 @@ import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
@@ -30,8 +31,6 @@ import static oolala.Command.CmdName.TELL;
  * The origin is at the center of the screen.
  */
 public class OolalaGame {
-    private int SIZE_WIDTH;
-    private int SIZE_HEIGHT;
     private int textBoxWidth = 275;
     private int textBoxHeight = 600;
     private String historyText = "Command History";
@@ -65,13 +64,11 @@ public class OolalaGame {
     private HashMap<Integer, Turtle> turtles;
     private ArrayList<Integer> currTurtleIdxs;
 
-    public Scene setUpScene(int SIZE_WIDTH, int SIZE_HEIGHT, Stage stage) {
+    public Scene setUpScene(int sizeWidth, int sizeHeight, Stage stage) {
         this.stage = stage;
         this.language = DEFAULT_LANGUAGE;
         myResources = ResourceBundle.getBundle(DEFAULT_RESOURCE_PACKAGE + language);
         parser = new Parser(myResources);
-        this.SIZE_WIDTH = SIZE_WIDTH;
-        this.SIZE_HEIGHT = SIZE_HEIGHT;
 
         root = new BorderPane();
 
@@ -85,24 +82,30 @@ public class OolalaGame {
         root.setCenter(canvasHBox);
         root.getChildren().add(canvasShapes);
 
-
         turtles = new HashMap<>();
         currTurtleIdxs = new ArrayList<>();
         turtles.put(1, new Turtle(1, 0, 0, canvasScreen));
         currTurtleIdxs.add(1);
         canvasScreen.getShapes().getChildren().add(turtles.get(1).getIcon());
 
-
         root.setPadding(new Insets(10, 10, 10, 10));
-        Scene scene = new Scene(root, SIZE_WIDTH, SIZE_HEIGHT);
+        Scene scene = new Scene(root, sizeWidth, sizeHeight);
         return scene;
     }
 
     public VBox makeTextBoxVBox() {
         VBox vBox = new VBox();
-        textArea = textBox.makeTextArea();
         textBoxButtonsHBox = makeTextButtonsHBox();
+        textArea = textBox.makeTextArea();
 
+        KeyCombination keyCombination = new KeyCodeCombination(KeyCode.ENTER, KeyCombination.ALT_DOWN);
+        textArea.setOnKeyPressed(event -> {
+            if (keyCombination.match(event)) {
+                ArrayList<Command> commands = parser.parse(textArea);
+                textBox.updateRecentlyUsed(commands, recentlyUsed);
+                setCommands(commands, this);
+            }
+        });
 
         EventHandler<MouseEvent> addLine = event -> {
             textBox.addLine(recentlyUsed.getSelectionModel().getSelectedItem(), textArea);
@@ -159,39 +162,10 @@ public class OolalaGame {
     }
 
     private HBox makeTextButtonsHBox() {
-        EventHandler<ActionEvent> passCommands = event -> {
-            ArrayList<Command> commands = parser.parse(textArea);
-            textBox.updateRecentlyUsed(commands, recentlyUsed);
-            setCommands(commands, this);
-        };
+        EventHandler<ActionEvent> passCommands = makePassCommandsEventEventHandler();
         EventHandler<ActionEvent> clearText = event -> textArea.clear();
-        EventHandler<ActionEvent> openFileChooser = event -> {
-            File f = fileChooser.showOpenDialog(stage);
-            if (f != null) {
-                try {
-                    Path filePath = Path.of(f.getPath());
-                    String content = Files.readString(filePath);
-                    textArea.setText(content);
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-        };
-        setUpFileChooser();
-        EventHandler<ActionEvent> saveFile = event -> {
-            File f = fileChooser.showSaveDialog(stage);
-            if (f != null) {
-                try {
-                    FileWriter writer = new FileWriter(f);
-                    writer.write(textArea.getText());
-                    writer.close();
-                } catch (FileNotFoundException e) {
-                    throw new RuntimeException(e);
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-        };
+        EventHandler<ActionEvent> openFileChooser = openFileChooserEventHandler();
+        EventHandler<ActionEvent> saveFile = makeSaveFileEventHandler();
         Button runButton = textBox.makeButton("RunButton", passCommands);
         Button clearTextButton = textBox.makeButton("ClearTextButton", clearText);
         Button fileOpenButton = textBox.makeButton("ImportButton", openFileChooser);
@@ -209,23 +183,48 @@ public class OolalaGame {
         hBox.getChildren().add(runButton);
         hBox.getChildren().add(clearTextButton);
 
-
-        KeyCombination keyCombination = new KeyCodeCombination(KeyCode.ENTER, KeyCombination.ALT_DOWN);
-        textArea.setOnKeyPressed(event -> {
-            if (keyCombination.match(event)) {
-                ArrayList<Command> commands = parser.parse(textArea);
-                textBox.updateRecentlyUsed(commands, recentlyUsed);
-                setCommands(commands, this);
-            }
-        });
         return hBox;
     }
 
-    private void setUpFileChooser() {
+    private EventHandler<ActionEvent> makePassCommandsEventEventHandler() {
+        EventHandler<ActionEvent> passCommands = event -> {
+            ArrayList<Command> commands = parser.parse(textArea);
+            textBox.updateRecentlyUsed(commands, recentlyUsed);
+            setCommands(commands, this);
+        };
+        return passCommands;
+    }
+
+    private EventHandler<ActionEvent> openFileChooserEventHandler() {
+        EventHandler<ActionEvent> openFileChooser = event -> {
+            File f = fileChooser.showOpenDialog(stage);
+            if (f != null) {
+                try {
+                    Path filePath = Path.of(f.getPath());
+                    String content = Files.readString(filePath);
+                    textArea.setText(content);
+                } catch (IOException e) {throw new RuntimeException(e);}
+            }
+        };
+        return openFileChooser;
+    }
+
+    private EventHandler<ActionEvent> makeSaveFileEventHandler() {
         fileChooser = new FileChooser();
         fileChooser.setTitle(myResources.getString("ImportButton"));
         FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("TXT files (*.txt)", "*.txt");
         fileChooser.getExtensionFilters().add(extFilter);
+        EventHandler<ActionEvent> saveFile = event -> {
+            File f = fileChooser.showSaveDialog(stage);
+            if (f != null) {
+                try {
+                    FileWriter writer = new FileWriter(f);
+                    writer.write(textArea.getText());
+                    writer.close();
+                } catch (IOException e) {throw new RuntimeException(e);}
+            }
+        };
+        return saveFile;
     }
 
     public CanvasScreen getCanvasScreen() {
@@ -268,6 +267,7 @@ public class OolalaGame {
 
     public void reset() {
         turtles.clear(); // TODO: Check if this is correct functionality
+        canvasShapes.getChildren().removeIf(i -> i instanceof ImageView);
         currTurtleIdxs.clear();
 
         turtles.put(1, new Turtle(1, 0, 0, canvasScreen));
