@@ -8,6 +8,7 @@ import javax.swing.SpringLayout;
 import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.TextArea;
 import oolala.Command.CmdName;
 
 /**
@@ -31,10 +32,10 @@ public class Parser {
    *                  a rich text area for syntax error highlighting.
    * @return An ArrayList of the parsed commands
    */
-  public ArrayList<Command> parse(TextBox textbox) {
+  public ArrayList<Command> parse(TextArea textArea) {
     ArrayList<Command> program = new ArrayList<>();
 
-    String commandString = textbox.getTextArea().getText().toLowerCase();
+    String commandString = textArea.getText().toLowerCase();
     Scanner scan = new Scanner(commandString);
     while (scan.hasNext()){
       Command c = new Command();

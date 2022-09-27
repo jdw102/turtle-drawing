@@ -1,18 +1,12 @@
 package oolala;
 
-import javafx.scene.Group;
 import javafx.scene.Node;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
-import javafx.scene.text.Text;
 
-import java.awt.*;
 import java.util.ArrayList;
 
 /**
@@ -75,7 +69,7 @@ public class Turtle {
     calcBounds(screen.getBorderRectangle());
   }
 
-  public void readInstruction(Command command, OolalaView display){
+  public void readInstruction(Command command, OolalaGame display){
     switch(command.prefix){
       case FORWARD -> moveForward(command.param, display);
       case BACK -> moveBack(command.param, display);
@@ -90,7 +84,7 @@ public class Turtle {
     }
   }
 
-  public void moveForward(double dist, OolalaView display){
+  public void moveForward(double dist, OolalaGame display){
     double x = this.posX + dist * Math.cos(Math.toRadians(this.angle + 90));
     double y = this.posY - dist * Math.sin(Math.toRadians(this.angle + 90));
     if (x > xMax){
@@ -120,7 +114,7 @@ public class Turtle {
     this.posX = x;
     moveIcon();
   }
-  public void moveBack(int dist, OolalaView display){
+  public void moveBack(int dist, OolalaGame display){
     double x = this.posX - dist * Math.cos(Math.toRadians(this.angle + 90));
     double y = this.posY + dist * Math.sin(Math.toRadians(this.angle + 90));
     if (x > xMax){
@@ -177,7 +171,7 @@ public class Turtle {
     moveIcon();
     rotateIcon();
   }
-  public void stamp(OolalaView view){
+  public void stamp(OolalaGame view){
     ImageView s = createIcon(this.posX, this.posY, iconSize, view.getCanvasScreen());
     stamps.add(s);
     view.getCanvasScreen().getShapes().getChildren().add(s);
@@ -194,7 +188,7 @@ public class Turtle {
   private void rotateIcon(){
     this.icon.setRotate(-angle);
   }
-  public void resetTurtle(OolalaView view){
+  public void resetTurtle(OolalaGame view){
     home();
     view.getCanvasScreen().getShapes().getChildren().removeAll(stamps);
     stamps.removeAll(stamps);

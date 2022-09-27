@@ -1,53 +1,34 @@
 package oolala;
 
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.geometry.Pos;
 import javafx.scene.Group;
-import javafx.scene.Node;
-import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
-import javafx.scene.text.Text;
-import javafx.util.StringConverter;
 
 import javax.imageio.ImageIO;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
-import static oolala.Command.CmdName.TELL;
-
 
 public class CanvasScreen {
-    //TODO: ArrayList of turtles
-    private Canvas canvas;
     private Rectangle borderRectangle;
     private Group shapes;
     private HBox hBox;
     private HBox stylingBox;
     private HBox settingsBox;
-    private GraphicsContext gc;
-    private HashMap<Integer, Turtle> turtles;
-    private ArrayList<Integer> currTurtleIdxs;
-    private ComboBox<String> languagesComboBox;
     private ResourceBundle myResources;
-    private Color COLOR = Color.BLACK;
+    private Color brushColor = Color.BLACK;
     private Color backgroundColor = Color.AZURE;
     private Double THICKNESS = 3.0;
-    private ArrayList<String> labels = new ArrayList<String>(Arrays.asList("ClearCanvasButton", "ResetTurtleButton", "SaveButton"));
-    private ArrayList<String> langs = new ArrayList<String>(Arrays.asList("English", "简体中文", "繁體中文", "日本語"));
+
 
     public CanvasScreen(ResourceBundle myResources) {
         this.myResources = myResources;
@@ -57,8 +38,6 @@ public class CanvasScreen {
         shapes.getChildren().add(borderRectangle);
         borderRectangle.setFill(backgroundColor);
 
-        createHBox();
-        hBox.setMinSize(400, 500);
         //Area indicator
 //        vBox.getChildren().add(Buttons);
 //        borderRectangle = new Rectangle();
@@ -69,55 +48,28 @@ public class CanvasScreen {
 //        borderRectangle.translateYProperty().bind((vBox.heightProperty().divide(2)).subtract((borderRectangle.heightProperty().divide(2))));
 
         //vBox.getChildren().add(hBox);
-        turtles = new HashMap<>();
-        currTurtleIdxs = new ArrayList<>();
-        turtles.put(1, new Turtle(1, 0, 0, this));
-        currTurtleIdxs.add(1);
-        shapes.getChildren().add(turtles.get(1).getIcon());
     }
 
-    public void setCommands(ArrayList<Command> commands, OolalaView display) {
-        Iterator<Command> itCmd = commands.iterator();
-        while (itCmd.hasNext()) {
-            Command instruction = itCmd.next();
-            //TODO: Handle tell command
-            if (instruction.prefix == TELL) {
-                currTurtleIdxs.clear();
-                currTurtleIdxs.addAll(instruction.params);
-                for (Integer param : instruction.params) {
-                    if (!turtles.containsKey(param)) {
-                        System.out.println("Creating new turtle");
-                        turtles.put(param, new Turtle(param, 0, 0, this));
-                        shapes.getChildren().add(turtles.get(param).getIcon());
-                    }
-                }
-            }
-            for (Integer idx : currTurtleIdxs) {
-                turtles.get(idx).readInstruction(instruction, display);
-            }
-            itCmd.remove();
-        }
+    public void setBrushColor(Color color) {
+        brushColor = color;
     }
 
-    private void setThickness(String value) {
-        Alert alert = new Alert(Alert.AlertType.ERROR,
-                myResources.getString("NumberFormatException"));
+    public void setThickness(String value) {
+        Alert alert = new Alert(Alert.AlertType.ERROR, myResources.getString("NumberFormatException"));
         try {
             double doubleValue = Double.parseDouble(value);
-            if (doubleValue > 0)
-                THICKNESS = doubleValue;
-            else
-                alert.showAndWait();
+            if (doubleValue > 0) THICKNESS = doubleValue;
+            else alert.showAndWait();
         } catch (NumberFormatException e) {
             alert.showAndWait();
         }
     }
 
     private void changeColor(Color clr) {
-        COLOR = clr;
+        brushColor = clr;
     }
 
-    private void screenShot() {
+    public void screenShot() {
         WritableImage snapshot = shapes.snapshot(null, null);
         File file = new File("snapshot.png");
         try {
@@ -127,12 +79,12 @@ public class CanvasScreen {
         }
     }
 
-    public Turtle[] getTurtles() {
-        Turtle[] currTurtles = new Turtle[currTurtleIdxs.size()];
-        for (int i = 0; i < currTurtleIdxs.size(); i++)
-            currTurtles[i] = turtles.get(currTurtleIdxs.get(i));
-        return currTurtles;
-    }
+//    public Turtle[] getTurtles() {
+//        Turtle[] currTurtles = new Turtle[currTurtleIdxs.size()];
+//        for (int i = 0; i < currTurtleIdxs.size(); i++)
+//            currTurtles[i] = turtles.get(currTurtleIdxs.get(i));
+//        return currTurtles;
+//    }
 
 
     /**
@@ -150,29 +102,16 @@ public class CanvasScreen {
         System.out.println(xEnd);
         System.out.println(yEnd);
         Line line = new Line();
-//        line.setStartX(SIZE_WIDTH / 2.0 + xStart);
-//        line.setStartY(SIZE_HEIGHT / 2.0 - yStart);
         line.setStartX(xStart);
         line.setStartY(yStart);
-//        line.setEndX(SIZE_WIDTH / 2.0 + x + length * Math.cos(Math.toRadians(direction)));
-//        line.setEndY(SIZE_HEIGHT / 2.0 - y - length * Math.sin(Math.toRadians(direction)));
         line.setEndX(xEnd);
         line.setEndY(yEnd);
         line.setStrokeWidth(THICKNESS);
-        //line.setFill(color);
-        line.setStroke(COLOR);
+        line.setStroke(brushColor);
         //TODO: is color an attribute of a turtle?
         shapes.getChildren().add(line);
     }
 
-    public void reset() {
-        turtles.clear(); // TODO: Check if this is correct functionality
-        currTurtleIdxs.clear();
-
-        turtles.put(1, new Turtle(1, 0, 0, this));
-        shapes.getChildren().add(turtles.get(1).getIcon()); // TODO: We should probably refactor this for scalability
-        currTurtleIdxs.add(1);
-    }
 
     public void clear() {
         //same way of implementing
@@ -182,36 +121,36 @@ public class CanvasScreen {
 //        }
         shapes.getChildren().removeIf(i -> i instanceof Line);
         shapes.getChildren().removeIf(i -> i instanceof ImageView);
-        reset();
-    }
-
-    public HBox getHBox() {
-        return hBox;
     }
 
     public Group getShapes() {
         return shapes;
     }
 
-    public ComboBox<String> getLanguagesComboBox() {
-        return languagesComboBox;
-    }
-
-    private TextField makeTextField() {
-        TextField textField = new TextField("Thickness");
-        textField.setPrefWidth(40);
-
+    public TextField makeTextField(String property, String defaultValue, EventHandler<ActionEvent> handler) {
+        TextField textField = new TextField(property);
+        textField.setText(defaultValue);
+        textField.setOnAction(handler);
         return textField;
     }
 
-    private ComboBox<String> makeComboBoxArrayList(ArrayList<String> items) {
+    public ComboBox<String> makeComboBoxArrayList(ArrayList<String> items, EventHandler<ActionEvent> handler) {
         ComboBox<String> comboBox = new ComboBox<>();
         comboBox.getItems().addAll(items);
         comboBox.setValue(items.get(0));//Default language
-
+        comboBox.setOnAction(handler);
         return comboBox;
     }
-    private Button makeButtons(String property, EventHandler<ActionEvent> handler) {
+
+    public ColorPicker makeColorPicker(EventHandler<ActionEvent> handler, Color defaultColor, String tooltip) {
+        ColorPicker colorPicker = new ColorPicker();
+        colorPicker.setValue(defaultColor);
+        colorPicker.setOnAction(handler);
+        Tooltip.install(colorPicker, new Tooltip(myResources.getString(tooltip)));
+        return colorPicker;
+    }
+
+    public Button makeButton(String property, EventHandler<ActionEvent> handler) {
         Button result = new Button();
         String label = myResources.getString(property);
         result.setText(label);
@@ -219,60 +158,11 @@ public class CanvasScreen {
         return result;
     }
 
-    public void setLanguage(ResourceBundle resources) {
-        myResources = resources;
-        int i = 0;
-        for (Node n : hBox.getChildren()) {
-            if (n instanceof Button) {
-                updateButtonLanguage((Button) n, labels.get(i));
-                i++;
-            }
-        }
+    public Color getColor() {
+        return brushColor;
     }
 
-    public void updateButtonLanguage(Button button, String property) {
-        String label = myResources.getString(property);
-        button.setText(label);
-    }
-
-    public void createHBox() {
-        EventHandler<ActionEvent> clearCommand = event -> clear();
-        EventHandler<ActionEvent> resetCommand = event -> reset();
-        EventHandler<ActionEvent> saveCommand = event -> screenShot();
-        Button clearButton = makeButtons(labels.get(0), clearCommand);
-        Button resetButton = makeButtons(labels.get(1), resetCommand);
-        Button saveButton = makeButtons(labels.get(2), saveCommand);
-
-        languagesComboBox = makeComboBoxArrayList(langs);
-
-        TextField thicknessTextField = makeTextField();
-        thicknessTextField.setText("1");
-        EventHandler<ActionEvent> thicknessCommand = event -> setThickness(thicknessTextField.getText());
-        thicknessTextField.setOnAction(thicknessCommand);
-
-        ColorPicker colorPicker = new ColorPicker();
-        colorPicker.setValue(Color.BLACK);
-        EventHandler<ActionEvent> setColor = event -> {
-            COLOR = colorPicker.getValue();
-        };
-        colorPicker.setOnAction(setColor);
-        Tooltip.install(colorPicker, new Tooltip(myResources.getString("BrushColorPicker")));
-        ColorPicker colorPickerBackGround = new ColorPicker();
-        colorPickerBackGround.setValue(Color.AZURE);
-        EventHandler<ActionEvent> setColorBackGround = event -> {
-            backgroundColor = colorPickerBackGround.getValue();
-            borderRectangle.setFill(backgroundColor);
-        };
-        colorPickerBackGround.setOnAction(setColorBackGround);
-        Tooltip.install(colorPickerBackGround, new Tooltip(myResources.getString("CanvasColorPicker")));
-
-        hBox = new HBox(colorPickerBackGround, colorPicker, thicknessTextField, clearButton, resetButton, saveButton, languagesComboBox);
-        hBox.setAlignment(Pos.TOP_RIGHT);
-    }
-    public Color getColor(){
-        return COLOR;
-    }
-    public Rectangle getBorderRectangle(){
+    public Rectangle getBorderRectangle() {
         return borderRectangle;
     }
 }
