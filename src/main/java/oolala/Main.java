@@ -15,7 +15,7 @@ public class Main extends Application{
     private static final int SIZE_HEIGHT = 600;
     private static final Paint BACKGROUND = Color.BLACK;
     private Stage stage;
-    private OolalaView view;
+    private OolalaGame view;
     private Scene scene;
     String TITLE = "Oolala";
     public static final String STYLESHEET = "default.css";
@@ -34,11 +34,12 @@ public class Main extends Application{
     @Override
     public void start(Stage stage) {
         this.stage = stage;
-        view = new OolalaView();
+        view = new OolalaGame();
         scene = view.setUpScene(SIZE_WIDTH, SIZE_HEIGHT,  stage);
         scene.getStylesheets().add(getClass().getResource(DEFAULT_RESOURCE_FOLDER + STYLESHEET).toExternalForm());
         stage.setTitle(TITLE);
         stage.setScene(scene);
+        stage.setResizable(false);
         stage.show();
     }
 }

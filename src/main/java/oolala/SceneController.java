@@ -16,13 +16,13 @@ public class SceneController {
     private static final int SIZE_HEIGHT = 600;
     private static final Paint BACKGROUND = Color.WHITE;
     private Stage stage;
-    private OolalaView view;
+    private OolalaGame view;
     private Scene scene;
     String TITLE = "Oolala";
 
     public SceneController(Stage stage) {
         this.stage = stage;
-        view = new OolalaView();
+        view = new OolalaGame();
         scene = view.setUpScene(SIZE_WIDTH, SIZE_HEIGHT,  stage);
         stage.setTitle(TITLE);
         stage.setScene(scene);

@@ -1,5 +1,5 @@
 .canvas {
-    -fx-border-color:lightblue ;
+    -fx-border-color:lightblue;
     -fx-border-insets:3;
     -fx-border-radius:7;
     -fx-border-width:1.0;
@@ -17,14 +17,18 @@
     -fx-border-style: solid;
 }
 .combo-box {
-    -fx-font-size: 10pt;
+    -fx-font-size: 11pt;
     -fx-min-height: 40;
 }
 .text-field {
     -fx-min-height: 40;
-    -fx-min-width: 20;
+    -fx-max-width: 40;
+    -fx-font-size: 12pt;
 }
 .color-picker {
     -fx-min-height: 40;
     -fx-max-width: 50;
+}
+.tooltip{
+    -fx-font-size: 10pt;
 }
