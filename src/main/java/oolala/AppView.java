@@ -30,7 +30,7 @@ import static oolala.Command.CmdName.TELL;
  * Setting up of the UI.
  * The origin is at the center of the screen.
  */
-public class OolalaGame {
+public class AppView {
     private int textBoxWidth = 275;
     private int textBoxHeight = 600;
     private String historyText = "Command History";
@@ -63,8 +63,14 @@ public class OolalaGame {
     private Color backgroundColor;
     private HashMap<Integer, Turtle> turtles;
     private ArrayList<Integer> currTurtleIdxs;
+    private HashMap<String, AppModel> apps;
+    private AppModel currentApp;
 
     public Scene setUpScene(int sizeWidth, int sizeHeight, Stage stage) {
+        apps = new HashMap<>();
+        apps.put("DrawingApp", new TurtleDrawingModel(this));
+        currentApp = apps.get("DrawingApp");
+
         this.stage = stage;
         this.language = DEFAULT_LANGUAGE;
         myResources = ResourceBundle.getBundle(DEFAULT_RESOURCE_PACKAGE + language);
@@ -166,10 +172,10 @@ public class OolalaGame {
         EventHandler<ActionEvent> clearText = event -> textArea.clear();
         EventHandler<ActionEvent> openFileChooser = openFileChooserEventHandler();
         EventHandler<ActionEvent> saveFile = makeSaveFileEventHandler();
-        Button runButton = textBox.makeButton("RunButton", passCommands);
-        Button clearTextButton = textBox.makeButton("ClearTextButton", clearText);
-        Button fileOpenButton = textBox.makeButton("ImportButton", openFileChooser);
-        Button saveButton = textBox.makeButton("SaveButton", saveFile);
+        Button runButton = makeButton("RunButton", passCommands);
+        Button clearTextButton = makeButton("ClearTextButton", clearText);
+        Button fileOpenButton = makeButton("ImportButton", openFileChooser);
+        Button saveButton = makeButton("SaveButton", saveFile);
 
         HBox hBox = new HBox();
         hBox.setAlignment(Pos.CENTER);
@@ -275,26 +281,20 @@ public class OolalaGame {
         currTurtleIdxs.add(1);
     }
 
-    public void setCommands(ArrayList<Command> commands, OolalaGame display) {
-        Iterator<Command> itCmd = commands.iterator();
-        while (itCmd.hasNext()) {
-            Command instruction = itCmd.next();
-            //TODO: Handle tell command
-            if (instruction.prefix == TELL) {
-                currTurtleIdxs.clear();
-                currTurtleIdxs.addAll(instruction.params);
-                for (Integer param : instruction.params) {
-                    if (!turtles.containsKey(param)) {
-                        System.out.println("Creating new turtle");
-                        turtles.put(param, new Turtle(param, 0, 0, canvasScreen));
-                        canvasScreen.getShapes().getChildren().add(turtles.get(param).getIcon());
-                    }
-                }
-            }
-            for (Integer idx : currTurtleIdxs) {
-                turtles.get(idx).readInstruction(instruction, display);
-            }
-            itCmd.remove();
-        }
+    public void setCommands(ArrayList<Command> commands, AppView display) {
+        currentApp.runApp(commands);
+    }
+    public Button makeButton(String property, EventHandler<ActionEvent> handler) {
+        Button result = new Button();
+        String label = myResources.getString(property);
+        result.setText(label);
+        result.setOnAction(handler);
+        return result;
+    }
+    public ArrayList<Integer> getCurrTurtleIdxs(){
+        return currTurtleIdxs;
+    }
+    public HashMap<Integer, Turtle> getTurtles(){
+        return turtles;
     }
 }

@@ -27,14 +27,6 @@ public class TextBox {
         return textArea;
     }
 
-    public Button makeButton(String property, EventHandler<ActionEvent> handler) {
-        Button result = new Button();
-        String label = myResources.getString(property);
-        result.setText(label);
-        result.setOnAction(handler);
-        return result;
-    }
-
     public ListView<String> makeListView(int maxHeight, EventHandler<MouseEvent> handler){
         ListView<String> listView = new ListView<String>();
         listView.setOnMouseClicked(handler);

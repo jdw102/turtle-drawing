@@ -69,7 +69,7 @@ public class Turtle {
     calcBounds(screen.getBorderRectangle());
   }
 
-  public void readInstruction(Command command, OolalaGame display){
+  public void readInstruction(Command command, AppView display){
     switch(command.prefix){
       case FORWARD -> moveForward(command.param, display);
       case BACK -> moveBack(command.param, display);
@@ -84,7 +84,7 @@ public class Turtle {
     }
   }
 
-  public void moveForward(double dist, OolalaGame display){
+  public void moveForward(double dist, AppView display){
     double x = this.posX + dist * Math.cos(Math.toRadians(this.angle + 90));
     double y = this.posY - dist * Math.sin(Math.toRadians(this.angle + 90));
     if (x > xMax){
@@ -114,7 +114,7 @@ public class Turtle {
     this.posX = x;
     moveIcon();
   }
-  public void moveBack(int dist, OolalaGame display){
+  public void moveBack(int dist, AppView display){
     double x = this.posX - dist * Math.cos(Math.toRadians(this.angle + 90));
     double y = this.posY + dist * Math.sin(Math.toRadians(this.angle + 90));
     if (x > xMax){
@@ -171,7 +171,7 @@ public class Turtle {
     moveIcon();
     rotateIcon();
   }
-  public void stamp(OolalaGame view){
+  public void stamp(AppView view){
     ImageView s = createIcon(this.posX, this.posY, iconSize, view.getCanvasScreen());
     stamps.add(s);
     view.getCanvasScreen().getShapes().getChildren().add(s);
@@ -188,7 +188,7 @@ public class Turtle {
   private void rotateIcon(){
     this.icon.setRotate(-angle);
   }
-  public void resetTurtle(OolalaGame view){
+  public void resetTurtle(AppView view){
     home();
     view.getCanvasScreen().getShapes().getChildren().removeAll(stamps);
     stamps.removeAll(stamps);
