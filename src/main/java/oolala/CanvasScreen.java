@@ -79,13 +79,6 @@ public class CanvasScreen {
         }
     }
 
-//    public Turtle[] getTurtles() {
-//        Turtle[] currTurtles = new Turtle[currTurtleIdxs.size()];
-//        for (int i = 0; i < currTurtleIdxs.size(); i++)
-//            currTurtles[i] = turtles.get(currTurtleIdxs.get(i));
-//        return currTurtles;
-//    }
-
     /**
      * A method to draw a new line on the canvas.
      *
@@ -108,7 +101,7 @@ public class CanvasScreen {
         line.setStrokeWidth(THICKNESS);
         line.setStroke(brushColor);
         //TODO: is color an attribute of a turtle?
-        shapes.getChildren().add(line);
+        shapes.getChildren().add(1, line);
     }
 
 

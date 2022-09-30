@@ -17,18 +17,18 @@ public class TurtleDrawingModel extends AppModel {
             Command instruction = itCmd.next();
             //TODO: Handle tell command
             if (instruction.prefix == TELL) {
-                myDisplay.getCurrTurtleIdxs().clear();
-                myDisplay.getCurrTurtleIdxs().addAll(instruction.params);
+                currTurtleIdxs.clear();
+                currTurtleIdxs.addAll(instruction.params);
                 for (Integer param : instruction.params) {
-                    if (!myDisplay.getTurtles().containsKey(param)) {
+                    if (!turtles.containsKey(param)) {
                         System.out.println("Creating new turtle");
-                        myDisplay.getTurtles().put(param, new Turtle(param, 0, 0, myDisplay.getCanvasScreen()));
-                        myDisplay.getCanvasScreen().getShapes().getChildren().add(myDisplay.getTurtles().get(param).getIcon());
+                        turtles.put(param, new Turtle(param, 0, 0, myDisplay.getCanvasScreen()));
+                        myDisplay.getCanvasScreen().getShapes().getChildren().add(turtles.get(param).getIcon());
                     }
                 }
             }
-            for (Integer idx : myDisplay.getCurrTurtleIdxs()) {
-                myDisplay.getTurtles().get(idx).readInstruction(instruction, myDisplay);
+            for (Integer idx : currTurtleIdxs) {
+                turtles.get(idx).readInstruction(instruction, myDisplay);
             }
             itCmd.remove();
         }

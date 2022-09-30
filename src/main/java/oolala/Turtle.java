@@ -64,7 +64,8 @@ public class Turtle {
     this.angle = DEFAULT_ANGLE;
     this.penDown = true;
     this.iconSize = DEFAULT_ICON_SIZE;
-    this.icon = createIcon(this.posX, this.posY, iconSize, screen);
+    this.position = new Tooltip();
+    this.icon = createIcon(this.posX, this.posY, iconSize, screen, position, false);
     this.stamps = new ArrayList<>();
     calcBounds(screen.getBorderRectangle());
   }
@@ -172,7 +173,8 @@ public class Turtle {
     rotateIcon();
   }
   public void stamp(AppView view){
-    ImageView s = createIcon(this.posX, this.posY, iconSize, view.getCanvasScreen());
+    ImageView s = createIcon(this.posX, this.posY, iconSize, view.getCanvasScreen(), new Tooltip(), true);
+    s.toFront();
     stamps.add(s);
     view.getCanvasScreen().getShapes().getChildren().add(s);
   }
@@ -183,7 +185,7 @@ public class Turtle {
     this.icon.setX(this.posX - iconSize / 2);
     this.icon.setY(this.posY - iconSize / 2);
     this.icon.toFront();
-    updateRelativePosition();
+    updateRelativePosition(position);
   }
   private void rotateIcon(){
     this.icon.setRotate(-angle);
@@ -193,7 +195,7 @@ public class Turtle {
     view.getCanvasScreen().getShapes().getChildren().removeAll(stamps);
     stamps.removeAll(stamps);
   }
-  private ImageView createIcon(double x, double y, double size, CanvasScreen canvas){
+  private ImageView createIcon(double x, double y, double size, CanvasScreen canvas, Tooltip tooltip, boolean stamp){
     ImageView i = new ImageView(new Image(turtleImage));
     i.setFitHeight(size);
     i.setFitWidth(size);
@@ -201,10 +203,15 @@ public class Turtle {
     i.setY(y- size / 2);
     i.setRotate(-angle);
     i.toFront();
+    if (!stamp){installPositionLabel(i, tooltip);}
     System.out.println("Creating icon");
-    position = new Tooltip("x: " + Double.toString(Math.round(relX)) + " y: " + Double.toString(Math.round(relY)));
-    Tooltip.install(i, position);
     return i;
+  }
+  public void installPositionLabel(ImageView i, Tooltip tooltip){
+    i.setOnMouseEntered(event -> onHover());
+    i.setOnMouseExited(event -> offHover());
+    updateRelativePosition(tooltip);
+    Tooltip.install(i, tooltip);
   }
   private void calcBounds(Rectangle r){
     xMin = r.getX() + iconSize / 2;
@@ -212,10 +219,19 @@ public class Turtle {
     yMin = r.getY() + iconSize / 2;
     yMax = r.getY() + r.getHeight() - iconSize / 2;
   }
-  private void updateRelativePosition(){
+  private void updateRelativePosition(Tooltip tooltip){
     relX = posX - border.getX();
     relY = (border.getY() + border.getHeight()) - posY;
-    position.setText("x: " + Double.toString(Math.round(relX)) + " y: " + Double.toString(Math.round(relY)));
+    tooltip.setText("x: " + Double.toString(Math.round(relX)) + " y: " + Double.toString(Math.round(relY)));
   }
+  private void onHover(){
+    icon.setScaleX(1.1);
+    icon.setScaleY(1.1);
+  }
+  private void offHover(){
+    icon.setScaleX(1 / 1.1);
+    icon.setScaleY(1 / 1.1);
+  }
+
 }
 
