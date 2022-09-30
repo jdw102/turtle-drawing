@@ -3,7 +3,6 @@ package oolala;
 import javafx.animation.*;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
@@ -13,7 +12,6 @@ import javafx.scene.shape.*;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 
-import java.awt.*;
 import java.util.ArrayList;
 
 /**
@@ -48,7 +46,7 @@ public class Turtle {
   private double relY;
   private Rectangle border;
   private Tooltip position;
-
+  private final double TURTLE_SPEED = 60;
 
   public Turtle() {
     this.id = DEFAULT_ID;
@@ -82,8 +80,8 @@ public class Turtle {
     switch(command.prefix){
       case FORWARD -> moveForward(command.param, canvas, animation);
       case BACK -> moveBack(command.param, canvas, animation);
-      case LEFT -> leftTurn(command.param, animation);
-      case RIGHT -> rightTurn(command.param, animation);
+      case LEFT -> rotateTurtle(-command.param, animation);
+      case RIGHT -> rotateTurtle(command.param, animation);
       case PENDOWN -> putPenDown();
       case PENUP -> putPenUp();
       case SHOWT -> showTurtle(animation);
@@ -147,13 +145,7 @@ public class Turtle {
     posX = x;
     posY = y;
   }
-  public void leftTurn(int newAngle, SequentialTransition animation){
-    RotateTransition rotate = new RotateTransition(Duration.seconds(0.5), icon);
-    rotate.setByAngle(-newAngle);
-    angle += newAngle;
-    animation.getChildren().add(rotate);
-  }
-  public void rightTurn(int newAngle, SequentialTransition animation){
+  public void rotateTurtle(int newAngle, SequentialTransition animation){
     RotateTransition rotate = new RotateTransition(Duration.seconds(0.5), icon);
     rotate.setByAngle(newAngle);
     angle -= newAngle;
@@ -178,11 +170,17 @@ public class Turtle {
     animation.getChildren().add(fade);
   }
   public void home(SequentialTransition animation){
-    this.posX = homeX;
-    this.posY = homeY;
-    this.angle = DEFAULT_ANGLE;
-    moveIcon(homeX, homeY);
-//    rotateIcon();
+    FadeTransition fadeOut = new FadeTransition(Duration.seconds(0.25), icon);
+    fadeOut.setFromValue(icon.getOpacity());
+    fadeOut.setToValue(0.0);
+    posX = homeX;
+    posY = homeY;
+    fadeOut.setOnFinished(event -> moveIcon(homeX, homeY));
+    FadeTransition fadeIn = new FadeTransition(Duration.seconds(0.25), icon);
+    fadeIn.setFromValue(0.0);
+    fadeIn.setToValue(icon.getOpacity());
+    animation.getChildren().add(fadeOut);
+    animation.getChildren().add(fadeIn);
   }
   public void stamp(CanvasScreen canvas, SequentialTransition animation){
     ImageView s = createIcon(this.posX, this.posY, iconSize, canvas, new Tooltip(), true);
@@ -222,7 +220,6 @@ public class Turtle {
     i.setRotate(-angle);
     i.toFront();
     if (!stamp){installPositionLabel(i, tooltip);}
-    System.out.println("Creating icon");
     return i;
   }
   public void installPositionLabel(ImageView i, Tooltip tooltip){
@@ -250,34 +247,8 @@ public class Turtle {
     icon.setScaleX(1 / 1.1);
     icon.setScaleY(1 / 1.1);
   }
-//  private void createPath(double xStart, double yStart, double xEnd, double yEnd, CanvasScreen screen){
-//    lines.add(screen.drawLine(xStart, yStart, xEnd, yEnd));
-//    path.getElements().add(new MoveTo(xStart, yStart));
-//    path.getElements().add(new LineTo(xStart, yStart));
-//  }
-//  private void followPath(){
-//    Circle pen  = new Circle(THICKNESS / 2);
-//    pen.setFill(Color.BLACK);
-//    ArrayList<Circle> penPoints = new ArrayList<>();
-//    ChangeListener changeListener = new ChangeListener() {
-//      @Override
-//      public void changed(ObservableValue ov, Object t, Object t1) {
-//        Circle newCirc = new Circle(pen.getTranslateX(), pen.getTranslateY(), pen.getRadius());
-//        shapes.getChildren().add(1, newCirc);
-//        penPoints.add(newCirc);
-//      }
-//    };
-//    pen.translateXProperty().addListener(changeListener);
-//    pen.translateYProperty().addListener(changeListener);
-//    pathTransition.setOnFinished(event -> {
-//      shapes.getChildren().removeAll(penPoints);
-//      penPoints.removeAll(penPoints);
-//      shapes.getChildren().add(1, line);
-//    });
-//  }
   public void drawLine(double xStart, double yStart, double xEnd, double yEnd, CanvasScreen canvas, SequentialTransition animation) {
-    System.out.println(xStart + " " + yStart);
-    System.out.println(xEnd + " " + yEnd);
+    double distance = Math.sqrt(Math.pow((xEnd - xStart), 2) + Math.pow((yEnd - yStart), 2) );
     Line line = new Line();
     line.setStartX(xStart);
     line.setStartY(yStart);
@@ -286,34 +257,29 @@ public class Turtle {
     line.setStrokeWidth(canvas.getThickness());
     line.setStroke(canvas.getBrushColor());
 
-    PathTransition pathTransition = penDown ? penDownAnimation(line, canvas) : penUpAnimation(line, canvas);
+    PathTransition pathTransition = penDown ? penDownAnimation(line, canvas, distance) : penUpAnimation(line, canvas, distance);
 
     //TODO: is color an attribute of a turtle?
     animation.getChildren().add(pathTransition);
   }
-  private PathTransition penDownAnimation(Line line, CanvasScreen canvas){
+  private PathTransition penDownAnimation(Line line, CanvasScreen canvas, double distance){
     Circle pen = new Circle(canvas.getThickness() / 2);
-    pen.setFill(canvas.getBrushColor());
-    pen.setVisible(false);
     ArrayList<Circle> penPoints = new ArrayList<>();
+    pen.setTranslateX(line.getStartX());
+    pen.setTranslateY(line.getStartY());
+    System.out.println(this.posY);
     ChangeListener changeListener = new ChangeListener() {
-      boolean first = true;
       @Override
       public void changed(ObservableValue ov, Object t, Object t1) {
-        if (!first){
           moveIcon(pen.getTranslateX(), pen.getTranslateY());
-          Circle newCirc = new Circle(pen.getTranslateX(), pen.getTranslateY(), pen.getRadius());
+          Circle newCirc = new Circle(pen.getTranslateX(), pen.getTranslateY(), pen.getRadius(), pen.getFill());
           canvas.getShapes().getChildren().add(1, newCirc);
           penPoints.add(newCirc);
-        }
-        else{
-          first = false;
-        }
       }
     };
     pen.translateXProperty().addListener(changeListener);
     pen.translateYProperty().addListener(changeListener);
-    PathTransition pathTransition = new PathTransition(Duration.seconds(2), line, pen);
+    PathTransition pathTransition = new PathTransition(Duration.seconds(distance / TURTLE_SPEED), line, pen);
     pathTransition.setOnFinished(event -> {
       canvas.getShapes().getChildren().removeAll(penPoints);
       penPoints.removeAll(penPoints);
@@ -321,11 +287,10 @@ public class Turtle {
     });
     return pathTransition;
   }
-  private PathTransition penUpAnimation(Line line, CanvasScreen canvas){
+  private PathTransition penUpAnimation(Line line, CanvasScreen canvas, double distance){
     Circle pen = new Circle(canvas.getThickness() / 2);
     pen.setVisible(false);
     pen.setFill(canvas.getBrushColor());
-    ArrayList<Circle> penPoints = new ArrayList<>();
     ChangeListener changeListener = new ChangeListener() {
       @Override
       public void changed(ObservableValue ov, Object t, Object t1) {
@@ -334,7 +299,7 @@ public class Turtle {
     };
     pen.translateXProperty().addListener(changeListener);
     pen.translateYProperty().addListener(changeListener);
-    PathTransition pathTransition = new PathTransition(Duration.seconds(2), line, pen);
+    PathTransition pathTransition = new PathTransition(Duration.seconds(distance / TURTLE_SPEED), line, pen);
     return pathTransition;
   }
 }

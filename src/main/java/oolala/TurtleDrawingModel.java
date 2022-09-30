@@ -16,6 +16,7 @@ public class TurtleDrawingModel extends AppModel {
     @Override
     public void runApp(ArrayList<Command> commands) {
         Iterator<Command> itCmd = commands.iterator();
+        int iter = 0;
         while (itCmd.hasNext()) {
             Command instruction = itCmd.next();
             //TODO: Handle tell command
@@ -34,6 +35,7 @@ public class TurtleDrawingModel extends AppModel {
                 turtles.get(idx).readInstruction(instruction, myDisplay.getCanvasScreen(), animation);
             }
             itCmd.remove();
+            iter++;
         }
         animation.play();
         animation.getChildren().removeAll(animation.getChildren());
