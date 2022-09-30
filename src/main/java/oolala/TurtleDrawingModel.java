@@ -1,5 +1,8 @@
 package oolala;
 
+import javafx.animation.SequentialTransition;
+import javafx.scene.shape.Path;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -28,9 +31,11 @@ public class TurtleDrawingModel extends AppModel {
                 }
             }
             for (Integer idx : currTurtleIdxs) {
-                turtles.get(idx).readInstruction(instruction, myDisplay);
+                turtles.get(idx).readInstruction(instruction, myDisplay.getCanvasScreen(), animation);
             }
             itCmd.remove();
         }
+        animation.play();
+        animation.getChildren().removeAll(animation.getChildren());
     }
 }

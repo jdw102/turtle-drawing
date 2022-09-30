@@ -1,5 +1,6 @@
 package oolala;
 
+import javafx.animation.SequentialTransition;
 import javafx.scene.image.ImageView;
 
 import java.util.ArrayList;
@@ -12,6 +13,7 @@ public abstract class AppModel {
     public AppView myDisplay;
     public HashMap<Integer, Turtle> turtles;
     public ArrayList<Integer> currTurtleIdxs;
+    public SequentialTransition animation;
 
     public AppModel(AppView display){
         myDisplay = display;
@@ -20,6 +22,7 @@ public abstract class AppModel {
         turtles.put(1, new Turtle(1, 0, 0, display.getCanvasScreen()));
         currTurtleIdxs.add(1);
         display.getCanvasScreen().getShapes().getChildren().add(turtles.get(1).getIcon());
+        animation = new SequentialTransition();
     }
     public void runApp(ArrayList<Command> commands){
 
@@ -38,5 +41,6 @@ public abstract class AppModel {
         turtles.put(1, new Turtle(1, 0, 0, myDisplay.getCanvasScreen()));
         myDisplay.getCanvasScreen().getShapes().getChildren().add(turtles.get(1).getIcon()); // TODO: We should probably refactor this for scalability
         currTurtleIdxs.add(1);
+        animation.getChildren().removeAll(animation.getChildren());
     }
 }
