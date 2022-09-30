@@ -1,0 +1,6 @@
+# Quadradic koch island
+# https://www.sidefx.com/docs/houdini/nodes/sop/lsystem.html
+
+START 	F
+
+rule 	F F-F+F+FF-F-F+F

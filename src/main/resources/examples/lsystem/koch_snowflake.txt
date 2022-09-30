@@ -1,0 +1,6 @@
+# Koch Snowflake
+# One side of the Koch snowflake
+# https://en.wikipedia.org/wiki/Koch_snowflake
+
+start 	F
+rule 	F F-F++F-F
