@@ -93,6 +93,7 @@ public class CanvasScreen {
         System.out.println(yStart);
         System.out.println(xEnd);
         System.out.println(yEnd);
+
         Line line = new Line();
         line.setStartX(xStart);
         line.setStartY(yStart);
@@ -150,5 +151,11 @@ public class CanvasScreen {
     }
     public Rectangle getBorderRectangle() {
         return borderRectangle;
+    }
+    public Double getThickness(){
+        return THICKNESS;
+    }
+    public Color getBrushColor(){
+        return brushColor;
     }
 }

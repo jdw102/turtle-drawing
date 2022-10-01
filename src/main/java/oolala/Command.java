@@ -1,5 +1,7 @@
 package oolala;
 
+import javafx.animation.SequentialTransition;
+
 import java.util.ArrayList;
 
 /**
@@ -23,7 +25,7 @@ public class Command {
   public int param;
   public ArrayList<Integer> params;
 
-  public void runCommand(Turtle turtle, AppView display){
+  public void runCommand(TurtleView turtle, CanvasScreen canvas, SequentialTransition animation){
 
   }
   @Override

@@ -1,11 +1,13 @@
 package oolala;
 
+import javafx.animation.SequentialTransition;
+
 public class CommandPenDown extends Command {
 
     public CommandPenDown(){
         prefix =CmdName.PENDOWN;
     }
-    public void runCommand(Turtle turtle, AppView display) {
+    public void runCommand(TurtleView turtle, CanvasScreen canvas, SequentialTransition animation) {
         turtle.putPenDown();
     }
 }

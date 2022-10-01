@@ -1,25 +1,25 @@
 package oolala;
 
-import javafx.scene.image.ImageView;
+import javafx.animation.SequentialTransition;
+import javafx.scene.shape.Rectangle;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
-
-import static oolala.Command.CmdName.TELL;
 
 public abstract class AppModel {
     public AppView myDisplay;
-    public HashMap<Integer, Turtle> turtles;
+    public HashMap<Integer, TurtleView> turtles;
     public ArrayList<Integer> currTurtleIdxs;
+    public SequentialTransition animation;
 
     public AppModel(AppView display){
         myDisplay = display;
         turtles = new HashMap<>();
         currTurtleIdxs = new ArrayList<>();
-        turtles.put(1, new Turtle(1, 0, 0, display.getCanvasScreen()));
+        turtles.put(1, new TurtleView(0, 0, display.getCanvasScreen()));
         currTurtleIdxs.add(1);
         display.getCanvasScreen().getShapes().getChildren().add(turtles.get(1).getIcon());
+        animation = new SequentialTransition();
     }
     public void runApp(ArrayList<Command> commands){
 
@@ -27,16 +27,18 @@ public abstract class AppModel {
     public ArrayList<Integer> getCurrTurtleIdxs(){
         return currTurtleIdxs;
     }
-    public HashMap<Integer, Turtle> getTurtles(){
+    public HashMap<Integer, TurtleView> getTurtles(){
         return turtles;
     }
     public void reset() {
         turtles.clear(); // TODO: Check if this is correct functionality
-        myDisplay.getCanvasScreen().getShapes().getChildren().removeIf(i -> i instanceof ImageView);
+        myDisplay.getCanvasScreen().getShapes().getChildren().removeIf(i -> !(i instanceof Rectangle));
         currTurtleIdxs.clear();
 
-        turtles.put(1, new Turtle(1, 0, 0, myDisplay.getCanvasScreen()));
+        turtles.put(1, new TurtleView(0, 0, myDisplay.getCanvasScreen()));
         myDisplay.getCanvasScreen().getShapes().getChildren().add(turtles.get(1).getIcon()); // TODO: We should probably refactor this for scalability
         currTurtleIdxs.add(1);
+        animation.stop();
+        animation.getChildren().removeAll(animation.getChildren());
     }
 }

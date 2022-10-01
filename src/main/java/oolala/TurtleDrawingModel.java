@@ -22,15 +22,17 @@ public class TurtleDrawingModel extends AppModel {
                 for (Integer param : instruction.params) {
                     if (!turtles.containsKey(param)) {
                         System.out.println("Creating new turtle");
-                        turtles.put(param, new Turtle(param, 0, 0, myDisplay.getCanvasScreen()));
+                        turtles.put(param, new TurtleView(0, 0, myDisplay.getCanvasScreen()));
                         myDisplay.getCanvasScreen().getShapes().getChildren().add(turtles.get(param).getIcon());
                     }
                 }
             }
             for (Integer idx : currTurtleIdxs) {
-                instruction.runCommand(turtles.get(idx), myDisplay);
+                instruction.runCommand(turtles.get(idx), myDisplay.getCanvasScreen(), animation);
             }
             itCmd.remove();
         }
+        animation.play();
+        animation.getChildren().removeAll(animation.getChildren());
     }
 }

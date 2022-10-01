@@ -92,7 +92,7 @@ public class Parser {
           c = new CommandPenUp();
           break;
         case "st":
-          c = new CommandStamp();
+          c = new CommandShowTurtle();
           break;
         case "ht":
           c  = new CommandHideTurtle();

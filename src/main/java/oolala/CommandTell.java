@@ -1,5 +1,7 @@
 package oolala;
 
+import javafx.animation.SequentialTransition;
+
 import java.util.ArrayList;
 
 public class CommandTell extends Command {
@@ -13,8 +15,8 @@ public class CommandTell extends Command {
         return params;
     }
 
-    public void runCommand(Turtle turtle, AppView display) {
-        turtle.stamp(display);
+    public void runCommand(TurtleView turtle, CanvasScreen canvas, SequentialTransition animation) {
+
     }
 }
 

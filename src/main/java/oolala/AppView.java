@@ -144,7 +144,7 @@ public class AppView {
         languagesComboBox = canvasScreen.makeComboBoxArrayList(languages, langCommand);
 
         EventHandler<ActionEvent> thicknessCommand = event -> canvasScreen.setThickness(thicknessTextField.getText());
-        thicknessTextField = canvasScreen.makeTextField("Thickness", "1", thicknessCommand);
+        thicknessTextField = canvasScreen.makeTextField("Thickness", "3", thicknessCommand);
 
         EventHandler<ActionEvent> setBrushColor = event -> {
             brushColor = colorPicker.getValue();
