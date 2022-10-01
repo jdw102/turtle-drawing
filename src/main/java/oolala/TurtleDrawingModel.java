@@ -28,7 +28,7 @@ public class TurtleDrawingModel extends AppModel {
                 }
             }
             for (Integer idx : currTurtleIdxs) {
-                turtles.get(idx).readInstruction(instruction, myDisplay);
+                instruction.runCommand(turtles.get(idx), myDisplay);
             }
             itCmd.remove();
         }

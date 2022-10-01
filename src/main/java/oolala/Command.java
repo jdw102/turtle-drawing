@@ -15,8 +15,17 @@ public class Command {
     PENDOWN, PENUP, SHOWT, HIDET,
     HOME, STAMP, TELL
   }
+
+  public void setParam(int param) {
+    this.param = param;
+  }
+
   public int param;
   public ArrayList<Integer> params;
+
+  public void runCommand(Turtle turtle, AppView display){
+
+  }
   @Override
   public String toString(){
     String s = "";
