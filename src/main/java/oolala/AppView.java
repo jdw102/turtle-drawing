@@ -65,6 +65,7 @@ public class AppView {
     private ArrayList<Integer> currTurtleIdxs;
     private HashMap<String, AppModel> apps;
     private AppModel currentApp;
+    private ToolBar toolBar;
 
     public Scene setUpScene(int sizeWidth, int sizeHeight, Stage stage) {
         apps = new HashMap<>();
@@ -76,6 +77,7 @@ public class AppView {
         myResources = ResourceBundle.getBundle(DEFAULT_RESOURCE_PACKAGE + language);
         parser = new Parser(myResources);
 
+        toolBar = new ToolBar(myResources);
         root = new BorderPane();
 
         textBox = new TextBox(myResources);
@@ -139,17 +141,17 @@ public class AppView {
         };
         EventHandler<ActionEvent> resetCommand = event -> reset();
         EventHandler<ActionEvent> saveCommand = event -> canvasScreen.screenShot();
-        Button clearButton = canvasScreen.makeButton(canvasButtonsLabels.get(0), clearCommand);
-        Button resetButton = canvasScreen.makeButton(canvasButtonsLabels.get(1), resetCommand);
-        Button saveButton = canvasScreen.makeButton(canvasButtonsLabels.get(2), saveCommand);
+        Button clearButton = toolBar.makeButton(canvasButtonsLabels.get(0), clearCommand);
+        Button resetButton = toolBar.makeButton(canvasButtonsLabels.get(1), resetCommand);
+        Button saveButton = toolBar.makeButton(canvasButtonsLabels.get(2), saveCommand);
 
         EventHandler<ActionEvent> langCommand = event -> {
             setLanguage(languagesComboBox.getValue());
         };
-        languagesComboBox = canvasScreen.makeComboBoxArrayList(languages, langCommand);
+        languagesComboBox = toolBar.makeComboBoxArrayList(languages, langCommand);
 
         EventHandler<ActionEvent> thicknessCommand = event -> canvasScreen.setThickness(thicknessTextField.getText());
-        thicknessTextField = canvasScreen.makeTextField("Thickness", "1", thicknessCommand);
+        thicknessTextField = toolBar.makeTextField("Thickness", "1", thicknessCommand);
 
         EventHandler<ActionEvent> setBrushColor = event -> {
             brushColor = colorPicker.getValue();
@@ -159,8 +161,8 @@ public class AppView {
             backgroundColor = colorPickerBackGround.getValue();
             canvasScreen.getBorderRectangle().setFill(backgroundColor);
         };
-        colorPicker = canvasScreen.makeColorPicker(setBrushColor, Color.BLACK, "BrushColorPicker");
-        colorPickerBackGround = canvasScreen.makeColorPicker(setColorBackGround, Color.AZURE, "CanvasColorPicker");
+        colorPicker = toolBar.makeColorPicker(setBrushColor, Color.BLACK, "BrushColorPicker");
+        colorPickerBackGround = toolBar.makeColorPicker(setColorBackGround, Color.AZURE, "CanvasColorPicker");
 
         HBox hBox = new HBox(colorPickerBackGround, colorPicker, thicknessTextField, clearButton, resetButton, saveButton, languagesComboBox);
         hBox.setAlignment(Pos.TOP_RIGHT);
@@ -172,10 +174,10 @@ public class AppView {
         EventHandler<ActionEvent> clearText = event -> textArea.clear();
         EventHandler<ActionEvent> openFileChooser = openFileChooserEventHandler();
         EventHandler<ActionEvent> saveFile = makeSaveFileEventHandler();
-        Button runButton = makeButton("RunButton", passCommands);
-        Button clearTextButton = makeButton("ClearTextButton", clearText);
-        Button fileOpenButton = makeButton("ImportButton", openFileChooser);
-        Button saveButton = makeButton("SaveButton", saveFile);
+        Button runButton = toolBar.makeButton("RunButton", passCommands);
+        Button clearTextButton = toolBar.makeButton("ClearTextButton", clearText);
+        Button fileOpenButton = toolBar.makeButton("ImportButton", openFileChooser);
+        Button saveButton = toolBar.makeButton("SaveButton", saveFile);
 
         HBox hBox = new HBox();
         hBox.setAlignment(Pos.CENTER);
@@ -209,7 +211,9 @@ public class AppView {
                     Path filePath = Path.of(f.getPath());
                     String content = Files.readString(filePath);
                     textArea.setText(content);
-                } catch (IOException e) {throw new RuntimeException(e);}
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
             }
         };
         return openFileChooser;
@@ -227,7 +231,9 @@ public class AppView {
                     FileWriter writer = new FileWriter(f);
                     writer.write(textArea.getText());
                     writer.close();
-                } catch (IOException e) {throw new RuntimeException(e);}
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
             }
         };
         return saveFile;
@@ -284,17 +290,12 @@ public class AppView {
     public void setCommands(ArrayList<Command> commands, AppView display) {
         currentApp.runApp(commands);
     }
-    public Button makeButton(String property, EventHandler<ActionEvent> handler) {
-        Button result = new Button();
-        String label = myResources.getString(property);
-        result.setText(label);
-        result.setOnAction(handler);
-        return result;
-    }
-    public ArrayList<Integer> getCurrTurtleIdxs(){
+
+    public ArrayList<Integer> getCurrTurtleIdxs() {
         return currTurtleIdxs;
     }
-    public HashMap<Integer, Turtle> getTurtles(){
+
+    public HashMap<Integer, Turtle> getTurtles() {
         return turtles;
     }
 }
