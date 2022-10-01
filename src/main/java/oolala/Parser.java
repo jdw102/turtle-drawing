@@ -28,17 +28,17 @@ public class Parser {
    * for list of supported commands.
    *
    * @author Aditya Paul
-   * @param textbox - The IDE's textbox. In the future, we plan on making this
+   * @param textArea - The IDE's textbox. In the future, we plan on making this
    *                  a rich text area for syntax error highlighting.
    * @return An ArrayList of the parsed commands
    */
   public ArrayList<Command> parse(TextArea textArea) {
     ArrayList<Command> program = new ArrayList<>();
-
+    Command c = new Command();
     String commandString = textArea.getText().toLowerCase();
     Scanner scan = new Scanner(commandString);
     while (scan.hasNext()){
-      Command c = new Command();
+//      Command c = new Command();
       String prefix = scan.next();
       if(prefix.charAt(0) == '#'){
         scan.nextLine();
@@ -46,9 +46,9 @@ public class Parser {
       }
       switch(prefix) {
         case "fd":
-          c.prefix = CmdName.FORWARD;
+          c = new CommandForward();
           if (scan.hasNextInt())
-            c.param = scan.nextInt();
+            c.setParam(scan.nextInt());
           else {
             // TODO: Handle
             System.err.println("Missing parameters for FD command!");
@@ -56,9 +56,9 @@ public class Parser {
           }
           break;
         case "bk":
-          c.prefix = CmdName.BACK;
+          c = new CommandBackward();
           if (scan.hasNextInt())
-            c.param = scan.nextInt();
+            c.setParam(scan.nextInt());
           else {
             // TODO: Handle
             System.err.println("Missing parameters for BK command!");
@@ -66,9 +66,9 @@ public class Parser {
           }
           break;
         case "lt":
-          c.prefix = CmdName.LEFT;
+          c = new CommandLeft();
           if (scan.hasNextInt())
-            c.param = scan.nextInt();
+            c.setParam(scan.nextInt());
           else {
             // TODO: Handle
             System.err.println("Missing parameters for LT command!");
@@ -76,9 +76,9 @@ public class Parser {
           }
           break;
         case "rt":
-          c.prefix = CmdName.RIGHT;
+          c = new CommandRight();
           if (scan.hasNextInt())
-            c.param = scan.nextInt();
+            c.setParam(scan.nextInt());
           else {
             // TODO: Handle
             System.err.println("Missing parameters for RT command!");
@@ -86,33 +86,32 @@ public class Parser {
           }
           break;
         case "pd":
-          c.prefix = CmdName.PENDOWN;
+          c = new CommandPenDown();
           break;
         case "pu":
-          c.prefix = CmdName.PENUP;
+          c = new CommandPenUp();
           break;
         case "st":
-          c.prefix = CmdName.SHOWT;
+          c = new CommandStamp();
           break;
         case "ht":
-          c.prefix = CmdName.HIDET;
+          c  = new CommandHideTurtle();
           break;
         case "home":
-          c.prefix = CmdName.HOME;
+          c = new CommandHome();
           break;
         case "stamp":
-          c.prefix = CmdName.STAMP;
+          c = new CommandStamp();
           break;
         case "tell":
-          c.prefix = CmdName.TELL;
-          c.params = new ArrayList<Integer>();
+          c = new CommandTell();
           if (!scan.hasNextInt()){
             // TODO: Handle
             System.err.println("Missing parameters for TELL command!");
             return new ArrayList<>();
           }
           while (scan.hasNextInt())
-            c.params.add(scan.nextInt());
+            ((CommandTell) c).getParams().add(scan.nextInt());
           break;
         default:
           // TODO: Handle bad input
