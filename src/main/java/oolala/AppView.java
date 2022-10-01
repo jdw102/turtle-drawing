@@ -61,23 +61,17 @@ public class AppView {
     private ColorPicker colorPicker;
     private Color brushColor;
     private Color backgroundColor;
-    private HashMap<Integer, Turtle> turtles;
-    private ArrayList<Integer> currTurtleIdxs;
+
     private HashMap<String, AppModel> apps;
     private AppModel currentApp;
-    private ToolBar toolBar;
 
     public Scene setUpScene(int sizeWidth, int sizeHeight, Stage stage) {
-        apps = new HashMap<>();
-        apps.put("DrawingApp", new TurtleDrawingModel(this));
-        currentApp = apps.get("DrawingApp");
 
         this.stage = stage;
         this.language = DEFAULT_LANGUAGE;
         myResources = ResourceBundle.getBundle(DEFAULT_RESOURCE_PACKAGE + language);
         parser = new Parser(myResources);
 
-        toolBar = new ToolBar(myResources);
         root = new BorderPane();
 
         textBox = new TextBox(myResources);
@@ -87,14 +81,13 @@ public class AppView {
         canvasScreen = new CanvasScreen(myResources);
         canvasHBox = makeCanvasHBox();
         canvasShapes = canvasScreen.getShapes();
+        apps = new HashMap<>();
+
+        apps.put("DrawingApp", new TurtleDrawingModel(this));
+        currentApp = apps.get("DrawingApp");
+
         root.setCenter(canvasHBox);
         root.getChildren().add(canvasShapes);
-
-        turtles = new HashMap<>();
-        currTurtleIdxs = new ArrayList<>();
-        turtles.put(1, new Turtle(1, 0, 0, canvasScreen));
-        currTurtleIdxs.add(1);
-        canvasScreen.getShapes().getChildren().add(turtles.get(1).getIcon());
 
         root.setPadding(new Insets(10, 10, 10, 10));
         Scene scene = new Scene(root, sizeWidth, sizeHeight);
@@ -137,21 +130,21 @@ public class AppView {
     public HBox makeCanvasHBox() {
         EventHandler<ActionEvent> clearCommand = event -> {
             canvasScreen.clear();
-            reset();
+            currentApp.reset();
         };
-        EventHandler<ActionEvent> resetCommand = event -> reset();
+        EventHandler<ActionEvent> resetCommand = event -> currentApp.reset();
         EventHandler<ActionEvent> saveCommand = event -> canvasScreen.screenShot();
-        Button clearButton = toolBar.makeButton(canvasButtonsLabels.get(0), clearCommand);
-        Button resetButton = toolBar.makeButton(canvasButtonsLabels.get(1), resetCommand);
-        Button saveButton = toolBar.makeButton(canvasButtonsLabels.get(2), saveCommand);
+        Button clearButton = canvasScreen.makeButton(canvasButtonsLabels.get(0), clearCommand);
+        Button resetButton = canvasScreen.makeButton(canvasButtonsLabels.get(1), resetCommand);
+        Button saveButton = canvasScreen.makeButton(canvasButtonsLabels.get(2), saveCommand);
 
         EventHandler<ActionEvent> langCommand = event -> {
             setLanguage(languagesComboBox.getValue());
         };
-        languagesComboBox = toolBar.makeComboBoxArrayList(languages, langCommand);
+        languagesComboBox = canvasScreen.makeComboBoxArrayList(languages, langCommand);
 
         EventHandler<ActionEvent> thicknessCommand = event -> canvasScreen.setThickness(thicknessTextField.getText());
-        thicknessTextField = toolBar.makeTextField("Thickness", "1", thicknessCommand);
+        thicknessTextField = canvasScreen.makeTextField("Thickness", "1", thicknessCommand);
 
         EventHandler<ActionEvent> setBrushColor = event -> {
             brushColor = colorPicker.getValue();
@@ -161,8 +154,8 @@ public class AppView {
             backgroundColor = colorPickerBackGround.getValue();
             canvasScreen.getBorderRectangle().setFill(backgroundColor);
         };
-        colorPicker = toolBar.makeColorPicker(setBrushColor, Color.BLACK, "BrushColorPicker");
-        colorPickerBackGround = toolBar.makeColorPicker(setColorBackGround, Color.AZURE, "CanvasColorPicker");
+        colorPicker = canvasScreen.makeColorPicker(setBrushColor, Color.BLACK, "BrushColorPicker");
+        colorPickerBackGround = canvasScreen.makeColorPicker(setColorBackGround, Color.AZURE, "CanvasColorPicker");
 
         HBox hBox = new HBox(colorPickerBackGround, colorPicker, thicknessTextField, clearButton, resetButton, saveButton, languagesComboBox);
         hBox.setAlignment(Pos.TOP_RIGHT);
@@ -174,10 +167,10 @@ public class AppView {
         EventHandler<ActionEvent> clearText = event -> textArea.clear();
         EventHandler<ActionEvent> openFileChooser = openFileChooserEventHandler();
         EventHandler<ActionEvent> saveFile = makeSaveFileEventHandler();
-        Button runButton = toolBar.makeButton("RunButton", passCommands);
-        Button clearTextButton = toolBar.makeButton("ClearTextButton", clearText);
-        Button fileOpenButton = toolBar.makeButton("ImportButton", openFileChooser);
-        Button saveButton = toolBar.makeButton("SaveButton", saveFile);
+        Button runButton = makeButton("RunButton", passCommands);
+        Button clearTextButton = makeButton("ClearTextButton", clearText);
+        Button fileOpenButton = makeButton("ImportButton", openFileChooser);
+        Button saveButton = makeButton("SaveButton", saveFile);
 
         HBox hBox = new HBox();
         hBox.setAlignment(Pos.CENTER);
@@ -211,9 +204,7 @@ public class AppView {
                     Path filePath = Path.of(f.getPath());
                     String content = Files.readString(filePath);
                     textArea.setText(content);
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
+                } catch (IOException e) {throw new RuntimeException(e);}
             }
         };
         return openFileChooser;
@@ -231,9 +222,7 @@ public class AppView {
                     FileWriter writer = new FileWriter(f);
                     writer.write(textArea.getText());
                     writer.close();
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
+                } catch (IOException e) {throw new RuntimeException(e);}
             }
         };
         return saveFile;
@@ -277,25 +266,15 @@ public class AppView {
         parser.setLanguage(myResources);
     }
 
-    public void reset() {
-        turtles.clear(); // TODO: Check if this is correct functionality
-        canvasShapes.getChildren().removeIf(i -> i instanceof ImageView);
-        currTurtleIdxs.clear();
-
-        turtles.put(1, new Turtle(1, 0, 0, canvasScreen));
-        canvasScreen.getShapes().getChildren().add(turtles.get(1).getIcon()); // TODO: We should probably refactor this for scalability
-        currTurtleIdxs.add(1);
-    }
-
     public void setCommands(ArrayList<Command> commands, AppView display) {
         currentApp.runApp(commands);
     }
-
-    public ArrayList<Integer> getCurrTurtleIdxs() {
-        return currTurtleIdxs;
+    public Button makeButton(String property, EventHandler<ActionEvent> handler) {
+        Button result = new Button();
+        String label = myResources.getString(property);
+        result.setText(label);
+        result.setOnAction(handler);
+        return result;
     }
 
-    public HashMap<Integer, Turtle> getTurtles() {
-        return turtles;
-    }
 }

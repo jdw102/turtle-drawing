@@ -1,0 +1,10 @@
+# Gosper space-filling curve
+# https://en.wikipedia.org/wiki/Gosper_curve
+
+# set angle to 60
+
+start 	F
+rule 	F F+A++A-F--FF-A+
+rule 	A -F+AA++A+F--F-A
+
+set 	A "pendown fd LENGTH"

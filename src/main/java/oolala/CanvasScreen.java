@@ -79,13 +79,6 @@ public class CanvasScreen {
         }
     }
 
-//    public Turtle[] getTurtles() {
-//        Turtle[] currTurtles = new Turtle[currTurtleIdxs.size()];
-//        for (int i = 0; i < currTurtleIdxs.size(); i++)
-//            currTurtles[i] = turtles.get(currTurtleIdxs.get(i));
-//        return currTurtles;
-//    }
-
     /**
      * A method to draw a new line on the canvas.
      *
@@ -108,7 +101,7 @@ public class CanvasScreen {
         line.setStrokeWidth(THICKNESS);
         line.setStroke(brushColor);
         //TODO: is color an attribute of a turtle?
-        shapes.getChildren().add(line);
+        shapes.getChildren().add(1, line);
     }
 
 
@@ -125,9 +118,36 @@ public class CanvasScreen {
         return shapes;
     }
 
+    public TextField makeTextField(String property, String defaultValue, EventHandler<ActionEvent> handler) {
+        TextField textField = new TextField(property);
+        textField.setText(defaultValue);
+        textField.setOnAction(handler);
+        return textField;
+    }
 
+    public ComboBox<String> makeComboBoxArrayList(ArrayList<String> items, EventHandler<ActionEvent> handler) {
+        ComboBox<String> comboBox = new ComboBox<>();
+        comboBox.getItems().addAll(items);
+        comboBox.setValue(items.get(0));//Default language
+        comboBox.setOnAction(handler);
+        return comboBox;
+    }
 
+    public ColorPicker makeColorPicker(EventHandler<ActionEvent> handler, Color defaultColor, String tooltip) {
+        ColorPicker colorPicker = new ColorPicker();
+        colorPicker.setValue(defaultColor);
+        colorPicker.setOnAction(handler);
+        Tooltip.install(colorPicker, new Tooltip(myResources.getString(tooltip)));
+        return colorPicker;
+    }
 
+    public Button makeButton(String property, EventHandler<ActionEvent> handler) {
+        Button result = new Button();
+        String label = myResources.getString(property);
+        result.setText(label);
+        result.setOnAction(handler);
+        return result;
+    }
     public Rectangle getBorderRectangle() {
         return borderRectangle;
     }
