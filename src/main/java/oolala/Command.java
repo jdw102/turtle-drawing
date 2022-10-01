@@ -1,5 +1,7 @@
 package oolala;
 
+import javafx.animation.SequentialTransition;
+
 import java.util.ArrayList;
 
 /**
@@ -15,8 +17,17 @@ public class Command {
     PENDOWN, PENUP, SHOWT, HIDET,
     HOME, STAMP, TELL
   }
+
+  public void setParam(int param) {
+    this.param = param;
+  }
+
   public int param;
   public ArrayList<Integer> params;
+
+  public void runCommand(TurtleView turtle, CanvasScreen canvas, SequentialTransition animation){
+
+  }
   @Override
   public String toString(){
     String s = "";
