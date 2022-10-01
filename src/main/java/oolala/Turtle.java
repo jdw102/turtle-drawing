@@ -13,6 +13,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 
 import java.util.ArrayList;
+import java.util.Collection;
 
 /**
  * A turtle/cursor to draw things with.
@@ -46,7 +47,7 @@ public class Turtle {
   private double relY;
   private Rectangle border;
   private Tooltip position;
-  private final double TURTLE_SPEED = 60;
+  private final double TURTLE_SPEED = 100;
 
   public Turtle() {
     this.id = DEFAULT_ID;
@@ -257,50 +258,38 @@ public class Turtle {
     line.setStrokeWidth(canvas.getThickness());
     line.setStroke(canvas.getBrushColor());
 
-    PathTransition pathTransition = penDown ? penDownAnimation(line, canvas, distance) : penUpAnimation(line, canvas, distance);
+    PathTransition pathTransition = lineAnimation(line, canvas, distance);
 
     //TODO: is color an attribute of a turtle?
     animation.getChildren().add(pathTransition);
   }
-  private PathTransition penDownAnimation(Line line, CanvasScreen canvas, double distance){
+  private PathTransition lineAnimation(Line line, CanvasScreen canvas, double distance){
     Circle pen = new Circle(canvas.getThickness() / 2);
-    ArrayList<Circle> penPoints = new ArrayList<>();
-    pen.setTranslateX(line.getStartX());
-    pen.setTranslateY(line.getStartY());
+    double x = posX;
+    double y = posY;
+    pen.setTranslateX(x);
+    pen.setTranslateY(y);
+    Collection<Circle> penPoints = new ArrayList<>();
+    boolean show = penDown;
     System.out.println(this.posY);
-    ChangeListener changeListener = new ChangeListener() {
-      @Override
-      public void changed(ObservableValue ov, Object t, Object t1) {
-          moveIcon(pen.getTranslateX(), pen.getTranslateY());
-          Circle newCirc = new Circle(pen.getTranslateX(), pen.getTranslateY(), pen.getRadius(), pen.getFill());
-          canvas.getShapes().getChildren().add(1, newCirc);
-          penPoints.add(newCirc);
-      }
-    };
-    pen.translateXProperty().addListener(changeListener);
-    pen.translateYProperty().addListener(changeListener);
+    pen.translateXProperty().addListener((ov, t, t1) -> drawDots(pen, penPoints, canvas, show));
+    pen.translateYProperty().addListener((ov, t, t1) -> drawDots(pen, penPoints, canvas, show));
     PathTransition pathTransition = new PathTransition(Duration.seconds(distance / TURTLE_SPEED), line, pen);
-    pathTransition.setOnFinished(event -> {
-      canvas.getShapes().getChildren().removeAll(penPoints);
-      penPoints.removeAll(penPoints);
-      canvas.getShapes().getChildren().add(1, line);
-    });
+    pathTransition.setOnFinished(event -> removeDots(pen, penPoints, canvas, line, show));
     return pathTransition;
   }
-  private PathTransition penUpAnimation(Line line, CanvasScreen canvas, double distance){
-    Circle pen = new Circle(canvas.getThickness() / 2);
-    pen.setVisible(false);
-    pen.setFill(canvas.getBrushColor());
-    ChangeListener changeListener = new ChangeListener() {
-      @Override
-      public void changed(ObservableValue ov, Object t, Object t1) {
-        moveIcon(pen.getTranslateX(), pen.getTranslateY());
-      }
-    };
-    pen.translateXProperty().addListener(changeListener);
-    pen.translateYProperty().addListener(changeListener);
-    PathTransition pathTransition = new PathTransition(Duration.seconds(distance / TURTLE_SPEED), line, pen);
-    return pathTransition;
+  private void drawDots(Circle pen, Collection<Circle> penPoints, CanvasScreen canvas, boolean show){
+    moveIcon(pen.getTranslateX(), pen.getTranslateY());
+    Circle newCirc = new Circle(pen.getTranslateX(), pen.getTranslateY(), pen.getRadius(), pen.getFill());
+    newCirc.setVisible(show);
+    canvas.getShapes().getChildren().add(1, newCirc);
+    penPoints.add(newCirc);
+  }
+  private void removeDots(Circle pen, Collection<Circle> penPoints, CanvasScreen canvas, Line line, boolean show){
+    canvas.getShapes().getChildren().removeAll(penPoints);
+    penPoints.removeAll(penPoints);
+    line.setVisible(show);
+    canvas.getShapes().getChildren().add(1, line);
   }
 }
 
