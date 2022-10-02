@@ -3,7 +3,6 @@ package oolala;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
-import oolala.Command.CmdName;
 
 public class LSystemParser {
 
@@ -12,6 +11,7 @@ public class LSystemParser {
                                                 "rt ", "lt ", "stamp"};
   public static final int DEFAULT_DIST = 10;
   public static final int DEFAULT_ANGLE = 30;
+  public static final int DEFAULT_LEVEL = 3;
 
   private boolean usingRandomDist = false;
   private boolean usingRandomAngle = false;
@@ -19,9 +19,13 @@ public class LSystemParser {
   private int distMax = DEFAULT_DIST;
   private int angMin = DEFAULT_ANGLE;
   private int angMax = DEFAULT_ANGLE;
+  private int dist = DEFAULT_DIST;
+  private int ang = DEFAULT_ANGLE;
+  private int level = DEFAULT_LEVEL;
   private HashMap<Character, String> alphabet;
   private HashMap<Character, String> rules;
   private String start;
+  private Parser logoParser;
 
   public LSystemParser() {
     alphabet = new HashMap<>();
@@ -34,22 +38,39 @@ public class LSystemParser {
   /**
    * A function that expands the given root according to the given rules.
    *
-   * @param root - The root string, or the initial string to start expanding
-   * @param level - The number of times to perform the expansion
    * @return a String object containing the root string expanded the specified number of times
    */
-  private String applyRules(String root, int level) {
-    String expanded = root;
-    for(int i = 0; i < level; i++){
+  private String applyRules() {
+    String expanded = start;
+    for(int i = 0; i < getLevel(); i++){
       String nextLevel = "";
       for(int j = 0; j < expanded.length(); j++){
         if(rules.containsKey(expanded.charAt(j))){
-          nextLevel.concat(rules.get(expanded.charAt(j)));
+          nextLevel = nextLevel.concat(rules.get(expanded.charAt(j)));
         }
       }
       expanded = nextLevel;
     }
     return expanded;
+  }
+
+  private String getCommandString(String expansion){
+    String commandString = "";
+    for(int i = 0; i < expansion.length(); i++){
+      char currChar = expansion.charAt(i);
+      if(alphabet.containsKey(currChar)) {
+        String cmd = alphabet.get(currChar);
+        if(cmd.substring(cmd.length() - 3).equals("fd ") ||
+            cmd.substring(cmd.length() - 3).equals("bk ")){
+          cmd = cmd.concat(Integer.toString(dist));
+        } else if(cmd.substring(cmd.length() - 3).equals("lt ") ||
+            cmd.substring(cmd.length() - 3).equals("rt ")) {
+          cmd = cmd.concat(Integer.toString(ang));
+        }
+        commandString = commandString.concat(cmd).concat(" ");
+      }
+    }
+    return commandString;
   }
 
   /**
@@ -58,13 +79,13 @@ public class LSystemParser {
    * for list of supported commands.
    *
    * @author Aditya Paul
-   * @param commandString - A string from the console containing all the
+   * @param configString - A string from the console containing all the
    *                        commands given to the application by the user
    * @return An ArrayList of the parsed commands
    */
-  public void parse(String commandString) {
-    commandString = commandString.toLowerCase();
-    Scanner scan = new Scanner(commandString);
+  public void parseConfig(String configString) {
+    configString = configString.toLowerCase();
+    Scanner scan = new Scanner(configString);
 
     char symbol;
     String expansion;
@@ -101,4 +122,29 @@ public class LSystemParser {
       }
     }
   }
+
+  public int getDist() {
+    return dist;
+  }
+
+  public void setDist(int dist) {
+    this.dist = dist;
+  }
+
+  public int getAng() {
+    return ang;
+  }
+
+  public void setAng(int ang) {
+    this.ang = ang;
+  }
+
+  public int getLevel() {
+    return level;
+  }
+
+  public void setLevel(int level) {
+    this.level = level;
+  }
+
 }
