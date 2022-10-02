@@ -3,13 +3,10 @@ package oolala;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 import java.util.Scanner;
-import javax.swing.SpringLayout;
 
-import javafx.scene.Node;
 import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
-import oolala.Command.CmdName;
+import oolala.Command.*;
 
 /**
  * The internal parser for each Logo command.

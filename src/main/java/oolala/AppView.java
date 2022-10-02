@@ -8,7 +8,6 @@ import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
@@ -17,13 +16,12 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import oolala.Command.Command;
 
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
-
-import static oolala.Command.CmdName.TELL;
 
 /**
  * @Author Luyao Wang
@@ -42,26 +40,25 @@ public class AppView {
     private FileChooser fileChooser;
     private Stage stage;
     private CanvasScreen canvasScreen;
+    ToolBar toolBar;
     private VBox textBoxVBox;
-    private HBox textBoxButtonsHBox;
-    private HBox canvasHBox;
+    private HBox leftToolbarHbox;
+    private HBox rightToolBarHBox;
     private ListView<String> recentlyUsed;
     private TextArea textArea;
     private Label historyLabel;
     private Group canvasShapes;
     private static final String DEFAULT_LANGUAGE = "English";
     private String language;
-    private ArrayList<String> languages = new ArrayList<String>(Arrays.asList("English", "简体中文", "繁體中文", "日本語"));
-    private ArrayList<String> canvasButtonsLabels = new ArrayList<String>(Arrays.asList("ClearCanvasButton", "ResetTurtleButton", "SaveButton"));
-    private ArrayList<String> textBoxButtonsLabels = new ArrayList<String>(Arrays.asList("ImportButton", "SaveButton", "RunButton", "ClearTextButton"));
-
+    private ArrayList<String> languages = new ArrayList<>(Arrays.asList("English", "简体中文", "繁體中文", "日本語"));
+    private ArrayList<String> canvasButtonsLabels = new ArrayList<>(Arrays.asList("ClearCanvasButton", "ResetTurtleButton", "SaveButton"));
+    private ArrayList<String> textBoxButtonsLabels = new ArrayList<>(Arrays.asList("ImportButton", "SaveButton", "RunButton", "ClearTextButton"));
     private ComboBox<String> languagesComboBox;
     private TextField thicknessTextField;
     private ColorPicker colorPickerBackGround;
     private ColorPicker colorPicker;
     private Color brushColor;
     private Color backgroundColor;
-
     private HashMap<String, AppModel> apps;
     private AppModel currentApp;
 
@@ -74,19 +71,21 @@ public class AppView {
 
         root = new BorderPane();
 
+        toolBar = new ToolBar(myResources);
+
         textBox = new TextBox(myResources);
         textBoxVBox = makeTextBoxVBox();
         root.setLeft(textBoxVBox);
 
         canvasScreen = new CanvasScreen(myResources);
-        canvasHBox = makeCanvasHBox();
+        rightToolBarHBox = makeCanvasHBox();
         canvasShapes = canvasScreen.getShapes();
         apps = new HashMap<>();
 
         apps.put("DrawingApp", new TurtleDrawingModel(this));
         currentApp = apps.get("DrawingApp");
 
-        root.setCenter(canvasHBox);
+        root.setCenter(rightToolBarHBox);
         root.getChildren().add(canvasShapes);
 
         root.setPadding(new Insets(10, 10, 10, 10));
@@ -96,7 +95,7 @@ public class AppView {
 
     public VBox makeTextBoxVBox() {
         VBox vBox = new VBox();
-        textBoxButtonsHBox = makeTextButtonsHBox();
+        leftToolbarHbox = makeLeftToolbarHBox();
         textArea = textBox.makeTextArea();
 
         KeyCombination keyCombination = new KeyCodeCombination(KeyCode.ENTER, KeyCombination.ALT_DOWN);
@@ -118,7 +117,7 @@ public class AppView {
         historyTitle.setAlignment(Pos.CENTER);
         historyTitle.getStyleClass().add("box");
 
-        vBox.getChildren().add(textBoxButtonsHBox);
+        vBox.getChildren().add(leftToolbarHbox);
         vBox.getChildren().add(textArea);
         vBox.getChildren().add(historyTitle);
         vBox.getChildren().add(recentlyUsed);
@@ -134,9 +133,9 @@ public class AppView {
         };
         EventHandler<ActionEvent> resetCommand = event -> currentApp.reset();
         EventHandler<ActionEvent> saveCommand = event -> canvasScreen.screenShot();
-        Button clearButton = canvasScreen.makeButton(canvasButtonsLabels.get(0), clearCommand);
-        Button resetButton = canvasScreen.makeButton(canvasButtonsLabels.get(1), resetCommand);
-        Button saveButton = canvasScreen.makeButton(canvasButtonsLabels.get(2), saveCommand);
+        Button clearButton = toolBar.makeButton(canvasButtonsLabels.get(0), clearCommand);
+        Button resetButton = toolBar.makeButton(canvasButtonsLabels.get(1), resetCommand);
+        Button saveButton = toolBar.makeButton(canvasButtonsLabels.get(2), saveCommand);
 
         EventHandler<ActionEvent> langCommand = event -> {
             setLanguage(languagesComboBox.getValue());
@@ -162,15 +161,15 @@ public class AppView {
         return hBox;
     }
 
-    private HBox makeTextButtonsHBox() {
+    private HBox makeLeftToolbarHBox() {
         EventHandler<ActionEvent> passCommands = makePassCommandsEventEventHandler();
         EventHandler<ActionEvent> clearText = event -> textArea.clear();
         EventHandler<ActionEvent> openFileChooser = openFileChooserEventHandler();
         EventHandler<ActionEvent> saveFile = makeSaveFileEventHandler();
-        Button runButton = makeButton("RunButton", passCommands);
-        Button clearTextButton = makeButton("ClearTextButton", clearText);
-        Button fileOpenButton = makeButton("ImportButton", openFileChooser);
-        Button saveButton = makeButton("SaveButton", saveFile);
+        Button runButton = toolBar.makeButton("RunButton", passCommands);
+        Button clearTextButton = toolBar.makeButton("ClearTextButton", clearText);
+        Button fileOpenButton = toolBar.makeButton("ImportButton", openFileChooser);
+        Button saveButton = toolBar.makeButton("SaveButton", saveFile);
 
         HBox hBox = new HBox();
         hBox.setAlignment(Pos.CENTER);
@@ -179,10 +178,7 @@ public class AppView {
         runButton.setMinWidth(textBoxWidth / 4);
         clearTextButton.setMinWidth(textBoxWidth / 4);
         fileOpenButton.setMinWidth(textBoxWidth / 4);
-        hBox.getChildren().add(fileOpenButton);
-        hBox.getChildren().add(saveButton);
-        hBox.getChildren().add(runButton);
-        hBox.getChildren().add(clearTextButton);
+        hBox.getChildren().addAll(fileOpenButton, saveButton, runButton, clearTextButton);
 
         return hBox;
     }
@@ -247,7 +243,7 @@ public class AppView {
         myResources = ResourceBundle.getBundle(DEFAULT_RESOURCE_PACKAGE + language);
 
         int i = 0;
-        for (Node n : canvasHBox.getChildren()) {
+        for (Node n : rightToolBarHBox.getChildren()) {
             if (n instanceof Button) {
                 updateButtonLanguage((Button) n, canvasButtonsLabels.get(i));
                 i++;
@@ -259,7 +255,7 @@ public class AppView {
         historyText = myResources.getString("CommandHistory");
         historyLabel.setText(historyText);
         int j = 0;
-        for (Node n : textBoxButtonsHBox.getChildren()) {
+        for (Node n : leftToolbarHbox.getChildren()) {
             updateButtonLanguage((Button) n, textBoxButtonsLabels.get(j));
             j++;
         }
@@ -268,13 +264,6 @@ public class AppView {
 
     public void setCommands(ArrayList<Command> commands, AppView display) {
         currentApp.runApp(commands);
-    }
-    public Button makeButton(String property, EventHandler<ActionEvent> handler) {
-        Button result = new Button();
-        String label = myResources.getString(property);
-        result.setText(label);
-        result.setOnAction(handler);
-        return result;
     }
 
 }

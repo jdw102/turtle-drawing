@@ -2,6 +2,7 @@ package oolala;
 
 import javafx.animation.SequentialTransition;
 import javafx.scene.shape.Rectangle;
+import oolala.Command.Command;
 
 import java.util.ArrayList;
 import java.util.HashMap;
