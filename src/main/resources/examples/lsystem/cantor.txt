@@ -1,0 +1,7 @@
+# Cantor set
+# https://en.wikipedia.org/wiki/Cantor_set
+
+START 	F
+
+RULE 	F FGF
+RULE 	G GGG
