@@ -36,7 +36,6 @@ public class AppView {
     private TextBox textBox;
     public static ResourceBundle myResources;
     private static final String DEFAULT_RESOURCE_PACKAGE = "Properties.";
-    private Parser parser;
     private FileChooser fileChooser;
     private Stage stage;
     private CanvasScreen canvasScreen;
@@ -67,7 +66,6 @@ public class AppView {
         this.stage = stage;
         this.language = DEFAULT_LANGUAGE;
         myResources = ResourceBundle.getBundle(DEFAULT_RESOURCE_PACKAGE + language);
-        parser = new Parser(myResources);
 
         root = new BorderPane();
 
@@ -82,8 +80,10 @@ public class AppView {
         canvasShapes = canvasScreen.getShapes();
         apps = new HashMap<>();
 
-        apps.put("DrawingApp", new TurtleDrawingModel(this));
-        currentApp = apps.get("DrawingApp");
+        apps.put("DrawingApp", new TurtleDrawingModel(this, myResources));
+        apps.put("LSystem", new LSystemModel(this, myResources));
+        //currentApp = apps.get("DrawingApp");
+        currentApp = apps.get("LSystem");
 
         root.setCenter(rightToolBarHBox);
         root.getChildren().add(canvasShapes);
@@ -101,7 +101,7 @@ public class AppView {
         KeyCombination keyCombination = new KeyCodeCombination(KeyCode.ENTER, KeyCombination.ALT_DOWN);
         textArea.setOnKeyPressed(event -> {
             if (keyCombination.match(event)) {
-                ArrayList<Command> commands = parser.parse(textArea);
+                ArrayList<Command> commands = currentApp.getParser().parse(textArea.getText().toLowerCase());
                 textBox.updateRecentlyUsed(commands, recentlyUsed);
                 setCommands(commands, this);
             }
@@ -185,7 +185,7 @@ public class AppView {
 
     private EventHandler<ActionEvent> makePassCommandsEventEventHandler() {
         EventHandler<ActionEvent> passCommands = event -> {
-            ArrayList<Command> commands = parser.parse(textArea);
+            ArrayList<Command> commands = currentApp.getParser().parse(textArea.getText().toLowerCase());
             textBox.updateRecentlyUsed(commands, recentlyUsed);
             setCommands(commands, this);
         };
@@ -259,7 +259,8 @@ public class AppView {
             updateButtonLanguage((Button) n, textBoxButtonsLabels.get(j));
             j++;
         }
-        parser.setLanguage(myResources);
+        //currentApp.getParser().setLanguage(myResources);
+        //TODO: language change in parser dialogs
     }
 
     public void setCommands(ArrayList<Command> commands, AppView display) {
