@@ -13,19 +13,27 @@ import oolala.Command.CmdName;
 public class Parser {
 
   /**
+   * A JavaFX wrapper for the below parse function
+   *
+   * @param textbox - The IDE's textbox.
+   * @return An arraylist of Command structures
+   */
+  public ArrayList<Command> parse(TextBox textbox) {
+    return parse(textbox.getTextArea().getText().toLowerCase());
+  }
+
+  /**
    * A method to parse user-given Logo commands from the app console.
    * See https://courses.cs.duke.edu/compsci307d/fall22/assign/02_oolala/logo.php
    * for list of supported commands.
    *
    * @author Aditya Paul
-   * @param textbox - The IDE's textbox. In the future, we plan on making this
-   *                  a rich text area for syntax error highlighting.
+   * @param commandString - The user-given logo program to parse.
    * @return An ArrayList of the parsed commands
    */
-  public ArrayList<Command> parse(TextBox textbox) {
+  public ArrayList<Command> parse(String commandString) {
     ArrayList<Command> program = new ArrayList<>();
 
-    String commandString = textbox.getTextArea().getText().toLowerCase();
     Scanner scan = new Scanner(commandString);
     while (scan.hasNext()){
       Command c = new Command();

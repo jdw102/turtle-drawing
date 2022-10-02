@@ -33,6 +33,7 @@ public class LSystemParser {
       alphabet.put(ALPHA_SYM[i], ALPHA_COMM[i]);
     }
     rules = new HashMap<>();
+    logoParser = new Parser();
   }
 
   /**
@@ -62,9 +63,15 @@ public class LSystemParser {
         String cmd = alphabet.get(currChar);
         if(cmd.substring(cmd.length() - 3).equals("fd ") ||
             cmd.substring(cmd.length() - 3).equals("bk ")){
+          if (usingRandomDist) {
+            dist = (int) Math.round(Math.random() * (distMax - distMin) + distMin);
+          }
           cmd = cmd.concat(Integer.toString(dist));
         } else if(cmd.substring(cmd.length() - 3).equals("lt ") ||
             cmd.substring(cmd.length() - 3).equals("rt ")) {
+          if (usingRandomAngle) {
+            ang = (int) Math.round(Math.random() * (angMax - angMin) + angMin);
+          }
           cmd = cmd.concat(Integer.toString(ang));
         }
         commandString = commandString.concat(cmd).concat(" ");
@@ -74,14 +81,12 @@ public class LSystemParser {
   }
 
   /**
-   * A method to parse user-given Logo commands from the app console.
-   * See https://courses.cs.duke.edu/compsci307d/fall22/assign/02_oolala/logo.php
-   * for list of supported commands.
+   * A method to configure the parser based on the inputs given in the
+   * IDE text box.
    *
    * @author Aditya Paul
    * @param configString - A string from the console containing all the
    *                        commands given to the application by the user
-   * @return An ArrayList of the parsed commands
    */
   public void parseConfig(String configString) {
     configString = configString.toLowerCase();
@@ -91,34 +96,31 @@ public class LSystemParser {
     String expansion;
     while (scan.hasNext()){
       String prefix = scan.next();
-      switch(prefix) {
-        case "start":
-          start = scan.next();
-          break;
-        case "rule":
+      switch (prefix) {
+        case "start" -> start = scan.next();
+        case "rule" -> {
           symbol = scan.next().charAt(0);
           expansion = scan.next();
           rules.put(symbol, expansion);
-          break;
-        case "randomd":
+        }
+        case "randomd" -> {
           usingRandomDist = true;
           distMin = scan.nextInt();
           distMax = scan.nextInt();
-          break;
-        case "randoma":
+        }
+        case "randoma" -> {
           usingRandomAngle = true;
           angMin = scan.nextInt();
           angMax = scan.nextInt();
-          break;
-        case "set":
+        }
+        case "set" -> {
           symbol = scan.next().charAt(0);
           expansion = scan.next();
           alphabet.put(symbol, expansion);
-          break;
-        default:
+        }
+        default ->
           // TODO: Handle bad input
-          System.err.println("Unrecognized Command!");
-          break;
+            System.err.println("Unrecognized Command!");
       }
     }
   }
@@ -147,4 +149,8 @@ public class LSystemParser {
     this.level = level;
   }
 
+  public ArrayList<Command> parse(String input){
+    parseConfig(input);
+    return logoParser.parse(getCommandString(applyRules()));
+  }
 }
