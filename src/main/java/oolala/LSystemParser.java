@@ -21,6 +21,7 @@ public class LSystemParser {
   private int angMax = DEFAULT_ANGLE;
   private HashMap<Character, String> alphabet;
   private HashMap<Character, String> rules;
+  private String start;
 
   public LSystemParser() {
     alphabet = new HashMap<>();
@@ -61,22 +62,22 @@ public class LSystemParser {
    *                        commands given to the application by the user
    * @return An ArrayList of the parsed commands
    */
-  public ArrayList<Command> parse(String commandString) {
-    ArrayList<Command> program = new ArrayList<Command>();
-
+  public void parse(String commandString) {
     commandString = commandString.toLowerCase();
     Scanner scan = new Scanner(commandString);
+
+    char symbol;
+    String expansion;
     while (scan.hasNext()){
-      Command c = new Command();
       String prefix = scan.next();
       switch(prefix) {
         case "start":
-          c.prefix = CmdName.FORWARD;
-          c.param = scan.nextInt();
+          start = scan.next();
           break;
         case "rule":
-          c.prefix = CmdName.BACK;
-          c.param = scan.nextInt();
+          symbol = scan.next().charAt(0);
+          expansion = scan.next();
+          rules.put(symbol, expansion);
           break;
         case "randomd":
           usingRandomDist = true;
@@ -89,15 +90,15 @@ public class LSystemParser {
           angMax = scan.nextInt();
           break;
         case "set":
-          c.prefix = CmdName.PENDOWN;
+          symbol = scan.next().charAt(0);
+          expansion = scan.next();
+          alphabet.put(symbol, expansion);
           break;
         default:
           // TODO: Handle bad input
           System.err.println("Unrecognized Command!");
           break;
       }
-      program.add(c);
     }
-    return program;
   }
 }
