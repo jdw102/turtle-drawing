@@ -41,13 +41,15 @@ public class LSystemParser {
    *
    * @return a String object containing the root string expanded the specified number of times
    */
-  private String applyRules() {
+  public String applyRules() {
     String expanded = start;
     for(int i = 0; i < getLevel(); i++){
       String nextLevel = "";
       for(int j = 0; j < expanded.length(); j++){
         if(rules.containsKey(expanded.charAt(j))){
           nextLevel = nextLevel.concat(rules.get(expanded.charAt(j)));
+        } else {
+          nextLevel = nextLevel.concat(Character.toString(expanded.charAt(j)));
         }
       }
       expanded = nextLevel;
@@ -55,7 +57,7 @@ public class LSystemParser {
     return expanded;
   }
 
-  private String getCommandString(String expansion){
+  public String getCommandString(String expansion){
     String commandString = "";
     for(int i = 0; i < expansion.length(); i++){
       char currChar = expansion.charAt(i);
