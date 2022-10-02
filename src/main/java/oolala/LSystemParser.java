@@ -7,17 +7,26 @@ import oolala.Command.CmdName;
 
 public class LSystemParser {
 
+  public static final char[] ALPHA_SYM = {'f', 'g', 'a', 'b', '+', '-', 'x'};
+  public static final String[] ALPHA_COMM = {"pd fd ", "pu fd ", "pu bk ", "pd bk ",
+                                                "rt ", "lt ", "stamp"};
   public static final int DEFAULT_DIST = 10;
   public static final int DEFAULT_ANGLE = 30;
 
   private boolean usingRandomDist = false;
   private boolean usingRandomAngle = false;
+  private int distMin = DEFAULT_DIST;
+  private int distMax = DEFAULT_DIST;
+  private int angMin = DEFAULT_ANGLE;
+  private int angMax = DEFAULT_ANGLE;
   private HashMap<Character, String> alphabet;
   private HashMap<Character, String> rules;
 
   public LSystemParser() {
     alphabet = new HashMap<>();
-
+    for(int i = 0; i < ALPHA_COMM.length; i++) {
+      alphabet.put(ALPHA_SYM[i], ALPHA_COMM[i]);
+    }
     rules = new HashMap<>();
   }
 
@@ -42,8 +51,6 @@ public class LSystemParser {
     return expanded;
   }
 
-
-
   /**
    * A method to parse user-given Logo commands from the app console.
    * See https://courses.cs.duke.edu/compsci307d/fall22/assign/02_oolala/logo.php
@@ -57,50 +64,32 @@ public class LSystemParser {
   public ArrayList<Command> parse(String commandString) {
     ArrayList<Command> program = new ArrayList<Command>();
 
+    commandString = commandString.toLowerCase();
     Scanner scan = new Scanner(commandString);
     while (scan.hasNext()){
       Command c = new Command();
       String prefix = scan.next();
       switch(prefix) {
-        case "fd":
+        case "start":
           c.prefix = CmdName.FORWARD;
           c.param = scan.nextInt();
           break;
-        case "bk":
+        case "rule":
           c.prefix = CmdName.BACK;
           c.param = scan.nextInt();
           break;
-        case "lt":
-          c.prefix = CmdName.LEFT;
-          c.param = scan.nextInt();
+        case "randomd":
+          usingRandomDist = true;
+          distMin = scan.nextInt();
+          distMax = scan.nextInt();
           break;
-        case "rt":
-          c.prefix = CmdName.RIGHT;
-          c.param = scan.nextInt();
+        case "randoma":
+          usingRandomAngle = true;
+          angMin = scan.nextInt();
+          angMax = scan.nextInt();
           break;
-        case "pd":
+        case "set":
           c.prefix = CmdName.PENDOWN;
-          break;
-        case "pu":
-          c.prefix = CmdName.PENUP;
-          break;
-        case "st":
-          c.prefix = CmdName.SHOWT;
-          break;
-        case "ht":
-          c.prefix = CmdName.HIDET;
-          break;
-        case "home":
-          c.prefix = CmdName.HOME;
-          break;
-        case "stamp":
-          c.prefix = CmdName.STAMP;
-          break;
-        case "tell":
-          c.prefix = CmdName.TELL;
-          c.params = new ArrayList<Integer>();
-          while (scan.hasNextInt())
-            c.params.add(scan.nextInt());
           break;
         default:
           // TODO: Handle bad input
