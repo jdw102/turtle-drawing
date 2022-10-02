@@ -54,6 +54,7 @@ public class AppView {
     private ArrayList<String> languages = new ArrayList<String>(Arrays.asList("English", "简体中文", "繁體中文", "日本語"));
     private ArrayList<String> canvasButtonsLabels = new ArrayList<String>(Arrays.asList("ClearCanvasButton", "ResetTurtleButton", "SaveButton"));
     private ArrayList<String> textBoxButtonsLabels = new ArrayList<String>(Arrays.asList("ImportButton", "SaveButton", "RunButton", "ClearTextButton"));
+    private ArrayList<String> turtleImages = new ArrayList<String>(Arrays.asList());
 
     private ComboBox<String> languagesComboBox;
     private TextField thicknessTextField;
@@ -79,10 +80,10 @@ public class AppView {
         root.setLeft(textBoxVBox);
 
         canvasScreen = new CanvasScreen(myResources);
-        canvasHBox = makeCanvasHBox();
+        canvasHBox = makeCanvasButtonsHBox();
         canvasShapes = canvasScreen.getShapes();
-        apps = new HashMap<>();
 
+        apps = new HashMap<>();
         apps.put("DrawingApp", new TurtleDrawingModel(this));
         currentApp = apps.get("DrawingApp");
 
@@ -104,7 +105,7 @@ public class AppView {
             if (keyCombination.match(event)) {
                 ArrayList<Command> commands = parser.parse(textArea);
                 textBox.updateRecentlyUsed(commands, recentlyUsed);
-                setCommands(commands, this);
+                setCommands(commands);
             }
         });
 
@@ -127,7 +128,7 @@ public class AppView {
         return vBox;
     }
 
-    public HBox makeCanvasHBox() {
+    public HBox makeCanvasButtonsHBox() {
         EventHandler<ActionEvent> clearCommand = event -> {
             canvasScreen.clear();
             currentApp.reset();
@@ -191,7 +192,7 @@ public class AppView {
         EventHandler<ActionEvent> passCommands = event -> {
             ArrayList<Command> commands = parser.parse(textArea);
             textBox.updateRecentlyUsed(commands, recentlyUsed);
-            setCommands(commands, this);
+            setCommands(commands);
         };
         return passCommands;
     }
@@ -266,7 +267,7 @@ public class AppView {
         parser.setLanguage(myResources);
     }
 
-    public void setCommands(ArrayList<Command> commands, AppView display) {
+    public void setCommands(ArrayList<Command> commands) {
         currentApp.runApp(commands);
     }
     public Button makeButton(String property, EventHandler<ActionEvent> handler) {

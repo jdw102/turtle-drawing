@@ -49,12 +49,14 @@ public class TurtleView {
     FadeTransition fade = new FadeTransition(Duration.seconds(0.25), icon);
     fade.setFromValue(icon.getOpacity());
     fade.setToValue(1.0);
+    fade.setOnFinished(event -> icon.toFront());
     animation.getChildren().add(fade);
   }
   public void hideTurtle(SequentialTransition animation){
     FadeTransition fade = new FadeTransition(Duration.seconds(0.25), icon);
     fade.setFromValue(icon.getOpacity());
     fade.setToValue(0.0);
+    fade.setOnFinished(event -> icon.toBack());
     animation.getChildren().add(fade);
   }
   public void home(SequentialTransition animation){
