@@ -1,9 +1,11 @@
 package oolala;
 
+import oolala.Command.Command;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import static oolala.Command.CmdName.TELL;
+import static oolala.Command.Command.CmdName.TELL;
 
 public class TurtleDrawingModel extends AppModel {
     public TurtleDrawingModel(AppView display) {

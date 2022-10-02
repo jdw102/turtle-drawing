@@ -37,17 +37,6 @@ public class CanvasScreen {
         borderRectangle = new Rectangle(300, 50, 500, 540);
         shapes.getChildren().add(borderRectangle);
         borderRectangle.setFill(backgroundColor);
-
-        //Area indicator
-//        vBox.getChildren().add(Buttons);
-//        borderRectangle = new Rectangle();
-//        vBox.getChildren().add(borderRectangle);
-//        borderRectangle.widthProperty().bind(vBox.widthProperty().subtract(60));
-//        borderRectangle.heightProperty().bind(vBox.heightProperty().subtract(60));
-//        borderRectangle.translateXProperty().bind((vBox.widthProperty().divide(2)).subtract((borderRectangle.widthProperty().divide(2))));
-//        borderRectangle.translateYProperty().bind((vBox.heightProperty().divide(2)).subtract((borderRectangle.heightProperty().divide(2))));
-
-        //vBox.getChildren().add(hBox);
     }
 
     public void setBrushColor(Color color) {
@@ -78,33 +67,6 @@ public class CanvasScreen {
             // TODO: handle exception here
         }
     }
-
-    /**
-     * A method to draw a new line on the canvas.
-     *
-     * @param xStart x coordinate of the start point
-     * @param yStart
-     * @param xEnd
-     * @param yEnd
-     * @author Luyao Wang
-     */
-    public void drawLine(double xStart, double yStart, double xEnd, double yEnd) {
-        System.out.println(xStart);
-        System.out.println(yStart);
-        System.out.println(xEnd);
-        System.out.println(yEnd);
-
-        Line line = new Line();
-        line.setStartX(xStart);
-        line.setStartY(yStart);
-        line.setEndX(xEnd);
-        line.setEndY(yEnd);
-        line.setStrokeWidth(THICKNESS);
-        line.setStroke(brushColor);
-        //TODO: is color an attribute of a turtle?
-        shapes.getChildren().add(1, line);
-    }
-
 
     public void clear() {
         //same way of implementing
