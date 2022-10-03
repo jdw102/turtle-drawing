@@ -26,7 +26,7 @@ public class LSystemModel extends AppModel {
                 for (Integer param : instruction.params) {
                     if (!turtles.containsKey(param)) {
                         System.out.println("Creating new turtle");
-                        turtles.put(param, new TurtleView(0, 0, myDisplay.getCanvasScreen()));
+                        turtles.put(param, new TurtleView(homeX, homeY, myDisplay.getCanvasScreen(), this));
                         myDisplay.getCanvasScreen().getShapes().getChildren().add(turtles.get(param).getIcon());
                     }
                 }

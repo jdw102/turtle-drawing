@@ -5,6 +5,8 @@ import javafx.scene.Node;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseDragEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.*;
 import javafx.scene.shape.Rectangle;
@@ -19,6 +21,8 @@ import java.util.Collection;
  * @author Aditya Paul
  */
 public class TurtleView {
+  private double homeX;
+  private double homeY;
   private TurtleModel model;
   public static final double DEFAULT_ICON_SIZE = 30;
   public String turtleImage = "Images/turtleicon.png";
@@ -28,11 +32,14 @@ public class TurtleView {
   private Tooltip position;
   private final double TURTLE_SPEED = 100;
 
-  public TurtleView( int posX, int posY, CanvasScreen screen){
+  public TurtleView(double posX, double posY, CanvasScreen screen, AppModel app){
     this.iconSize = DEFAULT_ICON_SIZE;
     this.model = new TurtleModel(posX, posY, screen.getBorderRectangle(), iconSize);
+    this.homeX = model.getPosX();
+    this.homeY = model.getPosY();
     this.position = new Tooltip();
-    this.icon = createIcon(model.getPosX(), model.getPosY(), iconSize, screen, position, false);
+    this.icon = createIcon(model.getPosX(), model.getPosY(), iconSize);
+    installPositionLabel(icon, position, app);
     this.stamps = new ArrayList<>();
   }
   public void move(double dist, CanvasScreen canvas, SequentialTransition animation){
@@ -49,20 +56,25 @@ public class TurtleView {
     FadeTransition fade = new FadeTransition(Duration.seconds(0.25), icon);
     fade.setFromValue(icon.getOpacity());
     fade.setToValue(1.0);
+    fade.setOnFinished(event -> icon.toFront());
     animation.getChildren().add(fade);
   }
   public void hideTurtle(SequentialTransition animation){
     FadeTransition fade = new FadeTransition(Duration.seconds(0.25), icon);
     fade.setFromValue(icon.getOpacity());
     fade.setToValue(0.0);
+    fade.setOnFinished(event -> icon.toBack());
     animation.getChildren().add(fade);
   }
   public void home(SequentialTransition animation){
     FadeTransition fadeOut = new FadeTransition(Duration.seconds(0.25), icon);
     fadeOut.setFromValue(icon.getOpacity());
     fadeOut.setToValue(0.0);
-    model.moveHome();
-    fadeOut.setOnFinished(event -> moveIcon(model.getHomeX(), model.getHomeY()));
+    fadeOut.setOnFinished(event -> {
+      moveIcon(homeX, homeY);
+      model.setPosition(homeX, homeY);
+      model.updateRelativePosition(icon, position);
+    } );
     FadeTransition fadeIn = new FadeTransition(Duration.seconds(0.25), icon);
     fadeIn.setFromValue(0.0);
     fadeIn.setToValue(icon.getOpacity());
@@ -70,7 +82,7 @@ public class TurtleView {
     animation.getChildren().add(fadeIn);
   }
   public void stamp(CanvasScreen canvas, SequentialTransition animation){
-    ImageView s = createIcon(model.getPosX(), model.getPosY(), iconSize, canvas, new Tooltip(), true);
+    ImageView s = createIcon(model.getPosX(), model.getPosY(), iconSize);
     s.toFront();
     stamps.add(s);
     s.setOpacity(0.0);
@@ -89,7 +101,7 @@ public class TurtleView {
     this.icon.toFront();
     model.updateRelativePosition(icon, position);
   }
-  private ImageView createIcon(double x, double y, double size, CanvasScreen canvas, Tooltip tooltip, boolean stamp){
+  private ImageView createIcon(double x, double y, double size){
     ImageView i = new ImageView(new Image(turtleImage));
     i.setFitHeight(size);
     i.setFitWidth(size);
@@ -97,14 +109,25 @@ public class TurtleView {
     i.setY(y- size / 2);
     i.setRotate(-model.geAngle());
     i.toFront();
-    if (!stamp){installPositionLabel(i, tooltip);}
     return i;
   }
-  public void installPositionLabel(ImageView i, Tooltip tooltip){
+  public void installPositionLabel(ImageView i, Tooltip tooltip, AppModel app){
     i.setOnMouseEntered(event -> onHover());
     i.setOnMouseExited(event -> offHover());
+    i.setOnMouseDragged(event -> onDrag(event, app));
     model.updateRelativePosition(i, tooltip);
     Tooltip.install(i, tooltip);
+  }
+  private void onDrag(MouseEvent e, AppModel app){
+    double x = e.getX();
+    double y = e.getY();
+    if (!app.isRunning() && app.getMyDisplay().isCanvasClear() && x < model.getXMax() && x > model.getXMin() && y > model.getYMin() && y < model.getYMax()){
+      moveIcon(x, y);
+      model.setPosition(x, y);
+      app.setHome(model.getRelX(), -model.getRelY());
+      homeX = x;
+      homeY = y;
+    }
   }
   private void onHover(){
     icon.setScaleX(1.1);
