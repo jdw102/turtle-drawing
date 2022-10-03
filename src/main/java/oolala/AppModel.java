@@ -67,6 +67,11 @@ public abstract class AppModel {
         running = false;
         animation.getChildren().removeAll(animation.getChildren());
     }
+    public void removeTurtles(){
+        for (Integer i: currTurtleIdxs){
+            myDisplay.getCanvasScreen().getShapes().getChildren().remove(turtles.get(i).getIcon());
+        }
+    }
     public boolean isRunning(){
         return running;
     }

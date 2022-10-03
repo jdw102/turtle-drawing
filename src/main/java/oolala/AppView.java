@@ -1,5 +1,7 @@
 package oolala;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -8,6 +10,8 @@ import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
@@ -52,7 +56,9 @@ public class AppView {
     private ArrayList<String> languages = new ArrayList<>(Arrays.asList("English", "简体中文", "繁體中文", "日本語"));
     private ArrayList<String> canvasButtonsLabels = new ArrayList<>(Arrays.asList("ClearCanvasButton", "ResetTurtleButton", "SaveButton"));
     private ArrayList<String> textBoxButtonsLabels = new ArrayList<>(Arrays.asList("ImportButton", "SaveButton", "RunButton", "ClearTextButton"));
+    private ObservableList<String> applicationLabels = FXCollections.observableArrayList("DrawingApp", "LSystem");
     private ComboBox<String> languagesComboBox;
+    private ComboBox<String> appComboBox;
     private TextField thicknessTextField;
     private ColorPicker colorPickerBackGround;
     private ColorPicker colorPicker;
@@ -80,8 +86,8 @@ public class AppView {
         canvasShapes = canvasScreen.getShapes();
         apps = new HashMap<>();
 
-        apps.put("DrawingApp", new TurtleDrawingModel(this, myResources));
-        apps.put("LSystem", new LSystemModel(this, myResources));
+        apps.put(applicationLabels.get(0), new TurtleDrawingModel(this, myResources));
+        apps.put(applicationLabels.get(1), new LSystemModel(this, myResources));
         currentApp = apps.get("DrawingApp");
         currentApp.displayTurtles();
 //        currentApp = apps.get("LSystem");
@@ -164,23 +170,33 @@ public class AppView {
         EventHandler<ActionEvent> clearText = event -> textArea.clear();
         EventHandler<ActionEvent> openFileChooser = openFileChooserEventHandler();
         EventHandler<ActionEvent> saveFile = makeSaveFileEventHandler();
+        EventHandler<ActionEvent> selectApp = makeAppSelectionEventHandler();
         Button runButton = toolBar.makeButton("RunButton", passCommands);
         Button clearTextButton = toolBar.makeButton("ClearTextButton", clearText);
         Button fileOpenButton = toolBar.makeButton("ImportButton", openFileChooser);
         Button saveButton = toolBar.makeButton("SaveButton", saveFile);
-
+        appComboBox = makeAppSelector();
         HBox hBox = new HBox();
         hBox.setAlignment(Pos.CENTER);
         hBox.setMinWidth(textBoxWidth);
-        saveButton.setMinWidth(textBoxWidth / 4);
-        runButton.setMinWidth(textBoxWidth / 4);
-        clearTextButton.setMinWidth(textBoxWidth / 4);
-        fileOpenButton.setMinWidth(textBoxWidth / 4);
-        hBox.getChildren().addAll(fileOpenButton, saveButton, runButton, clearTextButton);
+        saveButton.setMinWidth(textBoxWidth / 5);
+        runButton.setMinWidth(textBoxWidth / 5);
+        clearTextButton.setMinWidth(textBoxWidth / 5);
+        fileOpenButton.setMinWidth(textBoxWidth / 5);
+        appComboBox.setMaxWidth(textBoxWidth / 5);
+        hBox.getChildren().addAll(appComboBox, fileOpenButton, saveButton, runButton, clearTextButton);
 
         return hBox;
     }
-
+    private EventHandler<ActionEvent> makeAppSelectionEventHandler() {
+        EventHandler<ActionEvent> selectApp = event -> {
+            currentApp.reset(true);
+            currentApp.removeTurtles();
+            currentApp = apps.get(appComboBox.getValue());
+            currentApp.displayTurtles();
+        };
+        return selectApp;
+    }
     private EventHandler<ActionEvent> makePassCommandsEventEventHandler() {
         EventHandler<ActionEvent> passCommands = event -> {
             ArrayList<Command> commands = currentApp.getParser().parse(textArea.getText().toLowerCase());
@@ -254,8 +270,10 @@ public class AppView {
         historyLabel.setText(historyText);
         int j = 0;
         for (Node n : leftToolbarHbox.getChildren()) {
-            updateButtonLanguage((Button) n, textBoxButtonsLabels.get(j));
-            j++;
+            if (n instanceof  Button){
+                updateButtonLanguage((Button) n, textBoxButtonsLabels.get(j));
+                j++;
+            }
         }
         //currentApp.getParser().setLanguage(myResources);
         //TODO: language change in parser dialogs
@@ -269,5 +287,25 @@ public class AppView {
             return false;
         }
         else return true;
+    }
+    private ComboBox<String> makeAppSelector(){
+        ComboBox<String> c = new ComboBox<>(applicationLabels);
+        c.setButtonCell(new ImageCell());
+        c.setValue(applicationLabels.get(0));
+        c.setOnAction(makeAppSelectionEventHandler());
+        return c;
+    }
+    public class ImageCell extends ListCell<String> {
+        protected void updateItem(String item, boolean empty){
+            super.updateItem(item, empty);
+            setGraphic(null);
+            setText(null);
+            if(item!=null){
+                ImageView imageView = new ImageView(new Image(myResources.getString(item)));
+                imageView.setFitWidth(20);
+                imageView.setFitHeight(20);
+                setGraphic(imageView);
+            }
+        }
     }
 }
