@@ -3,6 +3,7 @@ package oolala;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -47,6 +48,13 @@ public class AppView {
     private VBox textBoxVBox;
     private HBox leftToolbarHbox;
     private HBox rightToolBarHBox;
+    private HBox drawSettingsHBox;
+    private TextField levelTextField;
+    private Label levelLabel;
+    private TextField distTextField;
+    private Label distLabel;
+    private TextField angTextField;
+    private Label angLabel;
     private ListView<String> recentlyUsed;
     private TextArea textArea;
     private Label historyLabel;
@@ -118,6 +126,8 @@ public class AppView {
             }
         });
 
+        drawSettingsHBox = makeDrawSettingsHbox();
+
         EventHandler<MouseEvent> addLine = event -> {
             textBox.addLine(recentlyUsed.getSelectionModel().getSelectedItem(), textArea);
         };
@@ -143,11 +153,43 @@ public class AppView {
 
         vBox.getChildren().add(leftToolbarHbox);
         vBox.getChildren().add(textArea);
+        vBox.getChildren().add(drawSettingsHBox);
         vBox.getChildren().add(historyTitle);
         vBox.getChildren().add(recentlyUsed);
         textArea.setPrefSize(textBoxWidth, 3 * textBoxHeight / 4);
 
         return vBox;
+    }
+
+    public HBox makeDrawSettingsHbox() {
+        levelLabel = new Label("Level");
+        EventHandler<ActionEvent> setLevel = event -> currentApp.getParser().setLevel(Integer.parseInt(levelTextField.getText()));
+        levelTextField = new TextField("Level");
+        levelTextField.setText("1");
+        levelTextField.setOnAction(setLevel);
+        VBox levelBox = new VBox(levelLabel, levelTextField);
+
+        distLabel = new Label("Distance");
+        EventHandler<ActionEvent> setDist = event -> currentApp.getParser().setDist(Integer.parseInt(distTextField.getText()));
+        distTextField = new TextField("Distance");
+        distTextField.setText("10");
+        distTextField.setOnAction(setDist);
+        VBox distBox = new VBox(distLabel, distTextField);
+
+        angLabel = new Label("Angle");
+        EventHandler<ActionEvent> setAngle = event -> currentApp.getParser().setAng(Integer.parseInt(angTextField.getText()));
+        angTextField = new TextField("Angle");
+        angTextField.setText("30");
+        angTextField.setOnAction(setAngle);
+        VBox angBox = new VBox(angLabel, angTextField);
+
+        HBox hBox = new HBox();
+        hBox.getChildren().add(levelBox);
+        hBox.getChildren().add(distBox);
+        hBox.getChildren().add(angBox);
+        hBox.setAlignment(Pos.CENTER);
+
+        return hBox;
     }
 
     public HBox makeCanvasHBox() {
