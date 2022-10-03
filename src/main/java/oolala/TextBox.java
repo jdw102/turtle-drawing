@@ -17,11 +17,13 @@ public class TextBox {
         this.myResources = myResources;
     }
 
+    @Deprecated
     public TextArea makeTextArea() {
         TextArea textArea = new TextArea("");
         return textArea;
     }
 
+    @Deprecated
     public ListView<String> makeListView(int maxHeight, EventHandler<MouseEvent> handler){
         ListView<String> listView = new ListView<String>();
         listView.setOnMouseClicked(handler);

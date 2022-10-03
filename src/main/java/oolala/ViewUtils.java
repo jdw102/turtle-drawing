@@ -7,8 +7,11 @@ import javafx.event.EventHandler;
 import javafx.scene.control.Button;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.ListView;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 
 public class ViewUtils {
@@ -48,5 +51,17 @@ public class ViewUtils {
     result.setText(label);
     result.setOnAction(handler);
     return result;
+  }
+
+  public TextArea makeTextArea() {
+    TextArea textArea = new TextArea("");
+    return textArea;
+  }
+
+  public ListView<String> makeListView(int maxHeight, EventHandler<MouseEvent> handler){
+    ListView<String> listView = new ListView<String>();
+    listView.setOnMouseClicked(handler);
+    listView.setMaxHeight(maxHeight);
+    return listView;
   }
 }
