@@ -56,6 +56,7 @@ public class LSystemParser extends Parser{
             }
             expanded = nextLevel;
         }
+        System.out.println(expanded);
         return expanded;
     }
 
@@ -151,6 +152,7 @@ public class LSystemParser extends Parser{
 
     public void setLevel(int level) {
         this.level = level;
+        System.out.println("Setting level to " + level);
     }
 
     public ArrayList<Command> parse(String input) {
