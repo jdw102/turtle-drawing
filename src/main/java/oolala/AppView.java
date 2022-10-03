@@ -56,6 +56,7 @@ public class AppView {
     private ArrayList<String> languages = new ArrayList<>(Arrays.asList("English", "简体中文", "繁體中文", "日本語"));
     private ArrayList<String> canvasButtonsLabels = new ArrayList<>(Arrays.asList("ClearCanvasButton", "ResetTurtleButton", "SaveButton"));
     private ArrayList<String> textBoxButtonsLabels = new ArrayList<>(Arrays.asList("ImportButton", "SaveButton", "RunButton", "ClearTextButton"));
+    private ArrayList<String> sliderLabels = new ArrayList<>(Arrays.asList("LengthSlider", "AngleSlider", "LevelSlider"));
     private ObservableList<String> applicationLabels = FXCollections.observableArrayList("DrawingApp", "LSystem");
     private ComboBox<String> languagesComboBox;
     private ComboBox<String> appComboBox;
@@ -66,6 +67,9 @@ public class AppView {
     private Color backgroundColor;
     private HashMap<String, AppModel> apps;
     private AppModel currentApp;
+    private LSystemSlider lengthSlider;
+    private LSystemSlider angleSlider;
+    private LSystemSlider levelSlider;
 
     public Scene setUpScene(int sizeWidth, int sizeHeight, Stage stage) {
 
@@ -118,6 +122,19 @@ public class AppView {
             textBox.addLine(recentlyUsed.getSelectionModel().getSelectedItem(), textArea);
         };
         recentlyUsed = textBox.makeListView(200, addLine);
+        EventHandler<MouseEvent> lengthChange = event -> {
+            ( (LSystemParser) apps.get("LSystem").getParser()).setDist((int) lengthSlider.getSlider().getValue());
+        };
+        EventHandler<MouseEvent> angleChange = event -> {
+            ( (LSystemParser) apps.get("LSystem").getParser()).setAng((int) angleSlider.getSlider().getValue());
+        };
+        EventHandler<MouseEvent> levelChange = event -> {
+            ( (LSystemParser) apps.get("LSystem").getParser()).setLevel((int) levelSlider.getSlider().getValue());
+        };
+        lengthSlider = new LSystemSlider(1, 100, 10, lengthChange, myResources.getString(sliderLabels.get(0)));
+        angleSlider = new LSystemSlider(1, 180, 30, angleChange, myResources.getString(sliderLabels.get(1)));
+        levelSlider = new LSystemSlider(1, 10, 3, levelChange, myResources.getString(sliderLabels.get(2)));
+
 
         historyLabel = new Label(historyText);
         HBox historyTitle = new HBox(historyLabel);
@@ -193,6 +210,12 @@ public class AppView {
             currentApp.reset(true);
             currentApp.removeTurtles();
             currentApp = apps.get(appComboBox.getValue());
+            if (appComboBox.getValue().equals("LSystem")){
+                addLSystemSliders();
+            }
+            else{
+                removeLSystemSliders();
+            }
             currentApp.displayTurtles();
         };
         return selectApp;
@@ -278,7 +301,19 @@ public class AppView {
         //currentApp.getParser().setLanguage(myResources);
         //TODO: language change in parser dialogs
     }
-
+    private void addLSystemSliders(){
+        int ind = textBoxVBox.getChildren().indexOf(textArea) + 1;
+        textBoxVBox.getChildren().add(ind, lengthSlider.getSliderBox());
+        ind++;
+        textBoxVBox.getChildren().add(ind, angleSlider.getSliderBox());
+        ind++;
+        textBoxVBox.getChildren().add(ind, levelSlider.getSliderBox());
+    }
+    private void removeLSystemSliders(){
+        textBoxVBox.getChildren().remove(lengthSlider.getSliderBox());
+        textBoxVBox.getChildren().remove(angleSlider.getSliderBox());
+        textBoxVBox.getChildren().remove(levelSlider.getSliderBox());
+    }
     public void setCommands(ArrayList<Command> commands, AppView display) {
         currentApp.runApp(commands);
     }
