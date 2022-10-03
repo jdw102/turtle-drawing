@@ -9,8 +9,6 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.StrokeLineCap;
 
 public class TurtleModel {
-    private double homeX; //TODO: Will we init this in the canvas?
-    private double homeY; //TODO: Will we init this in the canvas?
     public static final int DEFAULT_ANGLE = 0;
     private double posX;
     private double posY;
@@ -23,11 +21,9 @@ public class TurtleModel {
     private double relX;
     private double relY;
 
-    public TurtleModel(int posX, int posY, Rectangle border, double iconSize){
-        this.homeX = posX + border.getX() + border.getWidth()/2;
-        this.homeY = posY + border.getY() + border.getHeight()/2;
-        this.posX = homeX;
-        this.posY = homeY;
+    public TurtleModel(double posX, double posY, Rectangle border, double iconSize){
+        this.posX = posX + border.getX() + border.getWidth()/2;
+        this.posY = posY + border.getY() + border.getHeight()/2;
         this.angle = DEFAULT_ANGLE;
         this.penDown = true;
         calcBounds(border, iconSize);
@@ -66,9 +62,9 @@ public class TurtleModel {
         posY = y;
         return l;
     }
-    public void moveHome(){
-        posX = homeX;
-        posY = homeY;
+    public void setPosition(double x, double y){
+        posX = x;
+        posY = y;
     }
     public void rotate(double newAngle){
         angle -= newAngle;
@@ -80,8 +76,10 @@ public class TurtleModel {
         penDown = false;
     }
     public void updateRelativePosition(ImageView i, Tooltip tooltip){
-        relX = i.getX() - xMin;
-        relY = yMax - i.getY();
+        double width = xMax - xMin;
+        double height = yMax - yMin;
+        relX = i.getX() - xMin - width / 2 + i.getFitWidth() / 2;
+        relY = -(i.getY() - yMin - height / 2 + i.getFitWidth() / 2);
         tooltip.setText("x: " + Double.toString(Math.round(relX)) + " y: " + Double.toString(Math.round(relY)));
     }
     private Line createLine(double xStart, double yStart, double xEnd, double yEnd, CanvasScreen canvas) {
@@ -98,12 +96,6 @@ public class TurtleModel {
     public boolean isPenDown(){
         return penDown;
     }
-    public double getHomeX(){
-        return homeX;
-    }
-    public double getHomeY(){
-        return homeY;
-    }
     public double getPosX(){
         return posX;
     }
@@ -112,5 +104,23 @@ public class TurtleModel {
     }
     public double geAngle(){
         return angle;
+    }
+    public double getXMin(){
+        return xMin;
+    }
+    public double getXMax(){
+        return xMax;
+    }
+    public double getYMin(){
+        return yMin;
+    }
+    public double getYMax(){
+        return yMax;
+    }
+    public double getRelX(){
+        return relX;
+    }
+    public double getRelY(){
+        return relY;
     }
 }

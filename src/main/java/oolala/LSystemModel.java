@@ -8,16 +8,14 @@ import java.util.ResourceBundle;
 
 import static oolala.Command.Command.CmdName.TELL;
 
-public class TurtleDrawingModel extends AppModel {
-
-    public TurtleDrawingModel(AppView display, ResourceBundle myResources) {
+public class LSystemModel extends AppModel {
+    public LSystemModel(AppView display, ResourceBundle myResources) {
         super(display, myResources);
-        parser = new TurtleParser(myResources);
+        parser = new LSystemParser(myResources);
     }
 
     @Override
     public void runApp(ArrayList<Command> commands) {
-        running = true;
         Iterator<Command> itCmd = commands.iterator();
         while (itCmd.hasNext()) {
             Command instruction = itCmd.next();
