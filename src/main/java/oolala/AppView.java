@@ -153,7 +153,7 @@ public class AppView {
         VBox distBox = new VBox(distLabel, distTextField);
 
         angLabel = new Label("Angle");
-        EventHandler<ActionEvent> setAngle = event -> currentApp.getParser().setDist(Integer.parseInt(angTextField.getText()));
+        EventHandler<ActionEvent> setAngle = event -> currentApp.getParser().setAng(Integer.parseInt(angTextField.getText()));
         angTextField = new TextField("Angle");
         angTextField.setText("30");
         angTextField.setOnAction(setAngle);
