@@ -58,14 +58,9 @@ public class CanvasScreen {
         brushColor = clr;
     }
 
-    public void screenShot() {
+    public WritableImage screenShot() {
         WritableImage snapshot = shapes.snapshot(null, null);
-        File file = new File("snapshot.png");
-        try {
-            ImageIO.write(SwingFXUtils.fromFXImage(snapshot, null), "png", file);
-        } catch (IOException e) {
-            // TODO: handle exception here
-        }
+        return snapshot;
     }
 
     public void clear() {

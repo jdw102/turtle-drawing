@@ -2,6 +2,7 @@ package oolala;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
@@ -13,6 +14,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.image.WritableImage;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
@@ -23,6 +25,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import oolala.Command.Command;
 
+import javax.imageio.ImageIO;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -48,25 +51,12 @@ public class AppView {
     private VBox textBoxVBox;
     private HBox leftToolbarHbox;
     private HBox rightToolBarHBox;
-    private HBox drawSettingsHBox;
-    private TextField levelTextField;
-    private Label levelLabel;
-    private TextField distTextField;
-    private Label distLabel;
-    private TextField angTextField;
-    private Label angLabel;
     private ListView<String> recentlyUsed;
     private TextArea textArea;
     private Label historyLabel;
-    private Group canvasShapes;
     private static final String DEFAULT_LANGUAGE = "English";
     private String language;
-    private ArrayList<String> languages = new ArrayList<>(Arrays.asList("English", "简体中文", "繁體中文", "日本語"));
-    private ArrayList<String> canvasButtonsLabels = new ArrayList<>(Arrays.asList("ClearCanvasButton", "ResetTurtleButton", "SaveButton"));
-    private ArrayList<String> textBoxButtonsLabels = new ArrayList<>(Arrays.asList("ImportButton", "SaveButton", "RunButton", "ClearTextButton"));
-    private ArrayList<String> sliderLabels = new ArrayList<>(Arrays.asList("LengthSlider", "AngleSlider", "LevelSlider"));
     private ObservableList<String> applicationLabels = FXCollections.observableArrayList("DrawingApp", "LSystem");
-    private ComboBox<String> languagesComboBox;
     private ComboBox<String> appComboBox;
     private TextField thicknessTextField;
     private ColorPicker colorPickerBackGround;
@@ -94,8 +84,8 @@ public class AppView {
         root.setLeft(textBoxVBox);
 
         canvasScreen = new CanvasScreen(myResources);
-        rightToolBarHBox = makeCanvasHBox();
-        canvasShapes = canvasScreen.getShapes();
+        rightToolBarHBox = makeRightToolbarHBox();
+        Group canvasShapes = canvasScreen.getShapes();
         apps = new HashMap<>();
 
         apps.put(applicationLabels.get(0), new TurtleDrawingModel(this, myResources));
@@ -126,8 +116,6 @@ public class AppView {
             }
         });
 
-        drawSettingsHBox = makeDrawSettingsHbox();
-
         EventHandler<MouseEvent> addLine = event -> {
             textBox.addLine(recentlyUsed.getSelectionModel().getSelectedItem(), textArea);
         };
@@ -141,9 +129,9 @@ public class AppView {
         EventHandler<MouseEvent> levelChange = event -> {
             ( (LSystemParser) apps.get("LSystem").getParser()).setLevel((int) levelSlider.getSlider().getValue());
         };
-        lengthSlider = new LSystemSlider(1, 100, 10, lengthChange, myResources.getString(sliderLabels.get(0)));
-        angleSlider = new LSystemSlider(1, 180, 30, angleChange, myResources.getString(sliderLabels.get(1)));
-        levelSlider = new LSystemSlider(1, 10, 3, levelChange, myResources.getString(sliderLabels.get(2)));
+        lengthSlider = new LSystemSlider(1, 100, 10, lengthChange, myResources.getString("LengthSlider"));
+        angleSlider = new LSystemSlider(1, 180, 30, angleChange, myResources.getString("AngleSlider"));
+        levelSlider = new LSystemSlider(1, 10, 3, levelChange, myResources.getString("LevelSlider"));
 
 
         historyLabel = new Label(historyText);
@@ -153,7 +141,6 @@ public class AppView {
 
         vBox.getChildren().add(leftToolbarHbox);
         vBox.getChildren().add(textArea);
-        vBox.getChildren().add(drawSettingsHBox);
         vBox.getChildren().add(historyTitle);
         vBox.getChildren().add(recentlyUsed);
         textArea.setPrefSize(textBoxWidth, 3 * textBoxHeight / 4);
@@ -161,49 +148,13 @@ public class AppView {
         return vBox;
     }
 
-    public HBox makeDrawSettingsHbox() {
-        levelLabel = new Label("Level");
-        EventHandler<ActionEvent> setLevel = event -> currentApp.getParser().setLevel(Integer.parseInt(levelTextField.getText()));
-        levelTextField = new TextField("Level");
-        levelTextField.setText("1");
-        levelTextField.setOnAction(setLevel);
-        VBox levelBox = new VBox(levelLabel, levelTextField);
-
-        distLabel = new Label("Distance");
-        EventHandler<ActionEvent> setDist = event -> currentApp.getParser().setDist(Integer.parseInt(distTextField.getText()));
-        distTextField = new TextField("Distance");
-        distTextField.setText("10");
-        distTextField.setOnAction(setDist);
-        VBox distBox = new VBox(distLabel, distTextField);
-
-        angLabel = new Label("Angle");
-        EventHandler<ActionEvent> setAngle = event -> currentApp.getParser().setAng(Integer.parseInt(angTextField.getText()));
-        angTextField = new TextField("Angle");
-        angTextField.setText("30");
-        angTextField.setOnAction(setAngle);
-        VBox angBox = new VBox(angLabel, angTextField);
-
-        HBox hBox = new HBox();
-        hBox.getChildren().add(levelBox);
-        hBox.getChildren().add(distBox);
-        hBox.getChildren().add(angBox);
-        hBox.setAlignment(Pos.CENTER);
-
-        return hBox;
-    }
-
-    public HBox makeCanvasHBox() {
+    public HBox makeRightToolbarHBox() {
         EventHandler<ActionEvent> clearCommand = event -> currentApp.reset(false);
         EventHandler<ActionEvent> resetCommand = event -> currentApp.reset(true);
-        EventHandler<ActionEvent> saveCommand = event -> canvasScreen.screenShot();
-        Button clearButton = toolBar.makeButton(canvasButtonsLabels.get(0), clearCommand);
-        Button resetButton = toolBar.makeButton(canvasButtonsLabels.get(1), resetCommand);
-        Button saveButton = toolBar.makeButton(canvasButtonsLabels.get(2), saveCommand);
-
-        EventHandler<ActionEvent> langCommand = event -> {
-            setLanguage(languagesComboBox.getValue());
-        };
-        languagesComboBox = canvasScreen.makeComboBoxArrayList(languages, langCommand);
+        EventHandler<ActionEvent> saveCommand = makeSaveFileImgEventHandler();
+        Button clearButton = toolBar.makeButton("ClearCanvasButton", clearCommand);
+        Button resetButton = toolBar.makeButton("ResetTurtleButton", resetCommand);
+        Button saveButton = toolBar.makeButton("SaveButton", saveCommand);
 
         EventHandler<ActionEvent> thicknessCommand = event -> canvasScreen.setThickness(thicknessTextField.getText());
         thicknessTextField = canvasScreen.makeTextField("Thickness", "3", thicknessCommand);
@@ -219,7 +170,7 @@ public class AppView {
         colorPicker = canvasScreen.makeColorPicker(setBrushColor, Color.BLACK, "BrushColorPicker");
         colorPickerBackGround = canvasScreen.makeColorPicker(setColorBackGround, Color.AZURE, "CanvasColorPicker");
 
-        HBox hBox = new HBox(colorPickerBackGround, colorPicker, thicknessTextField, clearButton, resetButton, saveButton, languagesComboBox);
+        HBox hBox = new HBox(colorPickerBackGround, colorPicker, thicknessTextField, clearButton, resetButton, saveButton);
         hBox.setAlignment(Pos.TOP_RIGHT);
         return hBox;
     }
@@ -306,43 +257,24 @@ public class AppView {
     public CanvasScreen getCanvasScreen() {
         return canvasScreen;
     }
-
-    private void updateButtonLanguage(Button button, String property) {
-        String label = myResources.getString(property);
-        button.setText(label);
+    private EventHandler<ActionEvent> makeSaveFileImgEventHandler() {
+        FileChooser fileChooser = new FileChooser();
+        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("PNG files (*.png)", "*.png");
+        fileChooser.getExtensionFilters().add(extFilter);
+        EventHandler<ActionEvent> saveFile = event -> {
+            WritableImage snapshot = canvasScreen.screenShot();
+            File file = fileChooser.showSaveDialog(stage);
+            if (file != null) {
+                try {
+                    ImageIO.write(SwingFXUtils.fromFXImage(snapshot, null), "png", file);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        };
+        return saveFile;
     }
 
-    /**
-     * A method to set a language during runtime.
-     *
-     * @author Luyao Wang
-     */
-    private void setLanguage(String lang) {
-        language = lang;
-        myResources = ResourceBundle.getBundle(DEFAULT_RESOURCE_PACKAGE + language);
-
-        int i = 0;
-        for (Node n : rightToolBarHBox.getChildren()) {
-            if (n instanceof Button) {
-                updateButtonLanguage((Button) n, canvasButtonsLabels.get(i));
-                i++;
-            }
-        }
-        Tooltip.install(colorPicker, new Tooltip(myResources.getString("BrushColorPicker")));
-        Tooltip.install(colorPickerBackGround, new Tooltip(myResources.getString("CanvasColorPicker")));
-
-        historyText = myResources.getString("CommandHistory");
-        historyLabel.setText(historyText);
-        int j = 0;
-        for (Node n : leftToolbarHbox.getChildren()) {
-            if (n instanceof  Button){
-                updateButtonLanguage((Button) n, textBoxButtonsLabels.get(j));
-                j++;
-            }
-        }
-        //currentApp.getParser().setLanguage(myResources);
-        //TODO: language change in parser dialogs
-    }
     private void addLSystemSliders(){
         int ind = textBoxVBox.getChildren().indexOf(textArea) + 1;
         textBoxVBox.getChildren().add(ind, lengthSlider.getSliderBox());
