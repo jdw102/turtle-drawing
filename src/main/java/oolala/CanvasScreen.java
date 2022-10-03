@@ -19,8 +19,11 @@ import java.util.*;
 
 
 public class CanvasScreen {
-    private final Rectangle borderRectangle;
+    private Rectangle borderRectangle;
     private Group shapes;
+    private HBox hBox;
+    private HBox stylingBox;
+    private HBox settingsBox;
     private ResourceBundle myResources;
     private Color brushColor = Color.BLACK;
     private Color backgroundColor = Color.AZURE;
@@ -51,6 +54,10 @@ public class CanvasScreen {
         }
     }
 
+    private void changeColor(Color clr) {
+        brushColor = clr;
+    }
+
     public WritableImage screenShot() {
         WritableImage snapshot = shapes.snapshot(null, null);
         return snapshot;
@@ -72,10 +79,12 @@ public class CanvasScreen {
     public Rectangle getBorderRectangle() {
         return borderRectangle;
     }
-    public Double getThickness(){
+
+    public Double getThickness() {
         return THICKNESS;
     }
-    public Color getBrushColor(){
+
+    public Color getBrushColor() {
         return brushColor;
     }
 }

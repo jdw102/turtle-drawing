@@ -1,7 +1,10 @@
 package oolala;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -9,6 +12,8 @@ import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
@@ -21,7 +26,6 @@ import javafx.stage.Stage;
 import oolala.Command.Command;
 
 import javax.imageio.ImageIO;
-import javax.imageio.ImageWriter;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -33,18 +37,26 @@ import java.util.*;
  * The origin is at the center of the screen.
  */
 public class AppView {
-    private final int textBoxWidth = 275;
-    private final int textBoxHeight = 600;
+    private int textBoxWidth = 275;
+    private int textBoxHeight = 600;
+    private BorderPane root;
     private TextBox textBox;
-    public ResourceBundle myResources;
+    public static ResourceBundle myResources;
     private static final String DEFAULT_RESOURCE_PACKAGE = "Properties.";
+    private FileChooser fileChooser;
     private Stage stage;
     private CanvasScreen canvasScreen;
-    private ToolBar toolBar;
+    ToolBar toolBar;
+    private VBox textBoxVBox;
+    private HBox leftToolbarHbox;
+    private HBox rightToolBarHBox;
     private ListView<String> recentlyUsed;
     private TextArea textArea;
+    private Label historyLabel;
     private static final String DEFAULT_LANGUAGE = "English";
-    private String language = "English";
+    private String language;
+    private ObservableList<String> applicationLabels = FXCollections.observableArrayList("DrawingApp", "LSystem");
+    private ComboBox<String> appComboBox;
     private TextField thicknessTextField;
     private ColorPicker colorPickerBackGround;
     private ColorPicker colorPicker;
@@ -52,30 +64,37 @@ public class AppView {
     private Color backgroundColor;
     private HashMap<String, AppModel> apps;
     private AppModel currentApp;
+    private LSystemSlider lengthSlider;
+    private LSystemSlider angleSlider;
+    private LSystemSlider levelSlider;
 
     public Scene setUpScene(int sizeWidth, int sizeHeight, Stage stage) {
+
         this.stage = stage;
         this.language = DEFAULT_LANGUAGE;
         myResources = ResourceBundle.getBundle(DEFAULT_RESOURCE_PACKAGE + language);
 
-        BorderPane root = new BorderPane();
+        root = new BorderPane();
 
         toolBar = new ToolBar(myResources);
-        textBox = new TextBox(myResources);
-        canvasScreen = new CanvasScreen(myResources);
 
-        HBox rightToolBarHBox = makeRightToolbarHBox();
-        Group canvasShapes = canvasScreen.getShapes();
-        VBox textBoxVBox = makeTextBoxVBox();
-        root.setCenter(rightToolBarHBox);
-        root.getChildren().add(canvasShapes);
+        textBox = new TextBox(myResources);
+        textBoxVBox = makeTextBoxVBox();
         root.setLeft(textBoxVBox);
 
+        canvasScreen = new CanvasScreen(myResources);
+        rightToolBarHBox = makeRightToolbarHBox();
+        Group canvasShapes = canvasScreen.getShapes();
         apps = new HashMap<>();
-        apps.put("DrawingApp", new TurtleDrawingModel(this, myResources));
-        apps.put("LSystem", new LSystemModel(this, myResources));
-        //currentApp = apps.get("DrawingApp");
-        currentApp = apps.get("LSystem");
+
+        apps.put(applicationLabels.get(0), new TurtleDrawingModel(this, myResources));
+        apps.put(applicationLabels.get(1), new LSystemModel(this, myResources));
+        currentApp = apps.get("DrawingApp");
+        currentApp.displayTurtles();
+//        currentApp = apps.get("LSystem");
+
+        root.setCenter(rightToolBarHBox);
+        root.getChildren().add(canvasShapes);
 
         root.setPadding(new Insets(10, 10, 10, 10));
         Scene scene = new Scene(root, sizeWidth, sizeHeight);
@@ -84,7 +103,7 @@ public class AppView {
 
     public VBox makeTextBoxVBox() {
         VBox vBox = new VBox();
-        HBox leftToolbarHbox = makeLeftToolbarHBox();
+        leftToolbarHbox = makeLeftToolbarHBox();
         textArea = textBox.makeTextArea();
 
         KeyCombination keyCombination = new KeyCodeCombination(KeyCode.ENTER, KeyCombination.ALT_DOWN);
@@ -100,8 +119,21 @@ public class AppView {
             textBox.addLine(recentlyUsed.getSelectionModel().getSelectedItem(), textArea);
         };
         recentlyUsed = textBox.makeListView(200, addLine);
+        EventHandler<MouseEvent> lengthChange = event -> {
+            ( (LSystemParser) apps.get("LSystem").getParser()).setDist((int) lengthSlider.getSlider().getValue());
+        };
+        EventHandler<MouseEvent> angleChange = event -> {
+            ( (LSystemParser) apps.get("LSystem").getParser()).setAng((int) angleSlider.getSlider().getValue());
+        };
+        EventHandler<MouseEvent> levelChange = event -> {
+            ( (LSystemParser) apps.get("LSystem").getParser()).setLevel((int) levelSlider.getSlider().getValue());
+        };
+        lengthSlider = new LSystemSlider(1, 100, 10, lengthChange, myResources.getString("LengthSlider"));
+        angleSlider = new LSystemSlider(1, 180, 30, angleChange, myResources.getString("AngleSlider"));
+        levelSlider = new LSystemSlider(1, 10, 3, levelChange, myResources.getString("LevelSlider"));
 
-        Label historyLabel = new Label(myResources.getString("CommandHistory"));
+
+        historyLabel = new Label(myResources.getString("CommandHistory"));
         HBox historyTitle = new HBox(historyLabel);
         historyTitle.setAlignment(Pos.CENTER);
         historyTitle.getStyleClass().add("box");
@@ -116,11 +148,8 @@ public class AppView {
     }
 
     public HBox makeRightToolbarHBox() {
-        EventHandler<ActionEvent> clearCommand = event -> {
-            canvasScreen.clear();
-            currentApp.reset();
-        };
-        EventHandler<ActionEvent> resetCommand = event -> currentApp.reset();
+        EventHandler<ActionEvent> clearCommand = event -> currentApp.reset(false);
+        EventHandler<ActionEvent> resetCommand = event -> currentApp.reset(true);
         EventHandler<ActionEvent> saveCommand = makeSaveFileImgEventHandler();
         Button clearButton = toolBar.makeButton("ClearCanvasButton", clearCommand);
         Button resetButton = toolBar.makeButton("ResetTurtleButton", resetCommand);
@@ -150,31 +179,39 @@ public class AppView {
         EventHandler<ActionEvent> clearText = event -> textArea.clear();
         EventHandler<ActionEvent> openFileChooser = openFileChooserEventHandler();
         EventHandler<ActionEvent> saveFile = makeSaveFileEventHandler();
+        EventHandler<ActionEvent> selectApp = makeAppSelectionEventHandler();
         Button runButton = toolBar.makeButton("RunButton", passCommands);
         Button clearTextButton = toolBar.makeButton("ClearTextButton", clearText);
         Button fileOpenButton = toolBar.makeButton("ImportButton", openFileChooser);
         Button saveButton = toolBar.makeButton("SaveButton", saveFile);
-
+        appComboBox = makeAppSelector();
         HBox hBox = new HBox();
         hBox.setAlignment(Pos.CENTER);
         hBox.setMinWidth(textBoxWidth);
-        saveButton.setMinWidth(textBoxWidth / 4);
-        runButton.setMinWidth(textBoxWidth / 4);
-        clearTextButton.setMinWidth(textBoxWidth / 4);
-        fileOpenButton.setMinWidth(textBoxWidth / 4);
-        hBox.getChildren().addAll(fileOpenButton, saveButton, runButton, clearTextButton);
+        saveButton.setMinWidth(textBoxWidth / 5);
+        runButton.setMinWidth(textBoxWidth / 5);
+        clearTextButton.setMinWidth(textBoxWidth / 5);
+        fileOpenButton.setMinWidth(textBoxWidth / 5);
+        appComboBox.setMaxWidth(textBoxWidth / 5);
+        hBox.getChildren().addAll(appComboBox, fileOpenButton, saveButton, runButton, clearTextButton);
 
         return hBox;
     }
-
-    public CanvasScreen getCanvasScreen() {
-        return canvasScreen;
+    private EventHandler<ActionEvent> makeAppSelectionEventHandler() {
+        EventHandler<ActionEvent> selectApp = event -> {
+            currentApp.reset(true);
+            currentApp.removeTurtles();
+            currentApp = apps.get(appComboBox.getValue());
+            if (appComboBox.getValue().equals("LSystem")){
+                addLSystemSliders();
+            }
+            else{
+                removeLSystemSliders();
+            }
+            currentApp.displayTurtles();
+        };
+        return selectApp;
     }
-
-    public void setCommands(ArrayList<Command> commands, AppView display) {
-        currentApp.runApp(commands);
-    }
-
     private EventHandler<ActionEvent> makePassCommandsEventEventHandler() {
         EventHandler<ActionEvent> passCommands = event -> {
             ArrayList<Command> commands = currentApp.getParser().parse(textArea.getText().toLowerCase());
@@ -185,9 +222,6 @@ public class AppView {
     }
 
     private EventHandler<ActionEvent> openFileChooserEventHandler() {
-        FileChooser fileChooser = new FileChooser();
-        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("TXT files (*.txt)", "*.txt");
-        fileChooser.getExtensionFilters().add(extFilter);
         EventHandler<ActionEvent> openFileChooser = event -> {
             File f = fileChooser.showOpenDialog(stage);
             if (f != null) {
@@ -195,16 +229,15 @@ public class AppView {
                     Path filePath = Path.of(f.getPath());
                     String content = Files.readString(filePath);
                     textArea.setText(content);
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
+                } catch (IOException e) {throw new RuntimeException(e);}
             }
         };
         return openFileChooser;
     }
 
     private EventHandler<ActionEvent> makeSaveFileEventHandler() {
-        FileChooser fileChooser = new FileChooser();
+        fileChooser = new FileChooser();
+        fileChooser.setTitle(myResources.getString("ImportButton"));
         FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("TXT files (*.txt)", "*.txt");
         fileChooser.getExtensionFilters().add(extFilter);
         EventHandler<ActionEvent> saveFile = event -> {
@@ -214,14 +247,15 @@ public class AppView {
                     FileWriter writer = new FileWriter(f);
                     writer.write(textArea.getText());
                     writer.close();
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
+                } catch (IOException e) {throw new RuntimeException(e);}
             }
         };
         return saveFile;
     }
 
+    public CanvasScreen getCanvasScreen() {
+        return canvasScreen;
+    }
     private EventHandler<ActionEvent> makeSaveFileImgEventHandler() {
         FileChooser fileChooser = new FileChooser();
         FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("PNG files (*.png)", "*.png");
@@ -238,5 +272,48 @@ public class AppView {
             }
         };
         return saveFile;
+    }
+
+    private void addLSystemSliders(){
+        int ind = textBoxVBox.getChildren().indexOf(textArea) + 1;
+        textBoxVBox.getChildren().add(ind, lengthSlider.getSliderBox());
+        ind++;
+        textBoxVBox.getChildren().add(ind, angleSlider.getSliderBox());
+        ind++;
+        textBoxVBox.getChildren().add(ind, levelSlider.getSliderBox());
+    }
+    private void removeLSystemSliders(){
+        textBoxVBox.getChildren().remove(lengthSlider.getSliderBox());
+        textBoxVBox.getChildren().remove(angleSlider.getSliderBox());
+        textBoxVBox.getChildren().remove(levelSlider.getSliderBox());
+    }
+    public void setCommands(ArrayList<Command> commands, AppView display) {
+        currentApp.runApp(commands);
+    }
+    public boolean isCanvasClear(){
+        if (canvasScreen.getShapes().getChildren().size() > 2){
+            return false;
+        }
+        else return true;
+    }
+    private ComboBox<String> makeAppSelector(){
+        ComboBox<String> c = new ComboBox<>(applicationLabels);
+        c.setButtonCell(new ImageCell());
+        c.setValue(applicationLabels.get(0));
+        c.setOnAction(makeAppSelectionEventHandler());
+        return c;
+    }
+    public class ImageCell extends ListCell<String> {
+        protected void updateItem(String item, boolean empty){
+            super.updateItem(item, empty);
+            setGraphic(null);
+            setText(null);
+            if(item!=null){
+                ImageView imageView = new ImageView(new Image(myResources.getString(item)));
+                imageView.setFitWidth(20);
+                imageView.setFitHeight(20);
+                setGraphic(imageView);
+            }
+        }
     }
 }

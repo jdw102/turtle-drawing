@@ -17,6 +17,14 @@ public class ToolBar {
         this.myResources = resources;
     }
 
+    /**
+     *
+     * @param property
+     * @param handler
+     * @return
+     * @deprecated use {@link #ViewUtils.makeButton} instead
+     */
+    @Deprecated
     public Button makeButton(String property, EventHandler<ActionEvent> handler) {
         Button result = new Button();
         String label = myResources.getString(property);
@@ -25,6 +33,15 @@ public class ToolBar {
         return result;
     }
 
+    /**
+     *
+     * @param property
+     * @param defaultValue
+     * @param handler
+     * @return
+     * @deprecated use {@link #ViewUtils.makeTextField} instead
+     */
+    @Deprecated
     public TextField makeTextField(String property, String defaultValue, EventHandler<ActionEvent> handler) {
         TextField textField = new TextField(property);
         textField.setText(defaultValue);
@@ -32,6 +49,14 @@ public class ToolBar {
         return textField;
     }
 
+    /**
+     *
+     * @param items
+     * @param handler
+     * @return
+     * @deprecated use {@link #ViewUtils.makeComboBoxArrayList} instead
+     */
+    @Deprecated
     public ComboBox<String> makeComboBoxArrayList(ArrayList<String> items, EventHandler<ActionEvent> handler) {
         ComboBox<String> comboBox = new ComboBox<>();
         comboBox.getItems().addAll(items);
@@ -40,6 +65,16 @@ public class ToolBar {
         return comboBox;
     }
 
+    /**
+     *
+     * @param handler
+     * @param defaultColor
+     * @param tooltip
+     * @return
+     *
+     * @deprecated use {@link #ViewUtils.makeColorPicker} instead
+     */
+    @Deprecated
     public ColorPicker makeColorPicker(EventHandler<ActionEvent> handler, Color defaultColor, String tooltip) {
         ColorPicker colorPicker = new ColorPicker();
         colorPicker.setValue(defaultColor);
@@ -47,4 +82,5 @@ public class ToolBar {
         Tooltip.install(colorPicker, new Tooltip(myResources.getString(tooltip)));
         return colorPicker;
     }
+
 }

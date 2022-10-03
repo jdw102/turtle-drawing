@@ -13,6 +13,7 @@ import javafx.stage.Stage;
  */
 public class Main extends Application{
     private static final int SIZE_WIDTH = 800;
+
     private static final int SIZE_HEIGHT = 600;
     private static final Paint BACKGROUND = Color.BLACK;
     private Stage stage;
