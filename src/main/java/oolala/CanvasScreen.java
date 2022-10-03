@@ -81,6 +81,7 @@ public class CanvasScreen {
         return shapes;
     }
 
+    @Deprecated
     public TextField makeTextField(String property, String defaultValue, EventHandler<ActionEvent> handler) {
         TextField textField = new TextField(property);
         textField.setText(defaultValue);
@@ -88,6 +89,7 @@ public class CanvasScreen {
         return textField;
     }
 
+    @Deprecated
     public ComboBox<String> makeComboBoxArrayList(ArrayList<String> items, EventHandler<ActionEvent> handler) {
         ComboBox<String> comboBox = new ComboBox<>();
         comboBox.getItems().addAll(items);
@@ -96,6 +98,7 @@ public class CanvasScreen {
         return comboBox;
     }
 
+    @Deprecated
     public ColorPicker makeColorPicker(EventHandler<ActionEvent> handler, Color defaultColor, String tooltip) {
         ColorPicker colorPicker = new ColorPicker();
         colorPicker.setValue(defaultColor);
@@ -104,6 +107,7 @@ public class CanvasScreen {
         return colorPicker;
     }
 
+    @Deprecated
     public Button makeButton(String property, EventHandler<ActionEvent> handler) {
         Button result = new Button();
         String label = myResources.getString(property);
