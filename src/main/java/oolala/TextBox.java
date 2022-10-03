@@ -8,13 +8,11 @@ import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 
 import java.util.*;
+
 import oolala.Command.Command;
 
 public class TextBox {
-    private ResourceBundle myResources;
-
     public TextBox(ResourceBundle myResources) {
-        this.myResources = myResources;
     }
 
     public TextArea makeTextArea() {
@@ -22,7 +20,7 @@ public class TextBox {
         return textArea;
     }
 
-    public ListView<String> makeListView(int maxHeight, EventHandler<MouseEvent> handler){
+    public ListView<String> makeListView(int maxHeight, EventHandler<MouseEvent> handler) {
         ListView<String> listView = new ListView<String>();
         listView.setOnMouseClicked(handler);
         listView.setMaxHeight(maxHeight);

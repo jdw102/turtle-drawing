@@ -47,5 +47,4 @@ public class ToolBar {
         Tooltip.install(colorPicker, new Tooltip(myResources.getString(tooltip)));
         return colorPicker;
     }
-
 }

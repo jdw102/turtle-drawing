@@ -19,11 +19,8 @@ import java.util.*;
 
 
 public class CanvasScreen {
-    private Rectangle borderRectangle;
+    private final Rectangle borderRectangle;
     private Group shapes;
-    private HBox hBox;
-    private HBox stylingBox;
-    private HBox settingsBox;
     private ResourceBundle myResources;
     private Color brushColor = Color.BLACK;
     private Color backgroundColor = Color.AZURE;
@@ -54,18 +51,9 @@ public class CanvasScreen {
         }
     }
 
-    private void changeColor(Color clr) {
-        brushColor = clr;
-    }
-
-    public void screenShot() {
+    public WritableImage screenShot() {
         WritableImage snapshot = shapes.snapshot(null, null);
-        File file = new File("snapshot.png");
-        try {
-            ImageIO.write(SwingFXUtils.fromFXImage(snapshot, null), "png", file);
-        } catch (IOException e) {
-            // TODO: handle exception here
-        }
+        return snapshot;
     }
 
     public void clear() {
@@ -81,36 +69,6 @@ public class CanvasScreen {
         return shapes;
     }
 
-    public TextField makeTextField(String property, String defaultValue, EventHandler<ActionEvent> handler) {
-        TextField textField = new TextField(property);
-        textField.setText(defaultValue);
-        textField.setOnAction(handler);
-        return textField;
-    }
-
-    public ComboBox<String> makeComboBoxArrayList(ArrayList<String> items, EventHandler<ActionEvent> handler) {
-        ComboBox<String> comboBox = new ComboBox<>();
-        comboBox.getItems().addAll(items);
-        comboBox.setValue(items.get(0));//Default language
-        comboBox.setOnAction(handler);
-        return comboBox;
-    }
-
-    public ColorPicker makeColorPicker(EventHandler<ActionEvent> handler, Color defaultColor, String tooltip) {
-        ColorPicker colorPicker = new ColorPicker();
-        colorPicker.setValue(defaultColor);
-        colorPicker.setOnAction(handler);
-        Tooltip.install(colorPicker, new Tooltip(myResources.getString(tooltip)));
-        return colorPicker;
-    }
-
-    public Button makeButton(String property, EventHandler<ActionEvent> handler) {
-        Button result = new Button();
-        String label = myResources.getString(property);
-        result.setText(label);
-        result.setOnAction(handler);
-        return result;
-    }
     public Rectangle getBorderRectangle() {
         return borderRectangle;
     }
