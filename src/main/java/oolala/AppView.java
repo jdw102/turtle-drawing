@@ -39,7 +39,6 @@ import java.util.*;
 public class AppView {
     private int textBoxWidth = 275;
     private int textBoxHeight = 600;
-    private String historyText = "Command History";
     private BorderPane root;
     private TextBox textBox;
     public static ResourceBundle myResources;
@@ -134,7 +133,7 @@ public class AppView {
         levelSlider = new LSystemSlider(1, 10, 3, levelChange, myResources.getString("LevelSlider"));
 
 
-        historyLabel = new Label(historyText);
+        historyLabel = new Label(myResources.getString("CommandHistory"));
         HBox historyTitle = new HBox(historyLabel);
         historyTitle.setAlignment(Pos.CENTER);
         historyTitle.getStyleClass().add("box");
@@ -157,7 +156,7 @@ public class AppView {
         Button saveButton = toolBar.makeButton("SaveButton", saveCommand);
 
         EventHandler<ActionEvent> thicknessCommand = event -> canvasScreen.setThickness(thicknessTextField.getText());
-        thicknessTextField = canvasScreen.makeTextField("Thickness", "3", thicknessCommand);
+        thicknessTextField = toolBar.makeTextField("Thickness", "3", thicknessCommand);
 
         EventHandler<ActionEvent> setBrushColor = event -> {
             brushColor = colorPicker.getValue();
@@ -167,8 +166,8 @@ public class AppView {
             backgroundColor = colorPickerBackGround.getValue();
             canvasScreen.getBorderRectangle().setFill(backgroundColor);
         };
-        colorPicker = canvasScreen.makeColorPicker(setBrushColor, Color.BLACK, "BrushColorPicker");
-        colorPickerBackGround = canvasScreen.makeColorPicker(setColorBackGround, Color.AZURE, "CanvasColorPicker");
+        colorPicker = toolBar.makeColorPicker(setBrushColor, Color.BLACK, "BrushColorPicker");
+        colorPickerBackGround = toolBar.makeColorPicker(setColorBackGround, Color.AZURE, "CanvasColorPicker");
 
         HBox hBox = new HBox(colorPickerBackGround, colorPicker, thicknessTextField, clearButton, resetButton, saveButton);
         hBox.setAlignment(Pos.TOP_RIGHT);
