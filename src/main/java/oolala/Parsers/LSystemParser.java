@@ -1,12 +1,14 @@
-package oolala;
+package oolala.Parsers;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.ResourceBundle;
 import java.util.Scanner;
 import oolala.Command.Command;
+import oolala.Parsers.LogoParser;
+import oolala.Parsers.Parser;
 
-public class LSystemParser extends Parser{
+public class LSystemParser extends Parser {
 
     public static final char[] ALPHA_SYM = {'f', 'g', 'a', 'b', '+', '-', 'x'};
     public static final String[] ALPHA_COMM = {"pd fd ", "pu fd ", "pu bk ", "pd bk ",
@@ -45,7 +47,7 @@ public class LSystemParser extends Parser{
      *
      * @return a String object containing the root string expanded the specified number of times
      */
-    String applyRules() {
+    public String applyRules() {
         String expanded = start;
         for (int i = 0; i < getLevel(); i++) {
             String nextLevel = "";
@@ -61,7 +63,7 @@ public class LSystemParser extends Parser{
         return expanded;
     }
 
-    String getCommandString(String expansion) {
+    public String getCommandString(String expansion) {
         String commandString = "";
         for (int i = 0; i < expansion.length(); i++) {
             char currChar = expansion.charAt(i);

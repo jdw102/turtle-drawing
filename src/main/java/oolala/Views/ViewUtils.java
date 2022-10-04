@@ -1,23 +1,20 @@
-package oolala;
+package oolala.Views;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
 
 
-public class ToolBar {
+public class ViewUtils {
     ResourceBundle myResources;
 
-    public ToolBar(ResourceBundle resources){
+    public ViewUtils(ResourceBundle resources){
         this.myResources = resources;
     }
 
@@ -47,20 +44,6 @@ public class ToolBar {
         textField.setText(defaultValue);
         textField.setOnAction(handler);
         return textField;
-    }
-
-    /**
-     *
-     * @param items
-     * @param handler
-     * @return
-     */
-    public ComboBox<String> makeComboBoxArrayList(ArrayList<String> items, EventHandler<ActionEvent> handler) {
-        ComboBox<String> comboBox = new ComboBox<>();
-        comboBox.getItems().addAll(items);
-        comboBox.setValue(items.get(0));//Default language
-        comboBox.setOnAction(handler);
-        return comboBox;
     }
 
     public ComboBox<ImageView> makeImageSelector(List<String> labels, String title){
@@ -104,26 +87,6 @@ public class ToolBar {
         colorPicker.setOnAction(handler);
         Tooltip.install(colorPicker, new Tooltip(myResources.getString(tooltip)));
         return colorPicker;
-    }
-    public void makeSliders(VBox box, AppModel currentApp){
-        LSystemSlider lengthSlider = new LSystemSlider(1, 100, 10, myResources.getString("LengthSlider"));
-        LSystemSlider angleSlider = new LSystemSlider(1, 90, 30, myResources.getString("AngleSlider"));
-        LSystemSlider levelSlider = new LSystemSlider(0, 5, 3, myResources.getString("LevelSlider"));
-        EventHandler<MouseEvent> lengthChange = event -> {
-            ( (LSystemParser) currentApp.getParser()).setDist((int) lengthSlider.getSlider().getValue());
-        };
-        EventHandler<MouseEvent> angleChange = event -> {
-            ( (LSystemParser) currentApp.getParser()).setAng((int) angleSlider.getSlider().getValue());
-        };
-        EventHandler<MouseEvent> levelChange = event -> {
-            ( (LSystemParser) currentApp.getParser()).setLevel((int) levelSlider.getSlider().getValue());
-        };
-        lengthSlider.setHandler(lengthChange);
-        angleSlider.setHandler(angleChange);
-        levelSlider.setHandler(levelChange);
-        box.getChildren().add(2, lengthSlider.getSliderBox());
-        box.getChildren().add(2, angleSlider.getSliderBox());
-        box.getChildren().add(2, levelSlider.getSliderBox());
     }
 
 }

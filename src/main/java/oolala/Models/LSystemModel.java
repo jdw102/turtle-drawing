@@ -1,6 +1,10 @@
-package oolala;
+package oolala.Models;
 
+import oolala.Views.ViewComponents.CanvasScreen;
 import oolala.Command.Command;
+import oolala.Parsers.LSystemParser;
+import oolala.Views.AppView;
+import oolala.Views.TurtleView;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -9,15 +13,20 @@ import java.util.ResourceBundle;
 import static oolala.Command.Command.CmdName.TELL;
 
 public class LSystemModel extends AppModel {
-    public LSystemModel(AppView display, ResourceBundle myResources, String stampUrl) {
-        super(display, myResources, stampUrl);
-        changeIcon(myResources.getString("TriangleArrowIcon"));
+    public LSystemModel(CanvasScreen canvas, ResourceBundle myResources, String stampUrl, AppView display) {
+        super(canvas, myResources, stampUrl, display);
+        turtleIcon = myResources.getString("TriangleArrowIcon");
+        turtleStamp = myResources.getString(stampUrl);
         parser = new LSystemParser(myResources);
+        turtles.put(1, new TurtleView(homeX, homeY, myCanvas, this));
+        currTurtleIdxs.add(1);
+        myCanvas.getShapes().getChildren().add(turtles.get(1).getIcon());
     }
 
     @Override
-    public void runApp(ArrayList<Command> commands) {
-        super.runApp(commands);
+    public void runApp(ArrayList<Command> commands, AppView display) {
+        turtles.get(1).hideTurtle(animation);
+        super.runApp(commands, display);
         Iterator<Command> itCmd = commands.iterator();
         while (itCmd.hasNext()) {
             Command instruction = itCmd.next();
@@ -28,17 +37,20 @@ public class LSystemModel extends AppModel {
                 for (Integer param : instruction.params) {
                     if (!turtles.containsKey(param)) {
                         System.out.println("Creating new turtle");
-                        turtles.put(param, new TurtleView(homeX, homeY, myDisplay.getCanvasScreen(), this));
-                        myDisplay.getCanvasScreen().getShapes().getChildren().add(turtles.get(param).getIcon());
+                        turtles.put(param, new TurtleView(homeX, homeY, myCanvas, this));
                     }
                 }
             }
             for (Integer idx : currTurtleIdxs) {
-                instruction.runCommand(turtles.get(idx), myDisplay.getCanvasScreen(), animation);
+                instruction.runCommand(turtles.get(idx), myCanvas, animation);
             }
             itCmd.remove();
         }
         animation.play();
         animation.getChildren().removeAll(animation.getChildren());
+    }
+    @Override
+    public void changeImage(String url){
+        turtleStamp = url;
     }
 }

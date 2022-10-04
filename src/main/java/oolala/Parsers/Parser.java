@@ -1,4 +1,4 @@
-package oolala;
+package oolala.Parsers;
 
 import oolala.Command.Command;
 

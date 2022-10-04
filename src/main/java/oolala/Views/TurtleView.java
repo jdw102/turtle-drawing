@@ -1,4 +1,4 @@
-package oolala;
+package oolala.Views;
 
 import javafx.animation.*;
 import javafx.scene.Node;
@@ -8,6 +8,9 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.shape.*;
 import javafx.util.Duration;
+import oolala.Models.AppModel;
+import oolala.Views.ViewComponents.CanvasScreen;
+import oolala.Models.TurtleModel;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -20,7 +23,7 @@ import java.util.Collection;
 public class TurtleView {
   private double homeX;
   private double homeY;
-  private LogoModel model;
+  private TurtleModel model;
   private String stampUrl;
   public static final double DEFAULT_ICON_SIZE = 30;
   public ImageView icon;
@@ -31,7 +34,7 @@ public class TurtleView {
 
   public TurtleView(double posX, double posY, CanvasScreen screen, AppModel app){
     this.iconSize = DEFAULT_ICON_SIZE;
-    this.model = new LogoModel(posX, posY, screen.getBorderRectangle(), iconSize);
+    this.model = new TurtleModel(posX, posY, screen.getBorderRectangle(), iconSize);
     this.stampUrl = app.getStampIconUrl();
     this.homeX = model.getPosX();
     this.homeY = model.getPosY();
@@ -120,7 +123,7 @@ public class TurtleView {
   private void onDrag(MouseEvent e, AppModel app){
     double x = e.getX();
     double y = e.getY();
-    if (!app.isRunning() && app.getMyDisplay().isCanvasClear() && x < model.getXMax() && x > model.getXMin() && y > model.getYMin() && y < model.getYMax()){
+    if (!app.isRunning() && app.getMyCanvas().isClear() && x < model.getXMax() && x > model.getXMin() && y > model.getYMin() && y < model.getYMax()){
       moveIcon(x, y);
       model.setPosition(x, y);
       app.setHome(model.getRelX(), -model.getRelY());
@@ -148,30 +151,19 @@ public class TurtleView {
     pen.setFill(canvas.getBrushColor());
     Collection<Circle> penPoints = new ArrayList<>();
     boolean show = model.isPenDown();
-    pen.translateXProperty().addListener((ov, t, t1) -> drawDots(pen, penPoints, canvas, show));
-    pen.translateYProperty().addListener((ov, t, t1) -> drawDots(pen, penPoints, canvas, show));
+    pen.translateXProperty().addListener((ov, t, t1) -> moveIcon(pen.getTranslateX(), pen.getTranslateY()));
+    pen.translateYProperty().addListener((ov, t, t1) -> moveIcon(pen.getTranslateX(), pen.getTranslateY()));
     PathTransition pathTransition = new PathTransition(Duration.seconds(distance / TURTLE_SPEED), line, pen);
-    pathTransition.setOnFinished(event -> removeDots(pen, penPoints, canvas, line, show));
+    pathTransition.setOnFinished(event -> {
+      if (show) canvas.getShapes().getChildren().add(1, line);
+    });
     return pathTransition;
   }
-  private void drawDots(Circle pen, Collection<Circle> penPoints, CanvasScreen canvas, boolean show){
-    moveIcon(pen.getTranslateX(), pen.getTranslateY());
-    Circle newCirc = new Circle(pen.getTranslateX(), pen.getTranslateY(), pen.getRadius(), pen.getFill());
-    newCirc.setVisible(show);
-    canvas.getShapes().getChildren().add(1, newCirc);
-    penPoints.add(newCirc);
-  }
-  private void removeDots(Circle pen, Collection<Circle> penPoints, CanvasScreen canvas, Line line, boolean show){
-    canvas.getShapes().getChildren().removeAll(penPoints);
-    penPoints.removeAll(penPoints);
-    line.setVisible(show);
-    canvas.getShapes().getChildren().add(1, line);
-  }
   public void changeIcon(String s, AppModel app){
-    app.getMyDisplay().getCanvasScreen().getShapes().getChildren().remove(icon);
+    app.getMyCanvas().getShapes().getChildren().remove(icon);
     icon = createIcon(model.getPosX(), model.getPosY(), iconSize, s);
     installPositionLabel(icon, position, app);
-    app.getMyDisplay().getCanvasScreen().getShapes().getChildren().add(icon);
+    app.getMyCanvas().getShapes().getChildren().add(icon);
   }
   public void changeStamp(String s) {
     stampUrl = s;

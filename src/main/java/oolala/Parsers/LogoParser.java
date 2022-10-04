@@ -1,4 +1,4 @@
-package oolala;
+package oolala.Parsers;
 
 import java.util.ArrayList;
 import java.util.ResourceBundle;
@@ -6,6 +6,7 @@ import java.util.Scanner;
 
 import javafx.scene.control.Alert;
 import oolala.Command.*;
+import oolala.Parsers.Parser;
 
 /**
  * The internal parser for each Logo command.

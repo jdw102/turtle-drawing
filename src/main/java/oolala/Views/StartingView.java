@@ -1,4 +1,4 @@
-package oolala;
+package oolala.Views;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;

@@ -1,16 +1,18 @@
-package oolala;
+package oolala.Models;
 
 import javafx.animation.SequentialTransition;
-import javafx.scene.image.ImageView;
-import javafx.scene.shape.Rectangle;
+import oolala.Views.ViewComponents.CanvasScreen;
 import oolala.Command.Command;
+import oolala.Parsers.Parser;
+import oolala.Views.AppView;
+import oolala.Views.TurtleView;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.ResourceBundle;
 
 public abstract class AppModel {
-    public AppView myDisplay;
+    public CanvasScreen myCanvas;
     public HashMap<Integer, TurtleView> turtles;
     public ArrayList<Integer> currTurtleIdxs;
     public SequentialTransition animation;
@@ -19,32 +21,27 @@ public abstract class AppModel {
     public double homeX;
     public double homeY;
     public boolean running = false;
-    private String turtleIcon;
-    private String turtleStamp;
+    public String turtleIcon;
+    public String turtleStamp;
 
     //TODO: Can we create polymorphism for parser?
 
-    public AppModel(AppView display, ResourceBundle resources, String imageUrl) {
+    public AppModel(CanvasScreen canvas, ResourceBundle resources, String imageUrl, AppView display) {
+        myCanvas = canvas;
         myResources = resources;
-        turtleStamp = myResources.getString(imageUrl);
-        turtleIcon = myResources.getString(imageUrl);
-        myDisplay = display;
         turtles = new HashMap<>();
         currTurtleIdxs = new ArrayList<>();
         homeX = 0;
         homeY = 0;
-        turtles.put(1, new TurtleView(homeX, homeY, display.getCanvasScreen(), this));
-        currTurtleIdxs.add(1);
-        myDisplay.getCanvasScreen().getShapes().getChildren().add(turtles.get(1).getIcon());
         animation = new SequentialTransition();
         animation.setRate(3);
         animation.setOnFinished(event -> {
             running = false;
-            myDisplay.enableImageSelectors();
+            display.enableImageSelectors();
         });
     }
-    public void runApp(ArrayList<Command> commands) {
-        myDisplay.disableImageSelectors();
+    public void runApp(ArrayList<Command> commands, AppView display) {
+        display.disableImageSelectors();
         running = true;
     }
 
@@ -62,19 +59,14 @@ public abstract class AppModel {
             homeY = 0;
         }
         turtles.clear(); // TODO: Check if this is correct functionality
-        myDisplay.getCanvasScreen().getShapes().getChildren().removeIf(i -> !(i instanceof Rectangle));
+        myCanvas.clear();
         currTurtleIdxs.clear();
-        turtles.put(1, new TurtleView(homeX, homeY, myDisplay.getCanvasScreen(), this));
-        myDisplay.getCanvasScreen().getShapes().getChildren().add(turtles.get(1).getIcon()); // TODO: We should probably refactor this for scalability
+        turtles.put(1, new TurtleView(homeX, homeY, myCanvas, this));
+        myCanvas.getShapes().getChildren().add(turtles.get(1).getIcon()); // TODO: We should probably refactor this for scalability
         currTurtleIdxs.add(1);
         animation.stop();
         running = false;
         animation.getChildren().removeAll(animation.getChildren());
-    }
-    public void removeTurtles(){
-        for (Integer i: currTurtleIdxs){
-            myDisplay.getCanvasScreen().getShapes().getChildren().remove(turtles.get(i).getIcon());
-        }
     }
     public boolean isRunning(){
         return running;
@@ -86,24 +78,16 @@ public abstract class AppModel {
     public Parser getParser() {
         return parser;
     }
-    public AppView getMyDisplay(){
-        return myDisplay;
-    }
     public String getTurtleIconUrl(){
         return turtleIcon;
     }
     public String getStampIconUrl(){
         return turtleStamp;
     }
-    public void changeStamp(String s){
-        turtleStamp = s;
+    public CanvasScreen getMyCanvas(){
+        return myCanvas;
     }
-    public void changeIcon(String s){
-        turtleIcon = s;
-        turtleStamp = s;
-        for (Integer i: currTurtleIdxs){
-            turtles.get(i).changeIcon(s, this);
-            turtles.get(i).changeStamp(s);
-        }
+    public void changeImage(String url){
+
     }
 }
