@@ -5,11 +5,8 @@ import javafx.scene.Node;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseDragEvent;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.*;
-import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 
 import java.util.ArrayList;
@@ -23,7 +20,7 @@ import java.util.Collection;
 public class TurtleView {
   private double homeX;
   private double homeY;
-  private TurtleModel model;
+  private LogoModel model;
   private String stampUrl;
   public static final double DEFAULT_ICON_SIZE = 30;
   public ImageView icon;
@@ -34,7 +31,7 @@ public class TurtleView {
 
   public TurtleView(double posX, double posY, CanvasScreen screen, AppModel app){
     this.iconSize = DEFAULT_ICON_SIZE;
-    this.model = new TurtleModel(posX, posY, screen.getBorderRectangle(), iconSize);
+    this.model = new LogoModel(posX, posY, screen.getBorderRectangle(), iconSize);
     this.stampUrl = app.getStampIconUrl();
     this.homeX = model.getPosX();
     this.homeY = model.getPosY();

@@ -12,7 +12,7 @@ public class TurtleDrawingModel extends AppModel {
 
     public TurtleDrawingModel(AppView display, ResourceBundle myResources, String iconUrl) {
         super(display, myResources, iconUrl);
-        parser = new TurtleParser(myResources);
+        parser = new LogoParser(myResources);
     }
 
     @Override

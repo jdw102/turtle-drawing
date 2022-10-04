@@ -4,13 +4,12 @@
 
 ## Team Roles and Responsibilities
 
- * Team Member #1 
-Aditya Paul: parser, functionality of multiple turtles.
-
- * Team Member #2 
-Luyao Wang: canvas, the model, different languages.
+ * Team Member #1
+   Aditya Paul: parsers of LOGO and L-Syetem, functionality of multiple turtles.
+ * Team Member #2
+   Luyao Wang: the model, GUI, different languages.
  * Team Member #3
-Jerry Worthy: textbox, turtle class, styling, the model.
+   Jerry Worthy: turtle class, GUI, styling, the model, splashscreen.
 
 
 ## Design goals
@@ -24,11 +23,13 @@ The multi-language feature is also easy to add because everything is bundled up 
 
 #### Core Classes
 
-`OolalaGame`
+`AppModel`
 
-`Parse`, `CanvasView`, and `TextBox` objected are created in this class. `TextBox` and `CanvasView` classes are class for display, while
-`OolalaGame` is the model setting up the specific UI, and the `OolalaGame` also deals with the connection between the other 3 classes. For example, when the "Run" button is clicked, the text in 
-the `TextArea` will be passed to `Parser`, and the interpreted instructions will be passed to a list of `Turtle` objects, which call the `drawLine` method in `canvasScreen` class.
+`AppModel` has two subclasses `LogoModel` and `LSystemModel`
+
+`AppView`
+
+`Parser`, `CanvasScreen`, `TextBox`, and `ToolBar` objected are created in `AppView`. `AppModel` are also created in this class.
 
 ## Assumptions that Affect the Design
 
@@ -37,23 +38,22 @@ Therefore, when the window size is fixed, layout is easier, and we can focus on 
 
 #### Features Affected by Assumptions
 
-We assume that languages can be dynamically changed, so the way languages are changed in this program is to create a `setLanguage` method, which changes the text of all the occurrences where languages need to be changed.
 
 ## Significant differences from Original Plan
 
-In our original plan, we made the `OolalaGame` class a simpler class whose responsibility is mainly to set up the scene, and all the specific UI components are in `CanvasScreen` and `TextBox` class. 
-However, we found that in this way, the program is not very extensible, so we make `CanvasScreen` and `TextBox` classes only for view, which mainly contains `makeXXX` methods which do not specify a certain components, and we pass magical value to this method to create different components as an abstraction.
+In our original plan, we did not separate model from view.
+However, we found that in this way, the program is not extensible, so we make two subclasses inheriting the `AppModel` class.
 
 ## New Features HowTo
 
 #### Easy to Add Features
 
-# set the Home location to a specific xy-location (default is the center of the display)
-
-# set the Home location to a specific xy-location (default is the center of the display)
-
-These two features are easy to add since we assume that the size of window do not change.
+set the Home location to a specific xy-location (default is the center of the display)
 
 #### Other Features not yet Done
 
-Animation. This feature is important, without which our program seems to be lack of animation and vivacity. This feature should be done since we have biological entities in the next part.
+Added: Animation. This feature is important, without which our program seems to be lack of animation and vivacity. This feature should be done since we have biological entities in the next part.
+
+Tests for GUI
+
+Option for enable animation or not
