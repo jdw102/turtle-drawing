@@ -46,17 +46,18 @@ public class Main extends Application{
     @Override
     public void start(Stage stage) {
         this.stage = stage;
-        view = new AppView();
-        EventHandler<ActionEvent> startApp = event -> {
-            stage.close();
-            scene = view.setUpScene(SIZE_WIDTH, SIZE_HEIGHT, stage, startingView.getLanguage(), startingView.getAppName());
-            scene.getStylesheets().add(getClass().getResource(DEFAULT_RESOURCE_FOLDER + STYLESHEET).toExternalForm());
-            stage.setScene(scene);
-            stage.setResizable(false);
-            stage.show();
-        };
-        startingView = new StartingView();
-        scene = startingView.setUpScene(START_WIDTH, START_HEIGHT, startApp);
+        view = new AppView2(SIZE_WIDTH, SIZE_HEIGHT, stage, "English");
+        scene = view.getScene();
+//        EventHandler<ActionEvent> startApp = event -> {
+//            stage.close();
+//            scene = view.setUpScene(SIZE_WIDTH, SIZE_HEIGHT, stage, startingView.getLanguage(), startingView.getAppName());
+//            scene.getStylesheets().add(getClass().getResource(DEFAULT_RESOURCE_FOLDER + STYLESHEET).toExternalForm());
+//            stage.setScene(scene);
+//            stage.setResizable(false);
+//            stage.show();
+//        };
+//        startingView = new StartingView();
+//        scene = startingView.setUpScene(START_WIDTH, START_HEIGHT, startApp);
         scene.getStylesheets().add(getClass().getResource(DEFAULT_RESOURCE_FOLDER + STYLESHEET).toExternalForm());
         stage.setTitle(TITLE);
         stage.setScene(scene);

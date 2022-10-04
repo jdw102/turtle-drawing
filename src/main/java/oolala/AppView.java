@@ -4,15 +4,12 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
-import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
 import javafx.scene.input.KeyCode;
@@ -23,11 +20,9 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import javafx.util.Callback;
 import oolala.Command.Command;
 
 import javax.imageio.ImageIO;
-import javax.tools.Tool;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -41,7 +36,7 @@ import java.util.*;
 public class AppView {
     private int textBoxWidth = 275;
     private int textBoxHeight = 600;
-    private BorderPane root;
+    public BorderPane root;
     private TextBox textBox;
     public static ResourceBundle myResources;
     private static final String DEFAULT_RESOURCE_PACKAGE = "Properties.";
@@ -49,9 +44,9 @@ public class AppView {
     private Stage stage;
     private CanvasScreen canvasScreen;
     ToolBar toolBar;
-    private VBox textBoxVBox;
+    public VBox textBoxVBox;
     private HBox leftToolbarHbox;
-    private HBox rightToolBarHBox;
+    public HBox rightToolBarHBox;
     private ListView<String> recentlyUsed;
     private TextArea textArea;
     private static final String DEFAULT_LANGUAGE = "English";
@@ -64,17 +59,16 @@ public class AppView {
     private Color brushColor;
     private Color backgroundColor;
     private HashMap<String, AppModel> apps;
-    private AppModel currentApp;
+    public AppModel currentApp;
     private LSystemSlider lengthSlider;
     private LSystemSlider angleSlider;
     private LSystemSlider levelSlider;
     private final List<String> iconLabels = new ArrayList<>(Arrays.asList("TurtleIcon", "SimpleTurtleIcon", "TriangleArrowIcon"));
-    private final List<String> stampLabels = new ArrayList<>(Arrays.asList("SimpleLeafStamp", "OakLeafStamp", "MapleLeafStamp", "FireworkStamp"));
-    private ComboBox<ImageView> imageSelector;
-    private String currentAppName;
+    public final List<String> stampLabels = new ArrayList<>(Arrays.asList("SimpleLeafStamp", "OakLeafStamp", "MapleLeafStamp", "FireworkStamp"));
+    public ComboBox<ImageView> imageSelector;
+    private Scene scene;
 
-    public Scene setUpScene(int sizeWidth, int sizeHeight, Stage stage, String language, String appName) {
-        currentAppName = appName;
+    public AppView(int sizeWidth, int sizeHeight, Stage stage, String language) {
         myResources = ResourceBundle.getBundle(DEFAULT_RESOURCE_PACKAGE + language);
         this.stage = stage;
         this.language = language;
@@ -84,25 +78,22 @@ public class AppView {
         toolBar = new ToolBar(myResources);
 
         textBox = new TextBox(myResources);
-        textBoxVBox = makeTextBoxVBox();
+        //textBoxVBox = makeTextBoxVBox();
         root.setLeft(textBoxVBox);
 
         canvasScreen = new CanvasScreen(myResources);
         Group canvasShapes = canvasScreen.getShapes();
 
-        if (currentAppName.equals("Logo")){
-            currentApp = new TurtleDrawingModel(this, myResources, "TurtleIcon");
-        }
-        else if (currentAppName.equals("LSystem")){
-            currentApp = new LSystemModel(this, myResources, "SimpleLeafStamp");
-        }
         rightToolBarHBox = makeRightToolbarHBox();
 
         root.setCenter(rightToolBarHBox);
         root.getChildren().add(canvasShapes);
 
         root.setPadding(new Insets(10, 10, 10, 10));
-        Scene scene = new Scene(root, sizeWidth, sizeHeight);
+        scene = new Scene(root, sizeWidth, sizeHeight);
+    }
+
+    public Scene getScene(){
         return scene;
     }
 
@@ -134,9 +125,7 @@ public class AppView {
         vBox.getChildren().add(historyTitle);
         vBox.getChildren().add(recentlyUsed);
         textArea.setPrefSize(textBoxWidth, 3 * textBoxHeight / 4);
-        if (currentAppName.equals("LSystem")){
-            makeSliders(vBox);
-        }
+
         return vBox;
     }
 
@@ -164,25 +153,13 @@ public class AppView {
         };
         colorPicker = toolBar.makeColorPicker(setBrushColor, Color.BLACK, "BrushColorPicker");
         colorPickerBackGround = toolBar.makeColorPicker(setColorBackGround, Color.AZURE, "CanvasColorPicker");
-        makeBrushImageSelector();
-        HBox hBox = new HBox(imageSelector, colorPickerBackGround, colorPicker, thicknessTextField, clearButton, resetButton, saveButton);
+
+        HBox hBox = new HBox(colorPickerBackGround, colorPicker, thicknessTextField, clearButton, resetButton, saveButton);
         hBox.setAlignment(Pos.TOP_RIGHT);
         return hBox;
     }
 
     private void makeBrushImageSelector() {
-        if (Objects.equals(currentAppName, "Logo")){
-            imageSelector = toolBar.makeImageSelector(iconLabels, "IconChange");
-            imageSelector.setOnAction(event -> {
-                currentApp.changeIcon(imageSelector.getValue().getImage().getUrl());
-            });
-        }
-        else if (Objects.equals(currentAppName, "LSystem")){
-            imageSelector = toolBar.makeImageSelector(stampLabels, "StampChange");
-            imageSelector.setOnAction(event -> {
-                currentApp.changeStamp(imageSelector.getValue().getImage().getUrl());
-            });
-        }
     }
 
     private HBox makeLeftToolbarHBox() {
@@ -284,7 +261,7 @@ public class AppView {
     public void enableImageSelectors(){
         imageSelector.setDisable(false);
     }
-    private void makeSliders(VBox box){
+    public LSystemSlider makeSliders(VBox box){
         EventHandler<MouseEvent> lengthChange = event -> {
             ( (LSystemParser) currentApp.getParser()).setDist((int) lengthSlider.getSlider().getValue());
         };
@@ -294,11 +271,13 @@ public class AppView {
         EventHandler<MouseEvent> levelChange = event -> {
             ( (LSystemParser) currentApp.getParser()).setLevel((int) levelSlider.getSlider().getValue());
         };
-        lengthSlider = new LSystemSlider(1, 100, 10, lengthChange, myResources.getString("LengthSlider"));
-        angleSlider = new LSystemSlider(1, 90, 30, angleChange, myResources.getString("AngleSlider"));
-        levelSlider = new LSystemSlider(0, 5, 3, levelChange, myResources.getString("LevelSlider"));
-        box.getChildren().add(2, lengthSlider.getSliderBox());
-        box.getChildren().add(2, angleSlider.getSliderBox());
-        box.getChildren().add(2, levelSlider.getSliderBox());
+        LSystemSlider lengthSlider = new LSystemSlider(1, 100, 10, lengthChange, myResources.getString("LengthSlider"));
+        LSystemSlider angleSlider = new LSystemSlider(1, 90, 30, angleChange, myResources.getString("AngleSlider"));
+        LSystemSlider levelSlider = new LSystemSlider(0, 5, 3, levelChange, myResources.getString("LevelSlider"));
+//        box.getChildren().add(2, lengthSlider.getSliderBox());
+//        box.getChildren().add(2, angleSlider.getSliderBox());
+//        box.getChildren().add(2, levelSlider.getSliderBox());
+
+        return lengthSlider;
     }
 }
