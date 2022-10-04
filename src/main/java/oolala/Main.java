@@ -46,7 +46,7 @@ public class Main extends Application{
     @Override
     public void start(Stage stage) {
         this.stage = stage;
-        view = new AppView2(SIZE_WIDTH, SIZE_HEIGHT, stage, "English");
+        view = new AppView1(SIZE_WIDTH, SIZE_HEIGHT, stage, "English");
         scene = view.getScene();
 //        EventHandler<ActionEvent> startApp = event -> {
 //            stage.close();

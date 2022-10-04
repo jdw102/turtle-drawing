@@ -26,7 +26,7 @@ public class TextBox {
     private ListView<String> recentlyUsed;
 
 
-    public TextBox(int textBoxWidth, int textBoxHeight, ResourceBundle myResources, String appName, AppModel currentApp, AppView display, ViewUtils viewUtils) {
+    public TextBox(int textBoxWidth, int textBoxHeight, ResourceBundle myResources,AppModel currentApp, AppView display, ViewUtils viewUtils) {
         this.myResources = myResources;
         textArea = new TextArea("");
         textArea.setPrefSize(textBoxWidth, 3 * textBoxHeight / 4);
@@ -47,9 +47,9 @@ public class TextBox {
         });
         leftToolBar = makeLeftToolbarHBox(textBoxWidth, currentApp, display, viewUtils);
         box = new VBox(leftToolBar, textArea, historyTitle, recentlyUsed);
-        if (appName.equals("LSystem")){
-            makeSliders(currentApp);
-        }
+//        if (appName.equals("LSystem")){
+//            makeSliders(currentApp);
+//        }
     }
 
     public TextArea makeTextArea() {

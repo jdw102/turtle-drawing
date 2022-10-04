@@ -36,7 +36,7 @@ public class AppView {
     private static final String DEFAULT_RESOURCE_PACKAGE = "Properties.";
     private FileChooser fileChooser;
     private Stage stage;
-    private CanvasScreen canvasScreen;
+    public CanvasScreen canvasScreen;
     ViewUtils viewUtils;
     private VBox textBoxVBox;
     private HBox leftToolbarHbox;
@@ -46,14 +46,13 @@ public class AppView {
     private TextField thicknessTextField;
     private ColorPicker colorPickerBackGround;
     private ColorPicker colorPicker;
-    private AppModel currentApp;
-    private final List<String> iconLabels = new ArrayList<>(Arrays.asList("TurtleIcon", "SimpleTurtleIcon", "TriangleArrowIcon"));
-    private final List<String> stampLabels = new ArrayList<>(Arrays.asList("SimpleLeafStamp", "OakLeafStamp", "MapleLeafStamp", "FireworkStamp"));
+    public AppModel currentApp;
+    public final List<String> iconLabels = new ArrayList<>(Arrays.asList("TurtleIcon", "SimpleTurtleIcon", "TriangleArrowIcon"));
+    public final List<String> stampLabels = new ArrayList<>(Arrays.asList("SimpleLeafStamp", "OakLeafStamp", "MapleLeafStamp", "FireworkStamp"));
     private ComboBox<ImageView> imageSelector;
-    private String currentAppName;
+    private Scene scene;
 
-    public Scene setUpScene(int sizeWidth, int sizeHeight, Stage stage, String language, String appName) {
-        currentAppName = appName;
+    public AppView(int sizeWidth, int sizeHeight, Stage stage, String language) {
         myResources = ResourceBundle.getBundle(DEFAULT_RESOURCE_PACKAGE + language);
         this.stage = stage;
         fileChooser = new FileChooser();
@@ -64,20 +63,25 @@ public class AppView {
         canvasScreen = new CanvasScreen(myResources);
         Group canvasShapes = canvasScreen.getShapes();
 
-        if (currentAppName.equals("Logo")){
-            currentApp = new TurtleDrawingModel(canvasScreen, myResources, "TurtleIcon", this);
-        }
-        else if (currentAppName.equals("LSystem")){
-            currentApp = new LSystemModel(canvasScreen, myResources, "SimpleLeafStamp", this);
-        }
         rightToolBarHBox = makeRightToolbarHBox();
-        textBox = new TextBox(textBoxWidth, textBoxHeight, myResources, currentAppName, currentApp, this, viewUtils);
+        textBox = new TextBox(textBoxWidth, textBoxHeight, myResources, currentApp, this, viewUtils);
         root.setLeft(textBox.getBox());
         root.setCenter(rightToolBarHBox);
         root.getChildren().add(canvasShapes);
 
         root.setPadding(new Insets(10, 10, 10, 10));
-        Scene scene = new Scene(root, sizeWidth, sizeHeight);
+        scene = new Scene(root, sizeWidth, sizeHeight);
+    }
+
+    public HBox getRightToolBarHBox() {
+        return rightToolBarHBox;
+    }
+
+    public ComboBox<ImageView> getImageSelector() {
+        return imageSelector;
+    }
+
+    public Scene getScene() {
         return scene;
     }
 
@@ -103,25 +107,9 @@ public class AppView {
         };
         colorPicker = viewUtils.makeColorPicker(setBrushColor, Color.BLACK, "BrushColorPicker");
         colorPickerBackGround = viewUtils.makeColorPicker(setColorBackGround, Color.AZURE, "CanvasColorPicker");
-        makeImageSelector();
-        HBox hBox = new HBox(imageSelector, colorPickerBackGround, colorPicker, thicknessTextField, clearButton, resetButton, saveButton);
+        HBox hBox = new HBox(colorPickerBackGround, colorPicker, thicknessTextField, clearButton, resetButton, saveButton);
         hBox.setAlignment(Pos.TOP_RIGHT);
         return hBox;
-    }
-
-    private void makeImageSelector() {
-        if (Objects.equals(currentAppName, "Logo")){
-            imageSelector = viewUtils.makeImageSelector(iconLabels, "IconChange");
-            imageSelector.setOnAction(event -> {
-                currentApp.changeIcon(imageSelector.getValue().getImage().getUrl());
-            });
-        }
-        else if (Objects.equals(currentAppName, "LSystem")){
-            imageSelector = viewUtils.makeImageSelector(stampLabels, "StampChange");
-            imageSelector.setOnAction(event -> {
-                currentApp.changeStamp(imageSelector.getValue().getImage().getUrl());
-            });
-        }
     }
 
     public EventHandler<ActionEvent> openFileChooserEventHandler() {
@@ -185,4 +173,3 @@ public class AppView {
     }
 
 }
-    
