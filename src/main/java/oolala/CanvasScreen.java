@@ -51,9 +51,6 @@ public class CanvasScreen {
         }
     }
 
-    private void changeColor(Color clr) {
-        brushColor = clr;
-    }
 
     public WritableImage screenShot() {
         WritableImage snapshot = shapes.snapshot(null, null);
@@ -61,12 +58,7 @@ public class CanvasScreen {
     }
 
     public void clear() {
-        //same way of implementing
-//        for (Node i : shapes.getChildren()) {
-//            if (i instanceof Line)
-//                shapes.getChildren().remove(i);
-//        }
-        shapes.getChildren().removeIf(i -> i instanceof Line);
+        shapes.getChildren().removeIf(i -> !(i instanceof Rectangle));
     }
 
     public Group getShapes() {
@@ -83,5 +75,11 @@ public class CanvasScreen {
 
     public Color getBrushColor() {
         return brushColor;
+    }
+    public boolean isClear(){
+        if (shapes.getChildren().size() > 2){
+            return false;
+        }
+        else return true;
     }
 }
