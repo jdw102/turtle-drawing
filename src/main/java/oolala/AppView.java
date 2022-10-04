@@ -54,20 +54,10 @@ public class AppView {
     private HBox rightToolBarHBox;
     private ListView<String> recentlyUsed;
     private TextArea textArea;
-    private static final String DEFAULT_LANGUAGE = "English";
-    private String language;
-    private ObservableList<String> applicationLabels = FXCollections.observableArrayList("Logo", "LSystem");
-    private ComboBox<String> appComboBox;
     private TextField thicknessTextField;
     private ColorPicker colorPickerBackGround;
     private ColorPicker colorPicker;
-    private Color brushColor;
-    private Color backgroundColor;
-    private HashMap<String, AppModel> apps;
     private AppModel currentApp;
-    private LSystemSlider lengthSlider;
-    private LSystemSlider angleSlider;
-    private LSystemSlider levelSlider;
     private final List<String> iconLabels = new ArrayList<>(Arrays.asList("TurtleIcon", "SimpleTurtleIcon", "TriangleArrowIcon"));
     private final List<String> stampLabels = new ArrayList<>(Arrays.asList("SimpleLeafStamp", "OakLeafStamp", "MapleLeafStamp", "FireworkStamp"));
     private ComboBox<ImageView> imageSelector;
@@ -77,7 +67,6 @@ public class AppView {
         currentAppName = appName;
         myResources = ResourceBundle.getBundle(DEFAULT_RESOURCE_PACKAGE + language);
         this.stage = stage;
-        this.language = language;
 
         root = new BorderPane();
 
@@ -116,7 +105,7 @@ public class AppView {
             if (keyCombination.match(event)) {
                 ArrayList<Command> commands = currentApp.getParser().parse(textArea.getText().toLowerCase());
                 textBox.updateRecentlyUsed(commands, recentlyUsed);
-                setCommands(commands, this);
+                setCommands(commands);
             }
         });
 
@@ -135,7 +124,7 @@ public class AppView {
         vBox.getChildren().add(recentlyUsed);
         textArea.setPrefSize(textBoxWidth, 3 * textBoxHeight / 4);
         if (currentAppName.equals("LSystem")){
-            makeSliders(vBox);
+            toolBar.makeSliders(vBox, currentApp);
         }
         return vBox;
     }
@@ -155,12 +144,10 @@ public class AppView {
         thicknessTextField = toolBar.makeTextField("Thickness", "3", thicknessCommand);
 
         EventHandler<ActionEvent> setBrushColor = event -> {
-            brushColor = colorPicker.getValue();
-            canvasScreen.setBrushColor(brushColor);
+            canvasScreen.setBrushColor(colorPicker.getValue());
         };
         EventHandler<ActionEvent> setColorBackGround = event -> {
-            backgroundColor = colorPickerBackGround.getValue();
-            canvasScreen.getBorderRectangle().setFill(backgroundColor);
+            canvasScreen.getBorderRectangle().setFill(colorPickerBackGround.getValue());
         };
         colorPicker = toolBar.makeColorPicker(setBrushColor, Color.BLACK, "BrushColorPicker");
         colorPickerBackGround = toolBar.makeColorPicker(setColorBackGround, Color.AZURE, "CanvasColorPicker");
@@ -210,7 +197,7 @@ public class AppView {
         EventHandler<ActionEvent> passCommands = event -> {
             ArrayList<Command> commands = currentApp.getParser().parse(textArea.getText().toLowerCase());
             textBox.updateRecentlyUsed(commands, recentlyUsed);
-            setCommands(commands, this);
+            setCommands(commands);
         };
         return passCommands;
     }
@@ -268,7 +255,7 @@ public class AppView {
         return saveFile;
     }
 
-    public void setCommands(ArrayList<Command> commands, AppView display) {
+    public void setCommands(ArrayList<Command> commands) {
         currentApp.runApp(commands);
     }
     public boolean isCanvasClear(){
@@ -284,21 +271,5 @@ public class AppView {
     public void enableImageSelectors(){
         imageSelector.setDisable(false);
     }
-    private void makeSliders(VBox box){
-        EventHandler<MouseEvent> lengthChange = event -> {
-            ( (LSystemParser) currentApp.getParser()).setDist((int) lengthSlider.getSlider().getValue());
-        };
-        EventHandler<MouseEvent> angleChange = event -> {
-            ( (LSystemParser) currentApp.getParser()).setAng((int) angleSlider.getSlider().getValue());
-        };
-        EventHandler<MouseEvent> levelChange = event -> {
-            ( (LSystemParser) currentApp.getParser()).setLevel((int) levelSlider.getSlider().getValue());
-        };
-        lengthSlider = new LSystemSlider(1, 100, 10, lengthChange, myResources.getString("LengthSlider"));
-        angleSlider = new LSystemSlider(1, 90, 30, angleChange, myResources.getString("AngleSlider"));
-        levelSlider = new LSystemSlider(0, 5, 3, levelChange, myResources.getString("LevelSlider"));
-        box.getChildren().add(2, lengthSlider.getSliderBox());
-        box.getChildren().add(2, angleSlider.getSliderBox());
-        box.getChildren().add(2, levelSlider.getSliderBox());
-    }
+
 }

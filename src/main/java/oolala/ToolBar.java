@@ -4,6 +4,8 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 
 import java.util.ArrayList;
@@ -102,6 +104,26 @@ public class ToolBar {
         colorPicker.setOnAction(handler);
         Tooltip.install(colorPicker, new Tooltip(myResources.getString(tooltip)));
         return colorPicker;
+    }
+    public void makeSliders(VBox box, AppModel currentApp){
+        LSystemSlider lengthSlider = new LSystemSlider(1, 100, 10, myResources.getString("LengthSlider"));
+        LSystemSlider angleSlider = new LSystemSlider(1, 90, 30, myResources.getString("AngleSlider"));
+        LSystemSlider levelSlider = new LSystemSlider(0, 5, 3, myResources.getString("LevelSlider"));
+        EventHandler<MouseEvent> lengthChange = event -> {
+            ( (LSystemParser) currentApp.getParser()).setDist((int) lengthSlider.getSlider().getValue());
+        };
+        EventHandler<MouseEvent> angleChange = event -> {
+            ( (LSystemParser) currentApp.getParser()).setAng((int) angleSlider.getSlider().getValue());
+        };
+        EventHandler<MouseEvent> levelChange = event -> {
+            ( (LSystemParser) currentApp.getParser()).setLevel((int) levelSlider.getSlider().getValue());
+        };
+        lengthSlider.setHandler(lengthChange);
+        angleSlider.setHandler(angleChange);
+        levelSlider.setHandler(levelChange);
+        box.getChildren().add(2, lengthSlider.getSliderBox());
+        box.getChildren().add(2, angleSlider.getSliderBox());
+        box.getChildren().add(2, levelSlider.getSliderBox());
     }
 
 }

@@ -13,14 +13,13 @@ public class LSystemSlider {
     private HBox box;
     private Label name;
 
-    public LSystemSlider(int min, int max, int curr, EventHandler<MouseEvent> handler, String title){
+    public LSystemSlider(int min, int max, int curr, String title){
         slider = new Slider(min, max, curr);
         slider.valueProperty().addListener((obs, oldval, newVal) -> {
                     slider.setValue(newVal.intValue());
                     label.setText(Integer.toString((int) slider.getValue()));
         });
         slider.setShowTickMarks(true);
-        slider.setOnMouseReleased(handler);
         name = new Label(title);
         label = new Label(Integer.toString((int) slider.getValue()));
         box = new HBox(name, slider, label);
@@ -35,5 +34,8 @@ public class LSystemSlider {
     }
     public Label getLabel(){
         return label;
+    }
+    public void setHandler(EventHandler<MouseEvent> handler){
+        slider.setOnMouseReleased(handler);
     }
 }

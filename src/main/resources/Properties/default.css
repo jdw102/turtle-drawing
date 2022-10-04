@@ -19,6 +19,7 @@
 .combo-box {
     -fx-font-size: 11pt;
     -fx-min-height: 40;
+    -fx-max-width: 50;
 }
 .text-field {
     -fx-min-height: 40;
@@ -37,4 +38,5 @@
 }
 .start-combo-box{
     -fx-font-size: 14pt;
+    -fx-min-width: 200;
 }
