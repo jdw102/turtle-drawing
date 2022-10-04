@@ -41,7 +41,6 @@ import java.util.*;
 public class AppView {
     private int textBoxWidth = 275;
     private int textBoxHeight = 600;
-    private String historyText = "Command History";
     private BorderPane root;
     private TextBox textBox;
     public static ResourceBundle myResources;
@@ -153,7 +152,7 @@ public class AppView {
         Button saveButton = toolBar.makeButton("SaveButton", saveCommand);
 
         EventHandler<ActionEvent> thicknessCommand = event -> canvasScreen.setThickness(thicknessTextField.getText());
-        thicknessTextField = canvasScreen.makeTextField("Thickness", "3", thicknessCommand);
+        thicknessTextField = toolBar.makeTextField("Thickness", "3", thicknessCommand);
 
         EventHandler<ActionEvent> setBrushColor = event -> {
             brushColor = colorPicker.getValue();
