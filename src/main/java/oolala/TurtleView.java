@@ -24,8 +24,8 @@ public class TurtleView {
   private double homeX;
   private double homeY;
   private TurtleModel model;
+  private String stampUrl;
   public static final double DEFAULT_ICON_SIZE = 30;
-  public String turtleImage = "Images/turtleicon.png";
   public ImageView icon;
   public ArrayList<ImageView> stamps;
   private double iconSize;
@@ -35,10 +35,11 @@ public class TurtleView {
   public TurtleView(double posX, double posY, CanvasScreen screen, AppModel app){
     this.iconSize = DEFAULT_ICON_SIZE;
     this.model = new TurtleModel(posX, posY, screen.getBorderRectangle(), iconSize);
+    this.stampUrl = app.getStampIconUrl();
     this.homeX = model.getPosX();
     this.homeY = model.getPosY();
     this.position = new Tooltip();
-    this.icon = createIcon(model.getPosX(), model.getPosY(), iconSize);
+    this.icon = createIcon(model.getPosX(), model.getPosY(), iconSize, app.getTurtleIconUrl());
     installPositionLabel(icon, position, app);
     this.stamps = new ArrayList<>();
   }
@@ -70,9 +71,10 @@ public class TurtleView {
     FadeTransition fadeOut = new FadeTransition(Duration.seconds(0.25), icon);
     fadeOut.setFromValue(icon.getOpacity());
     fadeOut.setToValue(0.0);
+    model.setPosition(homeX, homeY);
     fadeOut.setOnFinished(event -> {
+      System.out.println("test");
       moveIcon(homeX, homeY);
-      model.setPosition(homeX, homeY);
       model.updateRelativePosition(icon, position);
     } );
     FadeTransition fadeIn = new FadeTransition(Duration.seconds(0.25), icon);
@@ -82,7 +84,7 @@ public class TurtleView {
     animation.getChildren().add(fadeIn);
   }
   public void stamp(CanvasScreen canvas, SequentialTransition animation){
-    ImageView s = createIcon(model.getPosX(), model.getPosY(), iconSize);
+    ImageView s = createIcon(model.getPosX(), model.getPosY(), iconSize, stampUrl);
     s.toFront();
     stamps.add(s);
     s.setOpacity(0.0);
@@ -101,8 +103,8 @@ public class TurtleView {
     this.icon.toFront();
     model.updateRelativePosition(icon, position);
   }
-  private ImageView createIcon(double x, double y, double size){
-    ImageView i = new ImageView(new Image(turtleImage));
+  private ImageView createIcon(double x, double y, double size, String url){
+    ImageView i = new ImageView(new Image(url));
     i.setFitHeight(size);
     i.setFitWidth(size);
     i.setX(x- size / 2);
@@ -167,6 +169,15 @@ public class TurtleView {
     penPoints.removeAll(penPoints);
     line.setVisible(show);
     canvas.getShapes().getChildren().add(1, line);
+  }
+  public void changeIcon(String s, AppModel app){
+    app.getMyDisplay().getCanvasScreen().getShapes().getChildren().remove(icon);
+    icon = createIcon(model.getPosX(), model.getPosY(), iconSize, s);
+    installPositionLabel(icon, position, app);
+    app.getMyDisplay().getCanvasScreen().getShapes().getChildren().add(icon);
+  }
+  public void changeStamp(String s) {
+    stampUrl = s;
   }
 }
 

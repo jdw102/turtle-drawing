@@ -9,13 +9,15 @@ import java.util.ResourceBundle;
 import static oolala.Command.Command.CmdName.TELL;
 
 public class LSystemModel extends AppModel {
-    public LSystemModel(AppView display, ResourceBundle myResources) {
-        super(display, myResources);
+    public LSystemModel(AppView display, ResourceBundle myResources, String stampUrl) {
+        super(display, myResources, stampUrl);
+        changeIcon(myResources.getString("TriangleArrowIcon"));
         parser = new LSystemParser(myResources);
     }
 
     @Override
     public void runApp(ArrayList<Command> commands) {
+        super.runApp(commands);
         Iterator<Command> itCmd = commands.iterator();
         while (itCmd.hasNext()) {
             Command instruction = itCmd.next();

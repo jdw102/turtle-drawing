@@ -32,3 +32,9 @@
 .tooltip{
     -fx-font-size: 10pt;
 }
+.start-label{
+    -fx-font-size: 16pt;
+}
+.start-combo-box{
+    -fx-font-size: 14pt;
+}
