@@ -28,10 +28,12 @@ import java.util.*;
  * The origin is at the center of the screen.
  */
 public class AppView {
-    private int textBoxWidth = 275;
-    private int textBoxHeight = 600;
-    private BorderPane root;
-    private TextBox textBox;
+    public int sizeWidth;
+    public int sizeHeight;
+    public int textBoxWidth = 275;
+    public int textBoxHeight = 600;
+    public BorderPane root;
+    public TextBox textBox;
     public static ResourceBundle myResources;
     private static final String DEFAULT_RESOURCE_PACKAGE = "Properties.";
     private FileChooser fileChooser;
@@ -40,7 +42,7 @@ public class AppView {
     ViewUtils viewUtils;
     private VBox textBoxVBox;
     private HBox leftToolbarHbox;
-    private HBox rightToolBarHBox;
+    public HBox rightToolBarHBox;
     private ListView<String> recentlyUsed;
     private TextArea textArea;
     private TextField thicknessTextField;
@@ -49,28 +51,29 @@ public class AppView {
     public AppModel currentApp;
     public final List<String> iconLabels = new ArrayList<>(Arrays.asList("TurtleIcon", "SimpleTurtleIcon", "TriangleArrowIcon"));
     public final List<String> stampLabels = new ArrayList<>(Arrays.asList("SimpleLeafStamp", "OakLeafStamp", "MapleLeafStamp", "FireworkStamp"));
-    private ComboBox<ImageView> imageSelector;
-    private Scene scene;
+    public ComboBox<ImageView> imageSelector;
+    public Scene scene;
+    public Group canvasShapes;
 
     public AppView(int sizeWidth, int sizeHeight, Stage stage, String language) {
+        this.sizeWidth = sizeWidth;
+        this.sizeHeight = sizeHeight;
         myResources = ResourceBundle.getBundle(DEFAULT_RESOURCE_PACKAGE + language);
         this.stage = stage;
         fileChooser = new FileChooser();
         root = new BorderPane();
+        canvasScreen = new CanvasScreen(myResources);
+        canvasShapes = canvasScreen.getShapes();
 
         viewUtils = new ViewUtils(myResources);
+    }
 
-        canvasScreen = new CanvasScreen(myResources);
-        Group canvasShapes = canvasScreen.getShapes();
+    public Scene setUpScene() {
+        return scene;
+    }
 
-        rightToolBarHBox = makeRightToolbarHBox();
-        textBox = new TextBox(textBoxWidth, textBoxHeight, myResources, currentApp, this, viewUtils);
-        root.setLeft(textBox.getBox());
-        root.setCenter(rightToolBarHBox);
-        root.getChildren().add(canvasShapes);
-
-        root.setPadding(new Insets(10, 10, 10, 10));
-        scene = new Scene(root, sizeWidth, sizeHeight);
+    public TextBox getTextBox() {
+        return textBox;
     }
 
     public HBox getRightToolBarHBox() {
@@ -79,10 +82,6 @@ public class AppView {
 
     public ComboBox<ImageView> getImageSelector() {
         return imageSelector;
-    }
-
-    public Scene getScene() {
-        return scene;
     }
 
     public HBox makeRightToolbarHBox() {
@@ -120,7 +119,9 @@ public class AppView {
                     Path filePath = Path.of(f.getPath());
                     String content = Files.readString(filePath);
                     textBox.setText(content);
-                } catch (IOException e) {throw new RuntimeException(e);}
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
             }
         };
         return openFileChooser;
@@ -137,7 +138,9 @@ public class AppView {
                     FileWriter writer = new FileWriter(f);
                     writer.write(textBox.getText());
                     writer.close();
-                } catch (IOException e) {throw new RuntimeException(e);}
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
             }
         };
         return saveFile;
@@ -165,10 +168,11 @@ public class AppView {
         currentApp.runApp(commands, this);
     }
 
-    public void disableImageSelectors(){
+    public void disableImageSelectors() {
         imageSelector.setDisable(true);
     }
-    public void enableImageSelectors(){
+
+    public void enableImageSelectors() {
         imageSelector.setDisable(false);
     }
 

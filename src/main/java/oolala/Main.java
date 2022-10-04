@@ -8,17 +8,13 @@ import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.stage.Stage;
 
-import java.util.HashMap;
-
-import static oolala.AppView.myResources;
-
 
 /**
  * @Author Luyao Wang
- *
+ * <p>
  * Feel free to completely change this code or delete it entirely.
  */
-public class Main extends Application{
+public class Main extends Application {
     private static final int SIZE_WIDTH = 800;
 
     private static final int SIZE_HEIGHT = 600;
@@ -46,18 +42,23 @@ public class Main extends Application{
     @Override
     public void start(Stage stage) {
         this.stage = stage;
-        view = new AppView1(SIZE_WIDTH, SIZE_HEIGHT, stage, "English");
-        scene = view.getScene();
-//        EventHandler<ActionEvent> startApp = event -> {
-//            stage.close();
-//            scene = view.setUpScene(SIZE_WIDTH, SIZE_HEIGHT, stage, startingView.getLanguage(), startingView.getAppName());
-//            scene.getStylesheets().add(getClass().getResource(DEFAULT_RESOURCE_FOLDER + STYLESHEET).toExternalForm());
-//            stage.setScene(scene);
-//            stage.setResizable(false);
-//            stage.show();
-//        };
-//        startingView = new StartingView();
-//        scene = startingView.setUpScene(START_WIDTH, START_HEIGHT, startApp);
+        EventHandler<ActionEvent> startApp = event -> {
+            stage.close();
+            String language = startingView.getLanguage();
+            String appName = startingView.getAppName();
+            switch (appName) {
+                case "Logo" -> view = new LogoAppView(SIZE_WIDTH, SIZE_HEIGHT, stage, language);
+                case "LSystem" -> view = new LSystemAppView(SIZE_WIDTH, SIZE_HEIGHT, stage, language);
+            }
+            scene = view.setUpScene();
+            scene.getStylesheets().add(getClass().getResource(DEFAULT_RESOURCE_FOLDER + STYLESHEET).toExternalForm());
+            stage.setScene(scene);
+            stage.setResizable(false);
+            stage.show();
+        };
+
+        startingView = new StartingView();
+        scene = startingView.setUpScene(START_WIDTH, START_HEIGHT, startApp);
         scene.getStylesheets().add(getClass().getResource(DEFAULT_RESOURCE_FOLDER + STYLESHEET).toExternalForm());
         stage.setTitle(TITLE);
         stage.setScene(scene);

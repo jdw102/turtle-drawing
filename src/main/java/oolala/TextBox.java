@@ -47,9 +47,6 @@ public class TextBox {
         });
         leftToolBar = makeLeftToolbarHBox(textBoxWidth, currentApp, display, viewUtils);
         box = new VBox(leftToolBar, textArea, historyTitle, recentlyUsed);
-//        if (appName.equals("LSystem")){
-//            makeSliders(currentApp);
-//        }
     }
 
     public TextArea makeTextArea() {
