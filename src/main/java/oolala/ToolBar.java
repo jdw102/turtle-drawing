@@ -107,9 +107,10 @@ public class ToolBar {
     }
     public void makeSliders(VBox box, AppModel currentApp){
         LSystemSlider lengthSlider = new LSystemSlider(1, 100, 10, myResources.getString("LengthSlider"));
-        LSystemSlider angleSlider = new LSystemSlider(1, 90, 30, myResources.getString("AngleSlider"));
+        LSystemSlider angleSlider = new LSystemSlider(1, 180, 30, myResources.getString("AngleSlider"));
         LSystemSlider levelSlider = new LSystemSlider(0, 5, 3, myResources.getString("LevelSlider"));
         EventHandler<MouseEvent> lengthChange = event -> {
+            System.out.println("test");
             ( (LSystemParser) currentApp.getParser()).setDist((int) lengthSlider.getSlider().getValue());
         };
         EventHandler<MouseEvent> angleChange = event -> {

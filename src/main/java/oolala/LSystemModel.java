@@ -9,15 +9,16 @@ import java.util.ResourceBundle;
 import static oolala.Command.Command.CmdName.TELL;
 
 public class LSystemModel extends AppModel {
-    public LSystemModel(AppView display, ResourceBundle myResources, String stampUrl) {
-        super(display, myResources, stampUrl);
+    public LSystemModel(CanvasScreen canvas, ResourceBundle myResources, String stampUrl, AppView display) {
+        super(canvas, myResources, stampUrl, display);
         changeIcon(myResources.getString("TriangleArrowIcon"));
         parser = new LSystemParser(myResources);
     }
 
     @Override
-    public void runApp(ArrayList<Command> commands) {
-        super.runApp(commands);
+    public void runApp(ArrayList<Command> commands, AppView display) {
+        turtles.get(1).hideTurtle(animation);
+        super.runApp(commands, display);
         Iterator<Command> itCmd = commands.iterator();
         while (itCmd.hasNext()) {
             Command instruction = itCmd.next();
@@ -28,13 +29,12 @@ public class LSystemModel extends AppModel {
                 for (Integer param : instruction.params) {
                     if (!turtles.containsKey(param)) {
                         System.out.println("Creating new turtle");
-                        turtles.put(param, new TurtleView(homeX, homeY, myDisplay.getCanvasScreen(), this));
-                        myDisplay.getCanvasScreen().getShapes().getChildren().add(turtles.get(param).getIcon());
+                        turtles.put(param, new TurtleView(homeX, homeY, myCanvas, this));
                     }
                 }
             }
             for (Integer idx : currTurtleIdxs) {
-                instruction.runCommand(turtles.get(idx), myDisplay.getCanvasScreen(), animation);
+                instruction.runCommand(turtles.get(idx), myCanvas, animation);
             }
             itCmd.remove();
         }

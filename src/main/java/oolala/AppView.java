@@ -73,20 +73,20 @@ public class AppView {
         toolBar = new ToolBar(myResources);
 
         textBox = new TextBox(myResources);
-        textBoxVBox = makeTextBoxVBox();
-        root.setLeft(textBoxVBox);
+
 
         canvasScreen = new CanvasScreen(myResources);
         Group canvasShapes = canvasScreen.getShapes();
 
         if (currentAppName.equals("Logo")){
-            currentApp = new TurtleDrawingModel(this, myResources, "TurtleIcon");
+            currentApp = new TurtleDrawingModel(canvasScreen, myResources, "TurtleIcon", this);
         }
         else if (currentAppName.equals("LSystem")){
-            currentApp = new LSystemModel(this, myResources, "SimpleLeafStamp");
+            currentApp = new LSystemModel(canvasScreen, myResources, "SimpleLeafStamp", this);
         }
         rightToolBarHBox = makeRightToolbarHBox();
-
+        textBoxVBox = makeTextBoxVBox();
+        root.setLeft(textBoxVBox);
         root.setCenter(rightToolBarHBox);
         root.getChildren().add(canvasShapes);
 
@@ -124,6 +124,7 @@ public class AppView {
         vBox.getChildren().add(recentlyUsed);
         textArea.setPrefSize(textBoxWidth, 3 * textBoxHeight / 4);
         if (currentAppName.equals("LSystem")){
+            System.out.println("test");
             toolBar.makeSliders(vBox, currentApp);
         }
         return vBox;
@@ -256,13 +257,7 @@ public class AppView {
     }
 
     public void setCommands(ArrayList<Command> commands) {
-        currentApp.runApp(commands);
-    }
-    public boolean isCanvasClear(){
-        if (canvasScreen.getShapes().getChildren().size() > 2){
-            return false;
-        }
-        else return true;
+        currentApp.runApp(commands, this);
     }
 
     public void disableImageSelectors(){
