@@ -162,23 +162,27 @@ public class AppView {
             backgroundColor = colorPickerBackGround.getValue();
             canvasScreen.getBorderRectangle().setFill(backgroundColor);
         };
-        colorPicker = canvasScreen.makeColorPicker(setBrushColor, Color.BLACK, "BrushColorPicker");
-        colorPickerBackGround = canvasScreen.makeColorPicker(setColorBackGround, Color.AZURE, "CanvasColorPicker");
-        if (currentAppName == "Logo"){
-            imageSelector =makeImageSelector(iconLabels, "IconChange");
+        colorPicker = toolBar.makeColorPicker(setBrushColor, Color.BLACK, "BrushColorPicker");
+        colorPickerBackGround = toolBar.makeColorPicker(setColorBackGround, Color.AZURE, "CanvasColorPicker");
+        makeBrushImageSelector();
+        HBox hBox = new HBox(imageSelector, colorPickerBackGround, colorPicker, thicknessTextField, clearButton, resetButton, saveButton);
+        hBox.setAlignment(Pos.TOP_RIGHT);
+        return hBox;
+    }
+
+    private void makeBrushImageSelector() {
+        if (Objects.equals(currentAppName, "Logo")){
+            imageSelector = toolBar.makeImageSelector(iconLabels, "IconChange");
             imageSelector.setOnAction(event -> {
                 currentApp.changeIcon(imageSelector.getValue().getImage().getUrl());
             });
         }
-        else if (currentAppName == "LSystem"){
-            imageSelector = makeImageSelector(stampLabels, "StampChange");
+        else if (Objects.equals(currentAppName, "LSystem")){
+            imageSelector = toolBar.makeImageSelector(stampLabels, "StampChange");
             imageSelector.setOnAction(event -> {
                 currentApp.changeStamp(imageSelector.getValue().getImage().getUrl());
             });
         }
-        HBox hBox = new HBox(imageSelector, colorPickerBackGround, colorPicker, thicknessTextField, clearButton, resetButton, saveButton);
-        hBox.setAlignment(Pos.TOP_RIGHT);
-        return hBox;
     }
 
     private HBox makeLeftToolbarHBox() {
@@ -272,32 +276,6 @@ public class AppView {
             return false;
         }
         else return true;
-    }
-    private ComboBox<ImageView> makeImageSelector(List<String> labels, String title){
-        ComboBox<ImageView> c = new ComboBox<>();
-        c.setButtonCell(new ListCell<ImageView>() {
-            @Override protected void updateItem(ImageView item, boolean empty) {
-                super.updateItem(item, empty);
-                if (item == null || empty) {
-                    setGraphic(null);
-                } else {
-                    ImageView i = new ImageView(item.getImage().getUrl());
-                    i.setFitHeight(item.getFitHeight());
-                    i.setFitWidth(item.getFitWidth());
-                    setGraphic(i);
-                }
-            }
-        });
-        for (String s: labels){
-            ImageView img = new ImageView(myResources.getString(s));
-            img.setFitWidth(20);
-            img.setFitHeight(20);
-            c.getItems().add(img);
-        };
-        c.setValue(c.getItems().get(0));
-        Tooltip t = new Tooltip(myResources.getString(title));
-        Tooltip.install(c, t);
-        return c;
     }
 
     public void disableImageSelectors(){

@@ -12,11 +12,11 @@ import oolala.Command.*;
  *
  * @author Aditya Paul
  */
-public class TurtleParser extends Parser {
+public class LogoParser extends Parser {
     ResourceBundle myResources;
 
 
-    public TurtleParser(ResourceBundle resourceBundle) {
+    public LogoParser(ResourceBundle resourceBundle) {
         myResources = resourceBundle;
     }
 

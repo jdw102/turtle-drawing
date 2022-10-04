@@ -1,14 +1,12 @@
 package oolala;
 
-import javafx.animation.PathTransition;
-import javafx.animation.SequentialTransition;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.ImageView;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.StrokeLineCap;
 
-public class TurtleModel {
+public class LogoModel {
     public static final int DEFAULT_ANGLE = 0;
     private double posX;
     private double posY;
@@ -21,7 +19,7 @@ public class TurtleModel {
     private double relX;
     private double relY;
 
-    public TurtleModel(double posX, double posY, Rectangle border, double iconSize){
+    public LogoModel(double posX, double posY, Rectangle border, double iconSize){
         this.posX = posX + border.getX() + border.getWidth()/2;
         this.posY = posY + border.getY() + border.getHeight()/2;
         this.angle = DEFAULT_ANGLE;

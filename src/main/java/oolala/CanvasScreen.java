@@ -21,9 +21,6 @@ import java.util.*;
 public class CanvasScreen {
     private Rectangle borderRectangle;
     private Group shapes;
-    private HBox hBox;
-    private HBox stylingBox;
-    private HBox settingsBox;
     private ResourceBundle myResources;
     private Color brushColor = Color.BLACK;
     private Color backgroundColor = Color.AZURE;

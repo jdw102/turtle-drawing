@@ -27,7 +27,7 @@ public class LSystemParser extends Parser{
     private HashMap<Character, String> alphabet;
     private HashMap<Character, String> rules;
     private String start;
-    private TurtleParser logoTurtleParser;
+    private LogoParser logoParser;
     private ResourceBundle myResources;
 
     public LSystemParser(ResourceBundle resources) {
@@ -37,7 +37,7 @@ public class LSystemParser extends Parser{
             alphabet.put(ALPHA_SYM[i], ALPHA_COMM[i]);
         }
         rules = new HashMap<>();
-        logoTurtleParser = new TurtleParser(myResources);
+        logoParser = new LogoParser(myResources);
     }
 
     /**
@@ -157,6 +157,6 @@ public class LSystemParser extends Parser{
 
     public ArrayList<Command> parse(String input) {
         parseConfig(input);
-        return logoTurtleParser.parse(getCommandString(applyRules()));
+        return logoParser.parse(getCommandString(applyRules()));
     }
 }
