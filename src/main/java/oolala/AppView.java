@@ -1,33 +1,22 @@
 package oolala;
 
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
-import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyCodeCombination;
-import javafx.scene.input.KeyCombination;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import javafx.util.Callback;
 import oolala.Command.Command;
 
 import javax.imageio.ImageIO;
-import javax.tools.Tool;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -48,7 +37,7 @@ public class AppView {
     private FileChooser fileChooser;
     private Stage stage;
     private CanvasScreen canvasScreen;
-    ToolBar toolBar;
+    ViewUtils viewUtils;
     private VBox textBoxVBox;
     private HBox leftToolbarHbox;
     private HBox rightToolBarHBox;
@@ -67,13 +56,10 @@ public class AppView {
         currentAppName = appName;
         myResources = ResourceBundle.getBundle(DEFAULT_RESOURCE_PACKAGE + language);
         this.stage = stage;
-
+        fileChooser = new FileChooser();
         root = new BorderPane();
 
-        toolBar = new ToolBar(myResources);
-
-        textBox = new TextBox(myResources);
-
+        viewUtils = new ViewUtils(myResources);
 
         canvasScreen = new CanvasScreen(myResources);
         Group canvasShapes = canvasScreen.getShapes();
@@ -85,49 +71,14 @@ public class AppView {
             currentApp = new LSystemModel(canvasScreen, myResources, "SimpleLeafStamp", this);
         }
         rightToolBarHBox = makeRightToolbarHBox();
-        textBoxVBox = makeTextBoxVBox();
-        root.setLeft(textBoxVBox);
+        textBox = new TextBox(textBoxWidth, textBoxHeight, myResources, currentAppName, currentApp, this, viewUtils);
+        root.setLeft(textBox.getBox());
         root.setCenter(rightToolBarHBox);
         root.getChildren().add(canvasShapes);
 
         root.setPadding(new Insets(10, 10, 10, 10));
         Scene scene = new Scene(root, sizeWidth, sizeHeight);
         return scene;
-    }
-
-    public VBox makeTextBoxVBox() {
-        VBox vBox = new VBox();
-        leftToolbarHbox = makeLeftToolbarHBox();
-        textArea = textBox.makeTextArea();
-
-        KeyCombination keyCombination = new KeyCodeCombination(KeyCode.ENTER, KeyCombination.ALT_DOWN);
-        textArea.setOnKeyPressed(event -> {
-            if (keyCombination.match(event)) {
-                ArrayList<Command> commands = currentApp.getParser().parse(textArea.getText().toLowerCase());
-                textBox.updateRecentlyUsed(commands, recentlyUsed);
-                setCommands(commands);
-            }
-        });
-
-        EventHandler<MouseEvent> addLine = event -> {
-            textBox.addLine(recentlyUsed.getSelectionModel().getSelectedItem(), textArea);
-        };
-        recentlyUsed = textBox.makeListView(200, addLine);
-
-        HBox historyTitle = new HBox(new Label(myResources.getString("CommandHistory")));
-        historyTitle.setAlignment(Pos.CENTER);
-        historyTitle.getStyleClass().add("box");
-
-        vBox.getChildren().add(leftToolbarHbox);
-        vBox.getChildren().add(textArea);
-        vBox.getChildren().add(historyTitle);
-        vBox.getChildren().add(recentlyUsed);
-        textArea.setPrefSize(textBoxWidth, 3 * textBoxHeight / 4);
-        if (currentAppName.equals("LSystem")){
-            System.out.println("test");
-            toolBar.makeSliders(vBox, currentApp);
-        }
-        return vBox;
     }
 
     public HBox makeRightToolbarHBox() {
@@ -137,12 +88,12 @@ public class AppView {
         };
         EventHandler<ActionEvent> resetCommand = event -> currentApp.reset(true);
         EventHandler<ActionEvent> saveCommand = makeSaveFileImgEventHandler();
-        Button clearButton = toolBar.makeButton("ClearCanvasButton", clearCommand);
-        Button resetButton = toolBar.makeButton("ResetTurtleButton", resetCommand);
-        Button saveButton = toolBar.makeButton("SaveButton", saveCommand);
+        Button clearButton = viewUtils.makeButton("ClearCanvasButton", clearCommand);
+        Button resetButton = viewUtils.makeButton("ResetTurtleButton", resetCommand);
+        Button saveButton = viewUtils.makeButton("SaveButton", saveCommand);
 
         EventHandler<ActionEvent> thicknessCommand = event -> canvasScreen.setThickness(thicknessTextField.getText());
-        thicknessTextField = toolBar.makeTextField("Thickness", "3", thicknessCommand);
+        thicknessTextField = viewUtils.makeTextField("Thickness", "3", thicknessCommand);
 
         EventHandler<ActionEvent> setBrushColor = event -> {
             canvasScreen.setBrushColor(colorPicker.getValue());
@@ -150,75 +101,44 @@ public class AppView {
         EventHandler<ActionEvent> setColorBackGround = event -> {
             canvasScreen.getBorderRectangle().setFill(colorPickerBackGround.getValue());
         };
-        colorPicker = toolBar.makeColorPicker(setBrushColor, Color.BLACK, "BrushColorPicker");
-        colorPickerBackGround = toolBar.makeColorPicker(setColorBackGround, Color.AZURE, "CanvasColorPicker");
-        makeBrushImageSelector();
+        colorPicker = viewUtils.makeColorPicker(setBrushColor, Color.BLACK, "BrushColorPicker");
+        colorPickerBackGround = viewUtils.makeColorPicker(setColorBackGround, Color.AZURE, "CanvasColorPicker");
+        makeImageSelector();
         HBox hBox = new HBox(imageSelector, colorPickerBackGround, colorPicker, thicknessTextField, clearButton, resetButton, saveButton);
         hBox.setAlignment(Pos.TOP_RIGHT);
         return hBox;
     }
 
-    private void makeBrushImageSelector() {
+    private void makeImageSelector() {
         if (Objects.equals(currentAppName, "Logo")){
-            imageSelector = toolBar.makeImageSelector(iconLabels, "IconChange");
+            imageSelector = viewUtils.makeImageSelector(iconLabels, "IconChange");
             imageSelector.setOnAction(event -> {
                 currentApp.changeIcon(imageSelector.getValue().getImage().getUrl());
             });
         }
         else if (Objects.equals(currentAppName, "LSystem")){
-            imageSelector = toolBar.makeImageSelector(stampLabels, "StampChange");
+            imageSelector = viewUtils.makeImageSelector(stampLabels, "StampChange");
             imageSelector.setOnAction(event -> {
                 currentApp.changeStamp(imageSelector.getValue().getImage().getUrl());
             });
         }
     }
 
-    private HBox makeLeftToolbarHBox() {
-        EventHandler<ActionEvent> passCommands = makePassCommandsEventEventHandler();
-        EventHandler<ActionEvent> clearText = event -> textArea.clear();
-        EventHandler<ActionEvent> openFileChooser = openFileChooserEventHandler();
-        EventHandler<ActionEvent> saveFile = makeSaveFileEventHandler();
-        Button runButton = toolBar.makeButton("RunButton", passCommands);
-        Button clearTextButton = toolBar.makeButton("ClearTextButton", clearText);
-        Button fileOpenButton = toolBar.makeButton("ImportButton", openFileChooser);
-        Button saveButton = toolBar.makeButton("SaveButton", saveFile);
-        HBox hBox = new HBox();
-        hBox.setAlignment(Pos.CENTER);
-        hBox.setMinWidth(textBoxWidth);
-        saveButton.setMinWidth(textBoxWidth / 4);
-        runButton.setMinWidth(textBoxWidth / 4);
-        clearTextButton.setMinWidth(textBoxWidth / 4);
-        fileOpenButton.setMinWidth(textBoxWidth / 4);
-        hBox.getChildren().addAll(fileOpenButton, saveButton, runButton, clearTextButton);
-
-        return hBox;
-    }
-
-    private EventHandler<ActionEvent> makePassCommandsEventEventHandler() {
-        EventHandler<ActionEvent> passCommands = event -> {
-            ArrayList<Command> commands = currentApp.getParser().parse(textArea.getText().toLowerCase());
-            textBox.updateRecentlyUsed(commands, recentlyUsed);
-            setCommands(commands);
-        };
-        return passCommands;
-    }
-
-    private EventHandler<ActionEvent> openFileChooserEventHandler() {
+    public EventHandler<ActionEvent> openFileChooserEventHandler() {
         EventHandler<ActionEvent> openFileChooser = event -> {
             File f = fileChooser.showOpenDialog(stage);
             if (f != null) {
                 try {
                     Path filePath = Path.of(f.getPath());
                     String content = Files.readString(filePath);
-                    textArea.setText(content);
+                    textBox.setText(content);
                 } catch (IOException e) {throw new RuntimeException(e);}
             }
         };
         return openFileChooser;
     }
 
-    private EventHandler<ActionEvent> makeSaveFileEventHandler() {
-        fileChooser = new FileChooser();
+    public EventHandler<ActionEvent> makeSaveFileEventHandler() {
         fileChooser.setTitle(myResources.getString("ImportButton"));
         FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("TXT files (*.txt)", "*.txt");
         fileChooser.getExtensionFilters().add(extFilter);
@@ -227,7 +147,7 @@ public class AppView {
             if (f != null) {
                 try {
                     FileWriter writer = new FileWriter(f);
-                    writer.write(textArea.getText());
+                    writer.write(textBox.getText());
                     writer.close();
                 } catch (IOException e) {throw new RuntimeException(e);}
             }
@@ -235,9 +155,6 @@ public class AppView {
         return saveFile;
     }
 
-    public CanvasScreen getCanvasScreen() {
-        return canvasScreen;
-    }
     private EventHandler<ActionEvent> makeSaveFileImgEventHandler() {
         FileChooser fileChooser = new FileChooser();
         FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("PNG files (*.png)", "*.png");
