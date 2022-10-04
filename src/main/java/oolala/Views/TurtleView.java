@@ -1,4 +1,4 @@
-package oolala;
+package oolala.Views;
 
 import javafx.animation.*;
 import javafx.scene.Node;
@@ -8,6 +8,9 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.shape.*;
 import javafx.util.Duration;
+import oolala.Models.AppModel;
+import oolala.Views.ViewComponents.CanvasScreen;
+import oolala.Models.TurtleModel;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -20,7 +23,7 @@ import java.util.Collection;
 public class TurtleView {
   private double homeX;
   private double homeY;
-  private LogoModel model;
+  private TurtleModel model;
   private String stampUrl;
   public static final double DEFAULT_ICON_SIZE = 30;
   public ImageView icon;
@@ -31,7 +34,7 @@ public class TurtleView {
 
   public TurtleView(double posX, double posY, CanvasScreen screen, AppModel app){
     this.iconSize = DEFAULT_ICON_SIZE;
-    this.model = new LogoModel(posX, posY, screen.getBorderRectangle(), iconSize);
+    this.model = new TurtleModel(posX, posY, screen.getBorderRectangle(), iconSize);
     this.stampUrl = app.getStampIconUrl();
     this.homeX = model.getPosX();
     this.homeY = model.getPosY();

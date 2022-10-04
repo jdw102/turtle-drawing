@@ -1,4 +1,4 @@
-package oolala;
+package oolala.Views.ViewComponents;
 
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;

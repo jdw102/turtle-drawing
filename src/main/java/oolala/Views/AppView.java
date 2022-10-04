@@ -1,11 +1,9 @@
-package oolala;
+package oolala.Views;
 
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
@@ -14,7 +12,10 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import oolala.Models.AppModel;
+import oolala.Views.ViewComponents.CanvasScreen;
 import oolala.Command.Command;
+import oolala.Views.ViewComponents.RunInterface;
 
 import javax.imageio.ImageIO;
 import java.io.*;
@@ -28,27 +29,29 @@ import java.util.*;
  * The origin is at the center of the screen.
  */
 public abstract class AppView {
+    public int sizeWidth;
+    public int sizeHeight;
     public int textBoxWidth = 275;
     public int textBoxHeight = 600;
     public BorderPane root;
-    public TextBox textBox;
+    public RunInterface runInterface;
     public static ResourceBundle myResources;
     private static final String DEFAULT_RESOURCE_PACKAGE = "Properties.";
     private FileChooser fileChooser;
     private Stage stage;
     public CanvasScreen canvasScreen;
-    ViewUtils viewUtils;
+    public ViewUtils viewUtils;
     public HBox rightToolBarHBox;
     private TextField thicknessTextField;
     private ColorPicker colorPickerBackGround;
     private ColorPicker colorPicker;
     public AppModel currentApp;
-    public final List<String> iconLabels = new ArrayList<>(Arrays.asList("TurtleIcon", "SimpleTurtleIcon", "TriangleArrowIcon"));
-    public final List<String> stampLabels = new ArrayList<>(Arrays.asList("SimpleLeafStamp", "OakLeafStamp", "MapleLeafStamp", "FireworkStamp"));
     public ComboBox<ImageView> imageSelector;
     public Scene scene;
 
     public AppView(int sizeWidth, int sizeHeight, Stage stage, String language) {
+        this.sizeWidth = sizeWidth;
+        this.sizeHeight = sizeHeight;
         myResources = ResourceBundle.getBundle(DEFAULT_RESOURCE_PACKAGE + language);
         this.stage = stage;
         fileChooser = new FileChooser();
@@ -56,7 +59,9 @@ public abstract class AppView {
         viewUtils = new ViewUtils(myResources);
         canvasScreen = new CanvasScreen(myResources);
     }
-
+    public Scene setUpScene(){
+        return scene;
+    }
     public HBox getRightToolBarHBox() {
         return rightToolBarHBox;
     }
@@ -103,7 +108,7 @@ public abstract class AppView {
                 try {
                     Path filePath = Path.of(f.getPath());
                     String content = Files.readString(filePath);
-                    textBox.setText(content);
+                    runInterface.setText(content);
                 } catch (IOException e) {throw new RuntimeException(e);}
             }
         };
@@ -119,7 +124,7 @@ public abstract class AppView {
             if (f != null) {
                 try {
                     FileWriter writer = new FileWriter(f);
-                    writer.write(textBox.getText());
+                    writer.write(runInterface.getText());
                     writer.close();
                 } catch (IOException e) {throw new RuntimeException(e);}
             }
@@ -155,10 +160,10 @@ public abstract class AppView {
     public void enableImageSelectors(){
         imageSelector.setDisable(false);
     }
-    public ComboBox<ImageView> makeImageSelector(String type) {
-        ComboBox<ImageView> imageSelector = viewUtils.makeImageSelector(iconLabels, type);
+    public ComboBox<ImageView> makeImageSelector(String type, List<String> images) {
+        ComboBox<ImageView> imageSelector = viewUtils.makeImageSelector(images, type);
         imageSelector.setOnAction(event -> {
-            currentApp.changeStamp(imageSelector.getValue().getImage().getUrl());
+            currentApp.changeImage(imageSelector.getValue().getImage().getUrl());
         });
         return imageSelector;
     }

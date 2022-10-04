@@ -1,6 +1,10 @@
-package oolala;
+package oolala.Models;
 
+import oolala.Views.ViewComponents.CanvasScreen;
 import oolala.Command.Command;
+import oolala.Parsers.LSystemParser;
+import oolala.Views.AppView;
+import oolala.Views.TurtleView;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -11,8 +15,12 @@ import static oolala.Command.Command.CmdName.TELL;
 public class LSystemModel extends AppModel {
     public LSystemModel(CanvasScreen canvas, ResourceBundle myResources, String stampUrl, AppView display) {
         super(canvas, myResources, stampUrl, display);
-        changeIcon(myResources.getString("TriangleArrowIcon"));
+        turtleIcon = myResources.getString("TriangleArrowIcon");
+        turtleStamp = myResources.getString(stampUrl);
         parser = new LSystemParser(myResources);
+        turtles.put(1, new TurtleView(homeX, homeY, myCanvas, this));
+        currTurtleIdxs.add(1);
+        myCanvas.getShapes().getChildren().add(turtles.get(1).getIcon());
     }
 
     @Override
@@ -40,5 +48,9 @@ public class LSystemModel extends AppModel {
         }
         animation.play();
         animation.getChildren().removeAll(animation.getChildren());
+    }
+    @Override
+    public void changeImage(String url){
+        turtleStamp = url;
     }
 }

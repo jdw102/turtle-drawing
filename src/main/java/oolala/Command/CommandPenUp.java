@@ -1,8 +1,8 @@
 package oolala.Command;
 
 import javafx.animation.SequentialTransition;
-import oolala.CanvasScreen;
-import oolala.TurtleView;
+import oolala.Views.ViewComponents.CanvasScreen;
+import oolala.Views.TurtleView;
 
 public class CommandPenUp extends Command {
     public CommandPenUp(){

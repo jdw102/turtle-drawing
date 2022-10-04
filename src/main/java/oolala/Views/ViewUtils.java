@@ -1,4 +1,4 @@
-package oolala;
+package oolala.Views;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;

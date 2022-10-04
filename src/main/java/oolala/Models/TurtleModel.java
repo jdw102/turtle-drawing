@@ -1,12 +1,13 @@
-package oolala;
+package oolala.Models;
 
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.ImageView;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.StrokeLineCap;
+import oolala.Views.ViewComponents.CanvasScreen;
 
-public class LogoModel {
+public class TurtleModel {
     public static final int DEFAULT_ANGLE = 0;
     private double posX;
     private double posY;
@@ -19,7 +20,7 @@ public class LogoModel {
     private double relX;
     private double relY;
 
-    public LogoModel(double posX, double posY, Rectangle border, double iconSize){
+    public TurtleModel(double posX, double posY, Rectangle border, double iconSize){
         this.posX = posX + border.getX() + border.getWidth()/2;
         this.posY = posY + border.getY() + border.getHeight()/2;
         this.angle = DEFAULT_ANGLE;
