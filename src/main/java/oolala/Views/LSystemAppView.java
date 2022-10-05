@@ -22,7 +22,7 @@ public class LSystemAppView extends AppView {
     public BorderPane setUpScene() {
         rightToolBarHBox = makeRightToolbarHBox();
         imageSelector = makeImageSelector("StampChange", stampLabels);
-        rightToolBarHBox.getChildren().add(0, imageSelector);
+        rightToolBarHBox.getChildren().add(1, imageSelector);
         runInterface = new LSystemRunInterface(textBoxWidth, textBoxHeight, myResources, currentApp, this, viewUtils);
         root.setLeft(runInterface.getBox());
         root.setCenter(rightToolBarHBox);

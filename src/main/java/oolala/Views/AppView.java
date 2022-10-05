@@ -23,6 +23,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 
+import static oolala.Main.*;
+
 /**
  * @Author Luyao Wang
  * Setting up of the UI.
@@ -62,14 +64,6 @@ public abstract class AppView {
     public BorderPane setUpScene(){
         return root;
     }
-    public HBox getRightToolBarHBox() {
-        return rightToolBarHBox;
-    }
-
-    public ComboBox<ImageView> getImageSelector() {
-        return imageSelector;
-    }
-
     public Scene getScene() {
         return scene;
     }
@@ -87,6 +81,7 @@ public abstract class AppView {
 
         EventHandler<ActionEvent> thicknessCommand = event -> canvasScreen.setThickness(thicknessTextField.getText());
         thicknessTextField = viewUtils.makeTextField("Thickness", "3", thicknessCommand);
+        thicknessTextField.setTooltip(new Tooltip(myResources.getString("ThicknessTextField")));
 
         EventHandler<ActionEvent> setBrushColor = event -> {
             canvasScreen.setBrushColor(colorPicker.getValue());
@@ -96,7 +91,8 @@ public abstract class AppView {
         };
         colorPicker = viewUtils.makeColorPicker(setBrushColor, Color.BLACK, "BrushColorPicker");
         colorPickerBackGround = viewUtils.makeColorPicker(setColorBackGround, Color.AZURE, "CanvasColorPicker");
-        HBox hBox = new HBox(colorPickerBackGround, colorPicker, thicknessTextField, clearButton, resetButton, saveButton);
+        HBox modeSlider = createModeSlider();
+        HBox hBox = new HBox(modeSlider, colorPickerBackGround, colorPicker, thicknessTextField, clearButton, resetButton, saveButton);
         hBox.setAlignment(Pos.TOP_RIGHT);
         return hBox;
     }
@@ -167,5 +163,39 @@ public abstract class AppView {
         });
         return imageSelector;
     }
-
+    public HBox createModeSlider(){
+        Slider modeSlider = new Slider(0, 1, 0);
+        modeSlider.setMaxWidth(50);
+        Label label = new Label("Light");
+        modeSlider.setOnMousePressed(event -> {
+            if (modeSlider.getValue() == 0){
+                modeSlider.setValue(1);
+            }
+            else{
+                modeSlider.setValue(0);
+            }
+        });
+        modeSlider.valueProperty().addListener((obs, oldval, newVal) -> {
+            modeSlider.setValue(newVal.intValue());
+            scene.getStylesheets().remove(0);
+            if ((int) modeSlider.getValue() == 0){
+                label.setText("Light");
+                colorPickerBackGround.setValue(Color.WHITE);
+                colorPicker.setValue(Color.BLACK);
+                canvasScreen.getBorderRectangle().setFill(Color.WHITE);
+                canvasScreen.setBrushColor(Color.BLACK);
+                scene.getStylesheets().add(getClass().getResource(DEFAULT_RESOURCE_FOLDER + STYLESHEET).toExternalForm());
+            }
+            else{
+                label.setText("Dark");
+                colorPickerBackGround.setValue(Color.BLACK);
+                colorPicker.setValue(Color.WHITE);
+                canvasScreen.getBorderRectangle().setFill(Color.BLACK);
+                canvasScreen.setBrushColor(Color.WHITE);
+                scene.getStylesheets().add(getClass().getResource(DEFAULT_RESOURCE_FOLDER + DARKMODE_STYLESHEET).toExternalForm());
+            }
+        });
+        HBox modeBox = new HBox(label, modeSlider);
+        return modeBox;
+    }
 }

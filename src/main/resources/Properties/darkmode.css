@@ -1,0 +1,71 @@
+.root {
+    -fx-background-color: darkgray;
+}
+.text-area .content {
+    -fx-background-color: black;
+}
+.text-area {
+    -fx-text-fill: white;
+}
+.canvas {
+    -fx-border-color:lightblue;
+    -fx-border-insets:3;
+    -fx-border-radius:7;
+    -fx-border-width:1.0;
+}
+.label {
+    -fx-font-size: 12pt;
+}
+.button {
+    -fx-font-size: 10pt;
+    -fx-min-height: 40;
+}
+.box {
+    -fx-border-width: 1;
+    -fx-border-color: lightblue;
+    -fx-border-style: solid;
+}
+.combo-box {
+    -fx-font-size: 11pt;
+    -fx-min-height: 40;
+    -fx-max-width: 50;
+}
+
+.text-field {
+    -fx-min-height: 40;
+    -fx-max-width: 40;
+    -fx-font-size: 12pt;
+}
+.color-picker {
+    -fx-min-height: 40;
+    -fx-max-width: 50;
+}
+.tooltip{
+    -fx-font-size: 10pt;
+}
+.start-label{
+    -fx-font-size: 16pt;
+}
+.start-combo-box{
+    -fx-font-size: 14pt;
+    -fx-min-width: 200;
+}
+.list-view {
+    -fx-background-color: black;
+}
+.list-view .list-cell:hover {
+    -fx-background-color: #434343;
+}
+
+.list-view .list-cell:selected {
+    -fx-background-color: #434343;
+}
+
+.list-view .list-cell {
+    -fx-background-color: black;
+    -fx-text-fill: white;
+}
+
+.list-view .label {
+    -fx-text-fill: white;
+}

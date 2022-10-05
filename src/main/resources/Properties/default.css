@@ -1,9 +1,4 @@
-.canvas {
-    -fx-border-color:lightblue;
-    -fx-border-insets:3;
-    -fx-border-radius:7;
-    -fx-border-width:1.0;
-}
+
 .label {
     -fx-font-size: 12pt;
 }

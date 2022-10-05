@@ -31,6 +31,14 @@ public class ViewUtils {
         result.setOnAction(handler);
         return result;
     }
+    public Button makeImageButton(String property, String tipLabel, EventHandler<ActionEvent> handler){
+        Button result = new Button();
+        ImageView i = new ImageView(myResources.getString(property));
+        result.setGraphic(i);
+        result.setOnAction(handler);
+        result.setTooltip(new Tooltip(myResources.getString(tipLabel)));
+        return result;
+    }
 
     /**
      *
