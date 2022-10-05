@@ -2,7 +2,7 @@ package oolala.Views;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -18,7 +18,6 @@ import java.util.ResourceBundle;
 
 public class StartingView {
     private BorderPane root;
-    private ComboBox<String> appSelector;
     private ComboBox<String> languageSelector;
     public static ResourceBundle myResources;
     private static final String DEFAULT_RESOURCE_PACKAGE = "Properties.";
@@ -36,13 +35,11 @@ public class StartingView {
         languageLabel.getStyleClass().add("start-label");
         startButton = new Button("START");
         startButton.setOnAction(startApp);
-        startButton.setMinWidth(100);
-        VBox box = new VBox(languageLabel, languageSelector);
+        startButton.getStyleClass().add("start-button");
+        VBox box = new VBox(languageLabel, languageSelector, startButton);
         box.setAlignment(Pos.CENTER);
         box.setSpacing(30);
         root.setCenter(box);
-        root.setBottom(startButton);
-        BorderPane.setAlignment(startButton, Pos.CENTER);
         Scene scene = new Scene(root, sizeWidth, sizeHeight);
         return scene;
     }

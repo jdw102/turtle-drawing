@@ -37,11 +37,11 @@ public abstract class AppModel {
         animation.setRate(3);
         animation.setOnFinished(event -> {
             running = false;
-            display.enableImageSelectors();
+            display.enableInputs();
         });
     }
     public void runApp(ArrayList<Command> commands, AppView display) {
-        display.disableImageSelectors();
+        display.disableInputs();
         running = true;
     }
 

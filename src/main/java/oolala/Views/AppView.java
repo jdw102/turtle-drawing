@@ -4,7 +4,6 @@ import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
@@ -15,7 +14,7 @@ import javafx.stage.Stage;
 import oolala.Models.AppModel;
 import oolala.Views.ViewComponents.CanvasScreen;
 import oolala.Command.Command;
-import oolala.Views.ViewComponents.RunInterface;
+import oolala.Views.ViewComponents.Terminal;
 
 import javax.imageio.ImageIO;
 import java.io.*;
@@ -36,7 +35,7 @@ public abstract class AppView {
     public int textBoxWidth = 275;
     public int textBoxHeight = 600;
     public BorderPane root;
-    public RunInterface runInterface;
+    public Terminal terminal;
     public static ResourceBundle myResources;
     private static final String DEFAULT_RESOURCE_PACKAGE = "Properties.";
     private FileChooser fileChooser;
@@ -57,6 +56,7 @@ public abstract class AppView {
         this.stage = stage;
         fileChooser = new FileChooser();
         root = new BorderPane();
+        root.getStyleClass().add("border-pane");
         viewUtils = new ViewUtils(myResources);
         canvasScreen = new CanvasScreen(myResources);
     }
@@ -68,7 +68,7 @@ public abstract class AppView {
     public HBox makeRightToolbarHBox() {
         EventHandler<ActionEvent> clearCommand = event -> {
             currentApp.reset(false);
-            enableImageSelectors();
+            enableInputs();
         };
         EventHandler<ActionEvent> resetCommand = event -> currentApp.reset(true);
         EventHandler<ActionEvent> saveCommand = makeSaveFileImgEventHandler();
@@ -102,7 +102,7 @@ public abstract class AppView {
                 try {
                     Path filePath = Path.of(f.getPath());
                     String content = Files.readString(filePath);
-                    runInterface.setText(content);
+                    terminal.setText(content);
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
@@ -120,7 +120,7 @@ public abstract class AppView {
             if (f != null) {
                 try {
                     FileWriter writer = new FileWriter(f);
-                    writer.write(runInterface.getText());
+                    writer.write(terminal.getText());
                     writer.close();
                 } catch (IOException e) {
                     throw new RuntimeException(e);
@@ -152,12 +152,14 @@ public abstract class AppView {
         currentApp.runApp(commands, this);
     }
 
-    public void disableImageSelectors() {
+    public void disableInputs() {
         imageSelector.setDisable(true);
+        terminal.disableRunButton();
     }
 
-    public void enableImageSelectors() {
+    public void enableInputs() {
         imageSelector.setDisable(false);
+        terminal.enableRunButton();
     }
 
     public ComboBox<ImageView> makeImageSelector(String type, List<String> images) {
@@ -183,7 +185,7 @@ public abstract class AppView {
             modeSlider.setValue(newVal.intValue());
             root.getStylesheets().clear();
             if ((int) modeSlider.getValue() == 0) {
-                root.setStyle("-fx-background-color:white");
+//                root.setStyle("-fx-background-color:white");
                 label.setText("Light");
                 colorPickerBackGround.setValue(Color.WHITE);
                 colorPicker.setValue(Color.BLACK);
@@ -191,7 +193,7 @@ public abstract class AppView {
                 canvasScreen.setBrushColor(Color.BLACK);
                 root.getStylesheets().add(getClass().getResource(DEFAULT_RESOURCE_FOLDER + STYLESHEET).toExternalForm());
             } else {
-                root.setStyle("-fx-background-color:gray");
+//                root.setStyle("-fx-background-color:gray");
                 label.setText("Dark");
                 colorPickerBackGround.setValue(Color.BLACK);
                 colorPicker.setValue(Color.WHITE);
