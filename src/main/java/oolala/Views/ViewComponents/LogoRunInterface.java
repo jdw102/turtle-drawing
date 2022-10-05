@@ -1,5 +1,7 @@
 package oolala.Views.ViewComponents;
 
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import oolala.Models.AppModel;
 import oolala.Views.AppView;
 import oolala.Views.ViewUtils;

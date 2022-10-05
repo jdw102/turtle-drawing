@@ -2,6 +2,7 @@ package oolala;
 
 import javafx.application.Application;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
@@ -28,7 +29,10 @@ public class Main extends Application {
     private Scene scene;
     String TITLE = "Oolala";
     public static final String STYLESHEET = "default.css";
+    public static final String DARKMODE_STYLESHEET = "darkmode.css";
     public static final String DEFAULT_RESOURCE_FOLDER = "/Properties/";
+    private String currentAppName;
+    private String currentLanguage;
 
     /**
      * A method to test (and a joke :).
@@ -45,11 +49,11 @@ public class Main extends Application {
         this.stage = stage;
         EventHandler<ActionEvent> startApp = event -> {
             stage.close();
-            String language = startingView.getLanguage();
-            String appName = startingView.getAppName();
-            switch (appName) {
-                case "Logo" -> view = new LogoAppView(SIZE_WIDTH, SIZE_HEIGHT, stage, language);
-                case "LSystem" -> view = new LSystemAppView(SIZE_WIDTH, SIZE_HEIGHT, stage, language);
+            currentLanguage = startingView.getLanguage();
+            currentAppName = startingView.getAppName();
+            switch (currentAppName) {
+                case "Logo" -> view = new LogoAppView(SIZE_WIDTH, SIZE_HEIGHT, stage, currentLanguage);
+                case "LSystem" -> view = new LSystemAppView(SIZE_WIDTH, SIZE_HEIGHT, stage, currentLanguage);
             }
             scene = view.setUpScene();
             scene.getStylesheets().add(getClass().getResource(DEFAULT_RESOURCE_FOLDER + STYLESHEET).toExternalForm());

@@ -36,6 +36,7 @@ public abstract class RunInterface {
     public RunInterface(int width, int height, ResourceBundle myResources, AppModel currentApp, AppView display, ViewUtils viewUtils) {
         this.myResources = myResources;
         textArea = new TextArea("");
+        textArea.getStyleClass().add("text-area");
         textArea.setPrefSize(width, 3 * height / 4);
         EventHandler<MouseEvent> addLineEvent = event -> {
             addLine(recentlyUsed.getSelectionModel().getSelectedItem(), textArea);

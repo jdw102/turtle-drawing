@@ -21,7 +21,7 @@ public class LogoAppView extends AppView {
     public Scene setUpScene() {
         rightToolBarHBox = makeRightToolbarHBox();
         imageSelector = makeImageSelector("IconChange", iconLabels);
-        rightToolBarHBox.getChildren().add(0, imageSelector);
+        rightToolBarHBox.getChildren().add(1, imageSelector);
         runInterface = new LogoRunInterface(textBoxWidth, textBoxHeight, myResources, currentApp, this, viewUtils);
         root.setLeft(runInterface.getBox());
         root.setCenter(rightToolBarHBox);
