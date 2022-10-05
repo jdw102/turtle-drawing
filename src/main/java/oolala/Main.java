@@ -47,14 +47,14 @@ public class Main extends Application {
             String language = startingView.getLanguage();
 
             TabPane tabPane = new TabPane();
-            AppView view1 = new LogoAppView(SIZE_WIDTH, SIZE_HEIGHT, stage, language);
+            Scene scene = new Scene(tabPane, SIZE_WIDTH, SIZE_HEIGHT);
+            AppView view1 = new LogoAppView(SIZE_WIDTH, SIZE_HEIGHT, stage,language);
             AppView view2 = new LSystemAppView(SIZE_WIDTH, SIZE_HEIGHT, stage, language);
-            Tab tab1 = new Tab("Logo", view1.setUpScene());
-            Tab tab2 = new Tab("L-System", view2.setUpScene());
+            Tab tab1 = new Tab("Logo", view1.setUpRootBorderPane());
+            Tab tab2 = new Tab("L-System", view2.setUpRootBorderPane());
             tabPane.getTabs().add(tab1);
             tabPane.getTabs().add(tab2);
 
-            Scene scene = new Scene(tabPane, SIZE_WIDTH, SIZE_HEIGHT);
             scene.getStylesheets().add(getClass().getResource(DEFAULT_RESOURCE_FOLDER + STYLESHEET).toExternalForm());
             stage.setScene(scene);
             stage.setTitle(TITLE);

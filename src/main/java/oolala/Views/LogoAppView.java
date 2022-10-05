@@ -19,7 +19,7 @@ public class LogoAppView extends AppView {
         currentApp = new LogoModel(canvasScreen, myResources, "TurtleIcon", this);
     }
 
-    public BorderPane setUpScene() {
+    public BorderPane setUpRootBorderPane() {
         rightToolBarHBox = makeRightToolbarHBox();
         imageSelector = makeImageSelector("IconChange", iconLabels);
         rightToolBarHBox.getChildren().add(1, imageSelector);

@@ -30,7 +30,7 @@ public class CanvasScreen {
     public CanvasScreen(ResourceBundle myResources) {
         this.myResources = myResources;
         shapes = new Group();
-        borderRectangle = new Rectangle(300, 50, 500, 540);
+        borderRectangle = new Rectangle(300, 55, 500, 540);
         shapes.getChildren().add(borderRectangle);
         borderRectangle.setFill(backgroundColor);
     }

@@ -49,7 +49,6 @@ public abstract class AppView {
     private ColorPicker colorPicker;
     public AppModel currentApp;
     public ComboBox<ImageView> imageSelector;
-    public Scene scene;
 
     public AppView(int sizeWidth, int sizeHeight, Stage stage, String language) {
         this.sizeWidth = sizeWidth;
@@ -61,11 +60,9 @@ public abstract class AppView {
         viewUtils = new ViewUtils(myResources);
         canvasScreen = new CanvasScreen(myResources);
     }
-    public BorderPane setUpScene(){
+
+    public BorderPane setUpRootBorderPane() {
         return root;
-    }
-    public Scene getScene() {
-        return scene;
     }
 
     public HBox makeRightToolbarHBox() {
@@ -94,6 +91,7 @@ public abstract class AppView {
         HBox modeSlider = createModeSlider();
         HBox hBox = new HBox(modeSlider, colorPickerBackGround, colorPicker, thicknessTextField, clearButton, resetButton, saveButton);
         hBox.setAlignment(Pos.TOP_RIGHT);
+        hBox.setSpacing(5);
         return hBox;
     }
 
@@ -105,7 +103,9 @@ public abstract class AppView {
                     Path filePath = Path.of(f.getPath());
                     String content = Files.readString(filePath);
                     runInterface.setText(content);
-                } catch (IOException e) {throw new RuntimeException(e);}
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
             }
         };
         return openFileChooser;
@@ -122,7 +122,9 @@ public abstract class AppView {
                     FileWriter writer = new FileWriter(f);
                     writer.write(runInterface.getText());
                     writer.close();
-                } catch (IOException e) {throw new RuntimeException(e);}
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
             }
         };
         return saveFile;
@@ -150,12 +152,14 @@ public abstract class AppView {
         currentApp.runApp(commands, this);
     }
 
-    public void disableImageSelectors(){
+    public void disableImageSelectors() {
         imageSelector.setDisable(true);
     }
-    public void enableImageSelectors(){
+
+    public void enableImageSelectors() {
         imageSelector.setDisable(false);
     }
+
     public ComboBox<ImageView> makeImageSelector(String type, List<String> images) {
         ComboBox<ImageView> imageSelector = viewUtils.makeImageSelector(images, type);
         imageSelector.setOnAction(event -> {
@@ -163,36 +167,37 @@ public abstract class AppView {
         });
         return imageSelector;
     }
-    public HBox createModeSlider(){
+
+    public HBox createModeSlider() {
         Slider modeSlider = new Slider(0, 1, 0);
         modeSlider.setMaxWidth(50);
         Label label = new Label("Light");
         modeSlider.setOnMousePressed(event -> {
-            if (modeSlider.getValue() == 0){
+            if (modeSlider.getValue() == 0) {
                 modeSlider.setValue(1);
-            }
-            else{
+            } else {
                 modeSlider.setValue(0);
             }
         });
         modeSlider.valueProperty().addListener((obs, oldval, newVal) -> {
             modeSlider.setValue(newVal.intValue());
-            scene.getStylesheets().remove(0);
-            if ((int) modeSlider.getValue() == 0){
+            root.getStylesheets().clear();
+            if ((int) modeSlider.getValue() == 0) {
+                root.setStyle("-fx-background-color:white");
                 label.setText("Light");
                 colorPickerBackGround.setValue(Color.WHITE);
                 colorPicker.setValue(Color.BLACK);
                 canvasScreen.getBorderRectangle().setFill(Color.WHITE);
                 canvasScreen.setBrushColor(Color.BLACK);
-                scene.getStylesheets().add(getClass().getResource(DEFAULT_RESOURCE_FOLDER + STYLESHEET).toExternalForm());
-            }
-            else{
+                root.getStylesheets().add(getClass().getResource(DEFAULT_RESOURCE_FOLDER + STYLESHEET).toExternalForm());
+            } else {
+                root.setStyle("-fx-background-color:gray");
                 label.setText("Dark");
                 colorPickerBackGround.setValue(Color.BLACK);
                 colorPicker.setValue(Color.WHITE);
                 canvasScreen.getBorderRectangle().setFill(Color.BLACK);
                 canvasScreen.setBrushColor(Color.WHITE);
-                scene.getStylesheets().add(getClass().getResource(DEFAULT_RESOURCE_FOLDER + DARKMODE_STYLESHEET).toExternalForm());
+                root.getStylesheets().add(getClass().getResource(DEFAULT_RESOURCE_FOLDER + DARKMODE_STYLESHEET).toExternalForm());
             }
         });
         HBox modeBox = new HBox(label, modeSlider);

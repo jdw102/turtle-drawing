@@ -1,5 +1,5 @@
 .root {
-    -fx-background-color: darkgray;
+    -fx-background: gray;
 }
 .text-area .content {
     -fx-background-color: black;
@@ -17,8 +17,28 @@
     -fx-font-size: 12pt;
 }
 .button {
+    -fx-text-fill: #ffffcc;
+    -fx-background-color: #23252a;
     -fx-font-size: 10pt;
     -fx-min-height: 40;
+}
+.button:hover {
+    -fx-background-color: #3a3e45;
+}
+.combo-box:hover {
+    -fx-background-color: #3a3e45;
+}
+.color-picker:hover {
+    -fx-background-color: #3a3e45;
+}
+.button:pressed {
+    -fx-background-color: #747c8b;
+}
+.combo-box:pressed {
+    -fx-background-color: #747c8b;
+}
+.color-picker:pressed {
+    -fx-background-color: #747c8b;
 }
 .box {
     -fx-border-width: 1;
@@ -29,16 +49,20 @@
     -fx-font-size: 11pt;
     -fx-min-height: 40;
     -fx-max-width: 50;
+    -fx-background-color: #23252a;
 }
 
 .text-field {
     -fx-min-height: 40;
     -fx-max-width: 40;
     -fx-font-size: 12pt;
+    -fx-text-fill: #ffffcc;
+    -fx-background-color: #23252a;
 }
 .color-picker {
     -fx-min-height: 40;
     -fx-max-width: 50;
+    -fx-background-color: #23252a;
 }
 .tooltip{
     -fx-font-size: 10pt;
@@ -62,7 +86,7 @@
 }
 
 .list-view .list-cell {
-    -fx-background-color: black;
+    -fx-background-color: gray;
     -fx-text-fill: white;
 }
 
