@@ -1,47 +1,34 @@
 package oolala;
 
-import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
-import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
+import javafx.scene.control.*;
 import javafx.stage.Stage;
 import oolala.Views.AppView;
 import oolala.Views.LSystemAppView;
 import oolala.Views.LogoAppView;
 import oolala.Views.StartingView;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import util.DukeApplicationTest;
 
+import javax.swing.text.View;
 
-/**
- * @Author Luyao Wang
- * <p>
- * Feel free to completely change this code or delete it entirely.
- */
-public class Main extends Application {
-    public static final int SIZE_WIDTH = 800;
+import static oolala.Main.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-    public static final int SIZE_HEIGHT = 650;
-    public static final int START_WIDTH = 400;
-    public static final int START_HEIGHT = 500;
+public class AppViewTest extends DukeApplicationTest {
     private StartingView startingView;
-    public static final String TITLE = "Oolala";
-    public static final String STYLESHEET = "default.css";
-    public static final String DARKMODE_STYLESHEET = "darkmode.css";
-    public static final String DEFAULT_RESOURCE_FOLDER = "/Properties/";
+    private Labeled myLabel;
+    // keep GUI components used in multiple tests
 
-    /**
-     * A method to test (and a joke :).
-     */
-    public double getVersion() {
-        return 0.001;
-    }
 
-    /**
-     * Start of the program.
-     */
+
+    // this method is run BEFORE EACH test to set up application in a fresh state
     @Override
-    public void start(Stage stage) {
+    public void start (Stage stage) {
         EventHandler<ActionEvent> startApp = event -> {
             stage.close();
             String language = startingView.getLanguage();
@@ -61,7 +48,7 @@ public class Main extends Application {
             stage.setResizable(false);
             stage.show();
         };
-
+        // create application and add scene for testing to given stage
         startingView = new StartingView();
         Scene startScene = startingView.setUpScene(START_WIDTH, START_HEIGHT, startApp);
         startScene.getStylesheets().add(getClass().getResource(DEFAULT_RESOURCE_FOLDER + STYLESHEET).toExternalForm());
@@ -69,5 +56,31 @@ public class Main extends Application {
         stage.setScene(startScene);
         stage.setResizable(false);
         stage.show();
+        myLabel = lookup("#TestLabel").query();
     }
+    @ParameterizedTest
+    @CsvSource({
+            "English",
+            "日本語",
+            "简体中文",
+            "繁體中文"
+    })
+    void testLanguageSelector (String language) {
+
+        ComboBox<String> languages = lookup("#LanguageSelector").query();
+        //ChoiceBox<String> options = lookup("#Options").query();
+        //ListView<String> options = lookup("#Options").query();
+        String expected = language;
+        // GIVEN, app first starts up
+        // WHEN, choice is made using a combo box
+        select(languages, expected);
+        assertEquals(expected, languages.getValue());
+        // THEN, check label text has been updated to match input
+    }
+    private void assertLabelText (String expected) {
+        assertEquals(expected, myLabel.getText());
+    }
+
+
+
 }
