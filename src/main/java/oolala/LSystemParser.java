@@ -9,13 +9,13 @@ import oolala.Command.Command;
 public class LSystemParser extends Parser{
 
     public static final char[] ALPHA_SYM = {'f', 'g', 'a', 'b', '+', '-', 'x'};
-    public static final String[] ALPHA_COMM = {"pd fd LENGTH", "pu fd LENGTH", "pu bk LENGTH", "pd bk LENGTH",
-            "rt ANGLE", "lt ANGLE", "stamp"};
+    public static final String[] ALPHA_COMM = {"pd fd length", "pu fd length", "pu bk length", "pd bk length",
+            "rt angle", "lt angle", "stamp"};
     public static final int DEFAULT_DIST = 10;
     public static final int DEFAULT_ANGLE = 30;
     public static final int DEFAULT_LEVEL = 3;
-    public static final String LENGTH_MARKER = "LENGTH";
-    public static final String ANGLE_MARKER = "ANGLE";
+    public static final String LENGTH_MARKER = "length";
+    public static final String ANGLE_MARKER = "angle";
 
     private boolean usingRandomDist = false;
     private boolean usingRandomAngle = false;
@@ -120,7 +120,8 @@ public class LSystemParser extends Parser{
                 }
                 case "set" -> {
                     symbol = scan.next().charAt(0);
-                    expansion = scan.next();
+                    expansion = scan.nextLine();
+                    expansion = expansion.substring(expansion.indexOf('\"'), expansion.lastIndexOf('\"') - 2);
                     alphabet.put(symbol, expansion);
                 }
                 default ->
