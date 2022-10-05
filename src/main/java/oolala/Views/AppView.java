@@ -59,8 +59,8 @@ public abstract class AppView {
         viewUtils = new ViewUtils(myResources);
         canvasScreen = new CanvasScreen(myResources);
     }
-    public Scene setUpScene(){
-        return scene;
+    public BorderPane setUpScene(){
+        return root;
     }
     public HBox getRightToolBarHBox() {
         return rightToolBarHBox;
