@@ -16,6 +16,7 @@ public class LSystemParser extends Parser{
     public static final int DEFAULT_LEVEL = 3;
     public static final String LENGTH_MARKER = "length";
     public static final String ANGLE_MARKER = "angle";
+    public static final String QUOTE_REGEX = "([\"'])(?:(?=(\\\\?))\\2.)*?\\1";
 
     private boolean usingRandomDist = false;
     private boolean usingRandomAngle = false;
@@ -120,8 +121,8 @@ public class LSystemParser extends Parser{
                 }
                 case "set" -> {
                     symbol = scan.next().charAt(0);
-                    expansion = scan.nextLine();
-                    expansion = expansion.substring(expansion.indexOf('\"') + 1, expansion.lastIndexOf('\"'));
+                    expansion = scan.findInLine(QUOTE_REGEX);
+                    expansion = expansion.substring(1, expansion.length() - 1);
                     alphabet.put(symbol, expansion);
                 }
                 default ->
