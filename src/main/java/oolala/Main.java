@@ -27,6 +27,7 @@ public class Main extends Application {
     private StartingView startingView;
     String TITLE = "Oolala";
     public static final String STYLESHEET = "default.css";
+    public static final String DARKMODE_STYLESHEET = "darkmode.css";
     public static final String DEFAULT_RESOURCE_FOLDER = "/Properties/";
 
     /**
