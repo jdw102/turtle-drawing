@@ -14,6 +14,8 @@ public class LSystemParser extends Parser{
     public static final int DEFAULT_DIST = 10;
     public static final int DEFAULT_ANGLE = 30;
     public static final int DEFAULT_LEVEL = 3;
+    public static final String LENGTH_MARKER = "LENGTH";
+    public static final String ANGLE_MARKER = "ANGLE";
 
     private boolean usingRandomDist = false;
     private boolean usingRandomAngle = false;
@@ -67,8 +69,12 @@ public class LSystemParser extends Parser{
             char currChar = expansion.charAt(i);
             if (alphabet.containsKey(currChar)) {
                 String cmd = alphabet.get(currChar);
-                cmd = cmd.replace("LENGTH", Integer.toString(this.getDist()));
-                cmd = cmd.replace("ANGLE", Integer.toString(this.getAng()));
+                if (usingRandomDist)
+                    dist = (int) Math.round(Math.random() * (distMax - distMin) + distMin);
+                if (usingRandomAngle)
+                    dist = (int) Math.round(Math.random() * (angMax - angMin) + angMin);
+                cmd = cmd.replace(LENGTH_MARKER, Integer.toString(this.getDist()));
+                cmd = cmd.replace(ANGLE_MARKER, Integer.toString(this.getAng()));
                 commandString = commandString.concat(cmd).concat(" ");
             }
         }
