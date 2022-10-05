@@ -121,7 +121,7 @@ public class LSystemParser extends Parser{
                 case "set" -> {
                     symbol = scan.next().charAt(0);
                     expansion = scan.nextLine();
-                    expansion = expansion.substring(expansion.indexOf('\"'), expansion.lastIndexOf('\"') - 2);
+                    expansion = expansion.substring(expansion.indexOf('\"') + 1, expansion.lastIndexOf('\"'));
                     alphabet.put(symbol, expansion);
                 }
                 default ->
