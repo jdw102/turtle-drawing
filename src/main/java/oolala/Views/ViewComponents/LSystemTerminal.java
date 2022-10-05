@@ -9,8 +9,8 @@ import oolala.Views.ViewUtils;
 
 import java.util.ResourceBundle;
 
-public class LSystemRunInterface extends RunInterface {
-    public LSystemRunInterface(int width, int height, ResourceBundle myResources, AppModel currentApp, AppView display, ViewUtils viewUtils) {
+public class LSystemTerminal extends Terminal {
+    public LSystemTerminal(int width, int height, ResourceBundle myResources, AppModel currentApp, AppView display, ViewUtils viewUtils) {
         super(width, height, myResources, currentApp, display, viewUtils);
         makeSliders(currentApp);
     }

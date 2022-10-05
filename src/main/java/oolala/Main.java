@@ -19,13 +19,13 @@ import oolala.Views.StartingView;
  * Feel free to completely change this code or delete it entirely.
  */
 public class Main extends Application {
-    private static final int SIZE_WIDTH = 800;
+    public static final int SIZE_WIDTH = 800;
 
-    private static final int SIZE_HEIGHT = 650;
-    private static final int START_WIDTH = 400;
-    private static final int START_HEIGHT = 500;
+    public static final int SIZE_HEIGHT = 650;
+    public static final int START_WIDTH = 400;
+    public static final int START_HEIGHT = 500;
     private StartingView startingView;
-    String TITLE = "Oolala";
+    public static final String TITLE = "Oolala";
     public static final String STYLESHEET = "default.css";
     public static final String DARKMODE_STYLESHEET = "darkmode.css";
     public static final String DEFAULT_RESOURCE_FOLDER = "/Properties/";

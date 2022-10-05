@@ -24,13 +24,17 @@ public class CanvasScreen {
     private ResourceBundle myResources;
     private Color brushColor = Color.BLACK;
     private Color backgroundColor = Color.WHITE;
-    private Double THICKNESS = 3.0;
+    private Double thickness = 3.0;
+    private final int START_X = 320;
+    private final int START_Y = 55;
+    private final int WIDTH = 500;
+    private final int HEIGHT = 556;
 
 
     public CanvasScreen(ResourceBundle myResources) {
         this.myResources = myResources;
         shapes = new Group();
-        borderRectangle = new Rectangle(300, 55, 500, 540);
+        borderRectangle = new Rectangle(START_X, START_Y, WIDTH, HEIGHT);
         shapes.getChildren().add(borderRectangle);
         borderRectangle.setFill(backgroundColor);
     }
@@ -43,7 +47,7 @@ public class CanvasScreen {
         Alert alert = new Alert(Alert.AlertType.ERROR, myResources.getString("NumberFormatException"));
         try {
             double doubleValue = Double.parseDouble(value);
-            if (doubleValue > 0) THICKNESS = doubleValue;
+            if (doubleValue > 0) thickness = doubleValue;
             else alert.showAndWait();
         } catch (NumberFormatException e) {
             alert.showAndWait();
@@ -69,7 +73,7 @@ public class CanvasScreen {
     }
 
     public Double getThickness() {
-        return THICKNESS;
+        return thickness;
     }
 
     public Color getBrushColor() {

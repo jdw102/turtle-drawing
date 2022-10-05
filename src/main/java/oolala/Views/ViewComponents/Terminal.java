@@ -25,15 +25,16 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.ResourceBundle;
 
-public abstract class RunInterface {
+public abstract class Terminal {
     public ResourceBundle myResources;
     private TextArea textArea;
     public VBox box;
     private HBox leftToolBar;
     private ListView<String> recentlyUsed;
+    public Button runButton;
 
 
-    public RunInterface(int width, int height, ResourceBundle myResources, AppModel currentApp, AppView display, ViewUtils viewUtils) {
+    public Terminal(int width, int height, ResourceBundle myResources, AppModel currentApp, AppView display, ViewUtils viewUtils) {
         this.myResources = myResources;
         textArea = new TextArea("");
         textArea.getStyleClass().add("text-area");
@@ -41,7 +42,8 @@ public abstract class RunInterface {
         EventHandler<MouseEvent> addLineEvent = event -> {
             addLine(recentlyUsed.getSelectionModel().getSelectedItem(), textArea);
         };
-        HBox historyTitle = new HBox(new Label(myResources.getString("CommandHistory")));
+        Label historyLabel = new Label(myResources.getString("CommandHistory"));
+        HBox historyTitle = new HBox(historyLabel);
         historyTitle.setAlignment(Pos.CENTER);
         historyTitle.getStyleClass().add("box");
         recentlyUsed = makeListView(200, addLineEvent);
@@ -92,7 +94,7 @@ public abstract class RunInterface {
     private HBox makeLeftToolbarHBox(int width, AppModel currentApp, AppView display, ViewUtils viewUtils) {
         EventHandler<ActionEvent> passCommands = makePassCommandsEventEventHandler(currentApp, display);
         EventHandler<ActionEvent> clearText = event -> textArea.clear();
-        Button runButton = viewUtils.makeButton("RunButton", passCommands);
+        runButton = viewUtils.makeButton("RunButton", passCommands);
         Button clearTextButton = viewUtils.makeButton("ClearTextButton", clearText);
         Button fileOpenButton = viewUtils.makeButton("ImportButton", display.openFileChooserEventHandler());
         Button saveButton = viewUtils.makeButton("SaveButton", display.makeSaveFileEventHandler());
@@ -124,5 +126,11 @@ public abstract class RunInterface {
     }
     public String getText(){
         return textArea.getText();
+    }
+    public void disableRunButton(){
+        runButton.setDisable(true);
+    }
+    public void enableRunButton(){
+        runButton.setDisable(false);
     }
 }

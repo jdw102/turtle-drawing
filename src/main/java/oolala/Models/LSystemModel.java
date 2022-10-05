@@ -15,7 +15,7 @@ import static oolala.Command.Command.CmdName.TELL;
 public class LSystemModel extends AppModel {
     public LSystemModel(CanvasScreen canvas, ResourceBundle myResources, String stampUrl, AppView display) {
         super(canvas, myResources, stampUrl, display);
-        turtleIcon = myResources.getString("TriangleArrowIcon");
+        turtleIcon = myResources.getString("CursorIcon");
         turtleStamp = myResources.getString(stampUrl);
         parser = new LSystemParser(myResources);
         turtles.put(1, new TurtleView(homeX, homeY, myCanvas, this));

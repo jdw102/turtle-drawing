@@ -1,5 +1,5 @@
-.root {
-    -fx-background: gray;
+.border-pane {
+    -fx-background-color: gray;
 }
 .text-area .content {
     -fx-background-color: black;
@@ -42,7 +42,7 @@
 }
 .box {
     -fx-border-width: 1;
-    -fx-border-color: lightblue;
+    -fx-border-color: #ffffcc;
     -fx-border-style: solid;
 }
 .combo-box {
@@ -51,7 +51,9 @@
     -fx-max-width: 50;
     -fx-background-color: #23252a;
 }
-
+.label {
+    -fx-text-fill: #ffffcc;
+}
 .text-field {
     -fx-min-height: 40;
     -fx-max-width: 40;
