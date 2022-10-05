@@ -9,8 +9,8 @@ import oolala.Command.Command;
 public class LSystemParser extends Parser{
 
     public static final char[] ALPHA_SYM = {'f', 'g', 'a', 'b', '+', '-', 'x'};
-    public static final String[] ALPHA_COMM = {"pd fd ", "pu fd ", "pu bk ", "pd bk ",
-            "rt ", "lt ", "stamp"};
+    public static final String[] ALPHA_COMM = {"pd fd LENGTH", "pu fd LENGTH", "pu bk LENGTH", "pd bk LENGTH",
+            "rt ANGLE", "lt ANGLE", "stamp"};
     public static final int DEFAULT_DIST = 10;
     public static final int DEFAULT_ANGLE = 30;
     public static final int DEFAULT_LEVEL = 3;
@@ -67,19 +67,8 @@ public class LSystemParser extends Parser{
             char currChar = expansion.charAt(i);
             if (alphabet.containsKey(currChar)) {
                 String cmd = alphabet.get(currChar);
-                if (cmd.substring(cmd.length() - 3).equals("fd ") ||
-                        cmd.substring(cmd.length() - 3).equals("bk ")) {
-                    if (usingRandomDist) {
-                        dist = (int) Math.round(Math.random() * (distMax - distMin) + distMin);
-                    }
-                    cmd = cmd.concat(Integer.toString(dist));
-                } else if (cmd.substring(cmd.length() - 3).equals("lt ") ||
-                        cmd.substring(cmd.length() - 3).equals("rt ")) {
-                    if (usingRandomAngle) {
-                        ang = (int) Math.round(Math.random() * (angMax - angMin) + angMin);
-                    }
-                    cmd = cmd.concat(Integer.toString(ang));
-                }
+                cmd = cmd.replace("LENGTH", Integer.toString(this.getDist()));
+                cmd = cmd.replace("ANGLE", Integer.toString(this.getAng()));
                 commandString = commandString.concat(cmd).concat(" ");
             }
         }
