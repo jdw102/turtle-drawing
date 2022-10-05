@@ -19,7 +19,7 @@ public class LSystemAppView extends AppView {
         currentApp = new LSystemModel(canvasScreen, myResources, "SimpleLeafStamp", this);
     }
 
-    public BorderPane setUpScene() {
+    public BorderPane setUpRootBorderPane() {
         rightToolBarHBox = makeRightToolbarHBox();
         imageSelector = makeImageSelector("StampChange", stampLabels);
         rightToolBarHBox.getChildren().add(1, imageSelector);

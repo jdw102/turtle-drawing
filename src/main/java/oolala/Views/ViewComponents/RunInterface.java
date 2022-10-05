@@ -55,6 +55,7 @@ public abstract class RunInterface {
         });
         leftToolBar = makeLeftToolbarHBox(width, currentApp, display, viewUtils);
         box = new VBox(leftToolBar, textArea, historyTitle, recentlyUsed);
+        box.setSpacing(5);
     }
     public ListView<String> makeListView(int maxHeight, EventHandler<MouseEvent> handler){
         ListView<String> listView = new ListView<String>();
@@ -103,6 +104,7 @@ public abstract class RunInterface {
         clearTextButton.setMinWidth(width / 4);
         fileOpenButton.setMinWidth(width / 4);
         hBox.getChildren().addAll(fileOpenButton, saveButton, runButton, clearTextButton);
+        hBox.setSpacing(5);
 
         return hBox;
     }
