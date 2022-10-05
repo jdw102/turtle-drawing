@@ -2,9 +2,10 @@ package oolala;
 
 import javafx.application.Application;
 import javafx.event.ActionEvent;
-import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
+import javafx.scene.control.Tab;
+import javafx.scene.control.TabPane;
 import javafx.stage.Stage;
 import oolala.Views.AppView;
 import oolala.Views.LSystemAppView;
@@ -20,19 +21,13 @@ import oolala.Views.StartingView;
 public class Main extends Application {
     private static final int SIZE_WIDTH = 800;
 
-    private static final int SIZE_HEIGHT = 600;
+    private static final int SIZE_HEIGHT = 650;
     private static final int START_WIDTH = 400;
     private static final int START_HEIGHT = 500;
-    private Stage stage;
-    private AppView view;
     private StartingView startingView;
-    private Scene scene;
     String TITLE = "Oolala";
     public static final String STYLESHEET = "default.css";
-    public static final String DARKMODE_STYLESHEET = "darkmode.css";
     public static final String DEFAULT_RESOURCE_FOLDER = "/Properties/";
-    private String currentAppName;
-    private String currentLanguage;
 
     /**
      * A method to test (and a joke :).
@@ -46,27 +41,31 @@ public class Main extends Application {
      */
     @Override
     public void start(Stage stage) {
-        this.stage = stage;
         EventHandler<ActionEvent> startApp = event -> {
             stage.close();
-            currentLanguage = startingView.getLanguage();
-            currentAppName = startingView.getAppName();
-            switch (currentAppName) {
-                case "Logo" -> view = new LogoAppView(SIZE_WIDTH, SIZE_HEIGHT, stage, currentLanguage);
-                case "LSystem" -> view = new LSystemAppView(SIZE_WIDTH, SIZE_HEIGHT, stage, currentLanguage);
-            }
-            scene = view.setUpScene();
+            String language = startingView.getLanguage();
+
+            TabPane tabPane = new TabPane();
+            AppView view1 = new LogoAppView(SIZE_WIDTH, SIZE_HEIGHT, stage, language);
+            AppView view2 = new LSystemAppView(SIZE_WIDTH, SIZE_HEIGHT, stage, language);
+            Tab tab1 = new Tab("Logo", view1.setUpScene());
+            Tab tab2 = new Tab("L-System", view2.setUpScene());
+            tabPane.getTabs().add(tab1);
+            tabPane.getTabs().add(tab2);
+
+            Scene scene = new Scene(tabPane, SIZE_WIDTH, SIZE_HEIGHT);
             scene.getStylesheets().add(getClass().getResource(DEFAULT_RESOURCE_FOLDER + STYLESHEET).toExternalForm());
             stage.setScene(scene);
+            stage.setTitle(TITLE);
             stage.setResizable(false);
             stage.show();
         };
 
         startingView = new StartingView();
-        scene = startingView.setUpScene(START_WIDTH, START_HEIGHT, startApp);
-        scene.getStylesheets().add(getClass().getResource(DEFAULT_RESOURCE_FOLDER + STYLESHEET).toExternalForm());
+        Scene startScene = startingView.setUpScene(START_WIDTH, START_HEIGHT, startApp);
+        startScene.getStylesheets().add(getClass().getResource(DEFAULT_RESOURCE_FOLDER + STYLESHEET).toExternalForm());
         stage.setTitle(TITLE);
-        stage.setScene(scene);
+        stage.setScene(startScene);
         stage.setResizable(false);
         stage.show();
     }

@@ -2,6 +2,7 @@ package oolala.Views;
 
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
+import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import oolala.Models.LogoModel;
 import oolala.Views.ViewComponents.LogoRunInterface;
@@ -18,7 +19,7 @@ public class LogoAppView extends AppView {
         currentApp = new LogoModel(canvasScreen, myResources, "TurtleIcon", this);
     }
 
-    public Scene setUpScene() {
+    public BorderPane setUpScene() {
         rightToolBarHBox = makeRightToolbarHBox();
         imageSelector = makeImageSelector("IconChange", iconLabels);
         rightToolBarHBox.getChildren().add(1, imageSelector);
@@ -27,7 +28,6 @@ public class LogoAppView extends AppView {
         root.setCenter(rightToolBarHBox);
         root.getChildren().add(canvasScreen.getShapes());
         root.setPadding(new Insets(10, 10, 10, 10));
-        scene = new Scene(root, sizeWidth, sizeHeight);
-        return scene;
+        return root;
     }
 }
