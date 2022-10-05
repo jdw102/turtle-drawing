@@ -30,24 +30,24 @@ public class StartingView {
     private static final String DEFAULT_RESOURCE_PACKAGE = "Properties.";
     private static final String STARTING_LANGUAGE = "English";
     private Button startButton;
-    private ObservableList<String> applicationLabels = FXCollections.observableArrayList("Logo", "LSystem");
+//    private ObservableList<String> applicationLabels = FXCollections.observableArrayList("Logo", "LSystem");
     private ObservableList<String> languageOptions = FXCollections.observableArrayList("English", "日本語", "简体中文", "繁體中文");
 
     public Scene setUpScene(int sizeWidth, int sizeHeight, EventHandler<ActionEvent> startApp){
         root = new BorderPane();
         myResources = ResourceBundle.getBundle(DEFAULT_RESOURCE_PACKAGE + STARTING_LANGUAGE);
-        appSelector = makeAppSelector();
+//        appSelector = makeAppSelector();
         languageSelector = makeLanguageSelector();
         languageSelector.getStyleClass().add("start-combo-box");
-        appSelector.getStyleClass().add("start-combo-box");
-        Label appLabel = new Label("Select App");
+//        appSelector.getStyleClass().add("start-combo-box");
+//        Label appLabel = new Label("Select App");
         Label languageLabel = new Label("Select Language");
-        appLabel.getStyleClass().add("start-label");
+//        appLabel.getStyleClass().add("start-label");
         languageLabel.getStyleClass().add("start-label");
         startButton = new Button("START");
         startButton.setOnAction(startApp);
         startButton.setMinWidth(100);
-        VBox box = new VBox(appLabel, appSelector, languageLabel, languageSelector);
+        VBox box = new VBox(languageLabel, languageSelector);
         box.setAlignment(Pos.CENTER);
         box.setSpacing(30);
         root.setCenter(box);
@@ -57,25 +57,25 @@ public class StartingView {
         return scene;
     }
 
-    private ComboBox<String> makeAppSelector(){
-        ComboBox<String> c = new ComboBox<>(applicationLabels);
-        c.setButtonCell(new ListCell<String>(){
-            protected void updateItem(String item, boolean empty){
-                super.updateItem(item, empty);
-                setGraphic(null);
-                setText(null);
-                if(item!=null){
-                    ImageView imageView = new ImageView(new Image(myResources.getString(item)));
-                    imageView.setFitWidth(20);
-                    imageView.setFitHeight(20);
-                    setGraphic(imageView);
-                    setText(item);
-                }
-            }
-        });
-        c.setValue(applicationLabels.get(0));
-        return c;
-    }
+//    private ComboBox<String> makeAppSelector(){
+//        ComboBox<String> c = new ComboBox<>(applicationLabels);
+//        c.setButtonCell(new ListCell<String>(){
+//            protected void updateItem(String item, boolean empty){
+//                super.updateItem(item, empty);
+//                setGraphic(null);
+//                setText(null);
+//                if(item!=null){
+//                    ImageView imageView = new ImageView(new Image(myResources.getString(item)));
+//                    imageView.setFitWidth(20);
+//                    imageView.setFitHeight(20);
+//                    setGraphic(imageView);
+//                    setText(item);
+//                }
+//            }
+//        });
+//        c.setValue(applicationLabels.get(0));
+//        return c;
+//    }
     private ComboBox<String> makeLanguageSelector(){
         ComboBox<String> c = new ComboBox<>(languageOptions);
         c.setValue(languageOptions.get(0));
