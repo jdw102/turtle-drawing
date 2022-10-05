@@ -25,7 +25,7 @@ public class CanvasScreen {
     private Color brushColor = Color.BLACK;
     private Color backgroundColor = Color.WHITE;
     private Double thickness = 3.0;
-    private final int START_X = 300;
+    private final int START_X = 320;
     private final int START_Y = 55;
     private final int WIDTH = 500;
     private final int HEIGHT = 556;
