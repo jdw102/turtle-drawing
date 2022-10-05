@@ -102,6 +102,10 @@ public class LSystemParser extends Parser{
         String expansion;
         while (scan.hasNext()) {
             String prefix = scan.next();
+            if (prefix.charAt(0) == '#') {
+                scan.nextLine();
+                continue;
+            }
             switch (prefix) {
                 case "start" -> start = scan.next();
                 case "rule" -> {
