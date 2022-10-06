@@ -33,8 +33,8 @@ public class AppViewTest extends DukeApplicationTest {
             String language = startingView.getLanguage();
 
             TabPane tabPane = new TabPane();
-            AppView view1 = new LogoAppView(SIZE_WIDTH, SIZE_HEIGHT, stage, language);
-            AppView view2 = new LSystemAppView(SIZE_WIDTH, SIZE_HEIGHT, stage, language);
+            AppView view1 = new LogoAppView(stage, language);
+            AppView view2 = new LSystemAppView(stage, language);
             Tab tab1 = new Tab("Logo", view1.setUpRootBorderPane());
             Tab tab2 = new Tab("L-System", view2.setUpRootBorderPane());
             tabPane.getTabs().add(tab1);

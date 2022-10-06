@@ -1,7 +1,23 @@
 .border-pane {
     -fx-background-color: lightgray;
 }
-
+.left-hbox {
+    -fx-alignment: center;
+    -fx-min-width: 275;
+    -fx-spacing: 5
+}
+.right-hbox {
+    -fx-alignment: top-right;
+    -fx-min-width: 275;
+    -fx-spacing: 5
+}
+.left-hbox-button {
+    -fx-min-width: 68.75
+}
+.text-area {
+    -fx-pref-width: 275;
+    -fx-pref-height: 450;
+}
 .label {
     -fx-font-size: 12pt;
 }
