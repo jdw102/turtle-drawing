@@ -20,7 +20,15 @@ import static oolala.Main.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class AppViewTest extends DukeApplicationTest {
+    private final int SIZE_WIDTH = 800;
+    private final int SIZE_HEIGHT = 650;
+    private final int START_WIDTH = 400;
+    private final int START_HEIGHT = 500;
     private StartingView startingView;
+    private final String TITLE = "Oolala";
+    private final String STYLESHEET = "default.css";
+    private final String DARKMODE_STYLESHEET = "darkmode.css";
+    private final String DEFAULT_RESOURCE_FOLDER = "/Properties/";
     private Labeled myLabel;
     // keep GUI components used in multiple tests
 
@@ -34,8 +42,8 @@ public class AppViewTest extends DukeApplicationTest {
             String language = startingView.getLanguage();
 
             TabPane tabPane = new TabPane();
-            AppView view1 = new LogoAppView(stage, language);
-            AppView view2 = new LSystemAppView(stage, language);
+            AppView view1 = new LogoAppView(stage, language, DEFAULT_RESOURCE_FOLDER, STYLESHEET, DARKMODE_STYLESHEET);
+            AppView view2 = new LSystemAppView(stage, language, DEFAULT_RESOURCE_FOLDER, STYLESHEET, DARKMODE_STYLESHEET);
             Tab tab1 = new Tab("Logo", view1.setUpRootBorderPane());
             Tab tab2 = new Tab("L-System", view2.setUpRootBorderPane());
             tabPane.getTabs().add(tab1);

@@ -168,5 +168,9 @@ public class TurtleView {
   public void changeStamp(String s) {
     stampUrl = s;
   }
+
+  public TurtleModel getModel() {
+    return model;
+  }
 }
 

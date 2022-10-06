@@ -45,7 +45,7 @@ public class LogoModel extends AppModel {
                 }
             }
             for (Integer idx : currTurtleIdxs) {
-                instruction.runCommand(turtles.get(idx), myCanvas, animation);
+                instruction.runCommand(turtles.get(idx).getModel(), myCanvas, animation);
             }
             itCmd.remove();
         }

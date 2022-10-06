@@ -33,7 +33,7 @@ public class LogoParser extends Parser {
      */
     public ArrayList<Command> parse(String inputText) {
         program = new ArrayList<>();
-        Command c = new Command();
+        Command c;
         Scanner scan = new Scanner(inputText);
         while (scan.hasNext()) {
 //      Command c = new Command();

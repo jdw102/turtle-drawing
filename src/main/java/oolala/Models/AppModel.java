@@ -1,6 +1,9 @@
 package oolala.Models;
 
 import javafx.animation.SequentialTransition;
+import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
+import javafx.scene.image.ImageView;
 import oolala.Views.ViewComponents.CanvasScreen;
 import oolala.Command.Command;
 import oolala.Parsers.Parser;
@@ -36,6 +39,16 @@ public abstract class AppModel {
         currTurtleIdxs = new ArrayList<>();
         homeX = 0;
         homeY = 0;
+    }
+
+    public void enableInputs(ComboBox<ImageView> imageSelector, Button runButton) {
+        imageSelector.setDisable(false);
+        runButton.setDisable(false);
+    }
+
+    public void disableInputs(ComboBox<ImageView> imageSelector, Button runButton) {
+        imageSelector.setDisable(true);
+        runButton.setDisable(true);
     }
 
     public void runApp(ArrayList<Command> commands) {

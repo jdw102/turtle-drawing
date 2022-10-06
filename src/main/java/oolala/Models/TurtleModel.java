@@ -92,6 +92,9 @@ public class TurtleModel {
         line.setStrokeLineCap(StrokeLineCap.ROUND);
         return line;
     }
+    public void move(double dist){
+
+    }
     public boolean isPenDown(){
         return penDown;
     }
