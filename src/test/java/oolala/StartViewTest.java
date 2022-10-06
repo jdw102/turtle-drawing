@@ -4,14 +4,11 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.image.ImageView;
-import javafx.scene.input.KeyCode;
 import javafx.stage.Stage;
 import oolala.Views.AppView;
 import oolala.Views.LSystemAppView;
 import oolala.Views.LogoAppView;
 import oolala.Views.StartingView;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import util.DukeApplicationTest;
@@ -19,13 +16,9 @@ import util.DukeApplicationTest;
 import static oolala.Main.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class StartAppViewTest extends DukeApplicationTest {
+public class StartViewTest extends DukeApplicationTest {
     private StartingView startingView;
-    // keep GUI components used in multiple tests
 
-
-
-    // this method is run BEFORE EACH test to set up application in a fresh state
     @Override
     public void start (Stage stage) {
         EventHandler<ActionEvent> startApp = event -> {
@@ -68,14 +61,9 @@ public class StartAppViewTest extends DukeApplicationTest {
     void testLanguageSelector (String language) {
 
         ComboBox<String> languages = lookup("#LanguageSelector").query();
-        //ChoiceBox<String> options = lookup("#Options").query();
-        //ListView<String> options = lookup("#Options").query();
         String expected = language;
-        // GIVEN, app first starts up
-        // WHEN, choice is made using a combo box
         select(languages, expected);
         assertEquals(expected, languages.getValue());
-        // THEN, check label text has been updated to match input
     }
 
 }

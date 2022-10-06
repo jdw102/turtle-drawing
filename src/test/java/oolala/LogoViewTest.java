@@ -42,7 +42,6 @@ public class LogoViewTest extends DukeApplicationTest {
     private Group canvasShapes;
 
 
-    // this method is run BEFORE EACH test to set up application in a fresh state
     @Override
     public void start (Stage stage) {
         logoView = new LogoAppView(stage, "English");;
@@ -72,16 +71,6 @@ public class LogoViewTest extends DukeApplicationTest {
         String expected = "";
         assertEquals(expected, terminalText.getText());
     }
-
-    @Test
-    void testTurtleForward()  {
-        ImageView turtleIcon = lookup("#Turtle1").query();
-        Double expectedPositon = turtleIcon.getY() - 100;
-        clickOn(terminalText).write("fd 100").write(KeyCode.ENTER.getChar());
-        clickOn(runButton);
-        sleep(1000);
-        assertEquals(expectedPositon, turtleIcon.getY());
-    }
     @Test
     void testCanvasClear() {
         int expected = 2;
@@ -107,5 +96,16 @@ public class LogoViewTest extends DukeApplicationTest {
         sleep(1000);
         Line line = lookup("#Line1").query();
         assertEquals(expected, line.getStroke());
+    }
+    @Test
+    void changeLineThickness(){
+        double expected = 7;
+        clickOn(thicknessTextField).press(KeyCode.BACK_SPACE).write('7');
+        press(KeyCode.ENTER);
+        clickOn(terminalText).write("fd 100").write(KeyCode.ENTER.getChar());
+        clickOn(runButton);
+        sleep(1000);
+        Line line = lookup("#Line1").query();
+        assertEquals(expected, line.getStrokeWidth());
     }
 }
