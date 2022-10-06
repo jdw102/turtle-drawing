@@ -5,7 +5,6 @@ import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
@@ -21,7 +20,7 @@ import oolala.Models.AppModel;
 import oolala.Views.ViewComponents.CanvasScreen;
 import oolala.Command.Command;
 import oolala.Views.ViewComponents.Terminal;
-import oolala.Views.ViewComponents.ToolBar;
+import oolala.Views.ViewComponents.ViewUtils;
 
 import javax.imageio.ImageIO;
 import java.io.*;
@@ -30,6 +29,7 @@ import java.nio.file.Path;
 import java.util.*;
 
 import static oolala.Main.*;
+import static oolala.Views.ViewComponents.ViewUtils.*;
 
 /**
  * @Author Luyao Wang
@@ -50,7 +50,7 @@ public abstract class AppView {
     private ColorPicker colorPicker;
     protected AppModel currentAppModel;
     protected ComboBox<ImageView> imageSelector;
-    protected ToolBar toolBar;
+    protected ViewUtils viewUtils;
     protected HBox leftToolBarHBox;
     protected VBox leftVBox;
     private Button runButton;
@@ -58,13 +58,12 @@ public abstract class AppView {
 
     public AppView(Stage stage, String language) {
         myResources = ResourceBundle.getBundle(DEFAULT_RESOURCE_PACKAGE + language);
+        viewUtils = new ViewUtils(myResources);
         this.stage = stage;
         fileChooser = new FileChooser();
         root = new BorderPane();
         root.getStyleClass().add("border-pane");
         canvasScreen = new CanvasScreen(myResources);
-        toolBar = new ToolBar(myResources);
-
         animation = new SequentialTransition();
         animation.setRate(3);
         animation.setOnFinished(event -> {
@@ -100,10 +99,10 @@ public abstract class AppView {
     public HBox makeLeftToolbarHBox() {
         EventHandler<ActionEvent> passCommands = makePassCommandEventEventHandler();
         EventHandler<ActionEvent> clearText = event -> terminal.getTextArea().clear();
-        runButton = toolBar.makeButton("RunButton", passCommands);
-        Button clearTextButton = toolBar.makeButton("ClearTextButton", clearText);
-        Button fileOpenButton = toolBar.makeButton("ImportButton", openFileChooserEventHandler());
-        Button saveButton = toolBar.makeButton("SaveButton", makeSaveFileEventHandler());
+        runButton = makeButton("RunButton", passCommands);
+        Button clearTextButton = makeButton("ClearTextButton", clearText);
+        Button fileOpenButton = makeButton("ImportButton", openFileChooserEventHandler());
+        Button saveButton = makeButton("SaveButton", makeSaveFileEventHandler());
         HBox hBox = new HBox();
 
         saveButton.getStyleClass().add("left-hbox-button");
@@ -121,15 +120,15 @@ public abstract class AppView {
         EventHandler<ActionEvent> resetCommand = event -> currentAppModel.reset(true);
         EventHandler<ActionEvent> saveCommand = makeSaveFileImgEventHandler();
         EventHandler<ActionEvent> thicknessCommand = event -> canvasScreen.setThickness(thicknessTextField.getText());
-        Button clearButton = toolBar.makeButton("ClearCanvasButton", clearCommand);
-        Button resetButton = toolBar.makeButton("ResetTurtleButton", resetCommand);
-        Button saveButton = toolBar.makeButton("SaveButton", saveCommand);
+        Button clearButton = makeButton("ClearCanvasButton", clearCommand);
+        Button resetButton = makeButton("ResetTurtleButton", resetCommand);
+        Button saveButton = makeButton("SaveButton", saveCommand);
         EventHandler<ActionEvent> setBrushColor = event -> canvasScreen.setBrushColor(colorPicker.getValue());
         EventHandler<ActionEvent> setColorBackGround = event -> canvasScreen.getBorderRectangle().setFill(colorPickerBackGround.getValue());
-        thicknessTextField = toolBar.makeTextField("Thickness", "3", thicknessCommand);
+        thicknessTextField = makeTextField("Thickness", "3", thicknessCommand);
         thicknessTextField.setTooltip(new Tooltip(myResources.getString("ThicknessTextField")));
-        colorPicker = toolBar.makeColorPicker(setBrushColor, Color.BLACK, "BrushColorPicker");
-        colorPickerBackGround = toolBar.makeColorPicker(setColorBackGround, Color.AZURE, "CanvasColorPicker");
+        colorPicker = makeColorPicker(setBrushColor, Color.BLACK, "BrushColorPicker");
+        colorPickerBackGround = makeColorPicker(setColorBackGround, Color.AZURE, "CanvasColorPicker");
         HBox modeSlider = makeDisplayModeSwitcher();
         HBox hBox = new HBox(modeSlider, colorPickerBackGround, colorPicker, thicknessTextField, clearButton, resetButton, saveButton);
         hBox.getStyleClass().add("right-hbox");
@@ -220,8 +219,8 @@ public abstract class AppView {
         return saveFile;
     }
 
-    public ComboBox<ImageView> makeImageSelector(String type, List<String> images) {
-        ComboBox<ImageView> imageSelector = toolBar.makeImageSelector(images, type);
+    public ComboBox<ImageView> makeAppViewImageSelector(String type, List<String> images) {
+        ComboBox<ImageView> imageSelector = makeImageSelector(images, type);
         imageSelector.setOnAction(event -> {
             currentAppModel.changeImage(imageSelector.getValue().getImage().getUrl());
         });
@@ -229,7 +228,7 @@ public abstract class AppView {
     }
 
     public HBox makeDisplayModeSwitcher() {
-        Slider modeSwitcher = toolBar.makeToggleBar(0, 1, 0, 50);
+        Slider modeSwitcher = makeToggleBar(0, 1, 0, 50);
         Label label = new Label(myResources.getString("LightMode"));
         modeSwitcher.valueProperty().addListener((obs, oldVal, newVal) -> {
             modeSwitcher.setValue(newVal.intValue());

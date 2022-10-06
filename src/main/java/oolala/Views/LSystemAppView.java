@@ -18,6 +18,6 @@ public class LSystemAppView extends AppView {
         super(stage, language);
         currentAppModel = new LSystemModel(canvasScreen, myResources, "SimpleLeafStamp", this, animation);
         terminal = new LSystemTerminal(myResources, (LSystemParser) currentAppModel.getParser());
-        imageSelector = makeImageSelector("StampChange", stampLabels);
+        imageSelector = makeAppViewImageSelector("StampChange", stampLabels);
     }
 }

@@ -21,7 +21,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class AppViewTest extends DukeApplicationTest {
     private StartingView startingView;
-    private Labeled myLabel;
     // keep GUI components used in multiple tests
 
 
@@ -56,14 +55,14 @@ public class AppViewTest extends DukeApplicationTest {
         stage.setScene(startScene);
         stage.setResizable(false);
         stage.show();
-        myLabel = lookup("#TestLabel").query();
     }
     @ParameterizedTest
     @CsvSource({
             "English",
             "日本語",
             "简体中文",
-            "繁體中文"
+            "繁體中文",
+            "WHAT"
     })
     void testLanguageSelector (String language) {
 
@@ -77,8 +76,11 @@ public class AppViewTest extends DukeApplicationTest {
         assertEquals(expected, languages.getValue());
         // THEN, check label text has been updated to match input
     }
-    private void assertLabelText (String expected) {
-        assertEquals(expected, myLabel.getText());
+    @Test
+    void testStartButton(){
+        Button startButton = lookup("StartButton").query();
+        clickOn(startButton);
+
     }
 
 
