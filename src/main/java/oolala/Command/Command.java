@@ -28,7 +28,7 @@ public class Command {
   public int param;
   public ArrayList<Integer> params;
 
-  public void runCommand(TurtleView turtle, CanvasScreen canvas, SequentialTransition animation){
+  public void runCommand(TurtleView turtle){
 
   }
   @Override

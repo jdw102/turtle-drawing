@@ -9,7 +9,7 @@ public class CommandStamp extends Command {
         prefix =CmdName.STAMP;
     }
 
-    public void runCommand(TurtleView turtle, CanvasScreen canvas, SequentialTransition animation) {
-        turtle.stamp(canvas, animation);
+    public void runCommand(TurtleView turtle) {
+        turtle.stamp();
     }
 }

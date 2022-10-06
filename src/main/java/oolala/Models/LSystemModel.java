@@ -14,19 +14,19 @@ import java.util.ResourceBundle;
 import static oolala.Command.Command.CmdName.TELL;
 
 public class LSystemModel extends AppModel {
-    public LSystemModel(CanvasScreen canvas, ResourceBundle myResources, String stampUrl, AppView display, SequentialTransition animation) {
-        super(canvas, myResources, stampUrl, display, animation);
+    public LSystemModel(CanvasScreen canvas, ResourceBundle myResources, String stampUrl, SequentialTransition animation) {
+        super(canvas, myResources, animation);
         turtleIcon = myResources.getString("CursorIcon");
         turtleStamp = myResources.getString(stampUrl);
         parser = new LSystemParser(myResources);
-        turtles.put(1, new TurtleView(homeX, homeY, myCanvas, this));
+        turtles.put(1, addNewTurtle());
         currTurtleIdxs.add(1);
         myCanvas.getShapes().getChildren().add(turtles.get(1).getIcon());
     }
 
     @Override
     public void runApp(ArrayList<Command> commands) {
-        turtles.get(1).hideTurtle(animation);
+        turtles.get(1).hideTurtle();
         super.runApp(commands);
         Iterator<Command> itCmd = commands.iterator();
         while (itCmd.hasNext()) {
@@ -38,20 +38,21 @@ public class LSystemModel extends AppModel {
                 for (Integer param : instruction.params) {
                     if (!turtles.containsKey(param)) {
                         System.out.println("Creating new turtle");
-                        turtles.put(param, new TurtleView(homeX, homeY, myCanvas, this));
+                        turtles.put(param, addNewTurtle());
                     }
                 }
             }
             for (Integer idx : currTurtleIdxs) {
-                instruction.runCommand(turtles.get(idx), myCanvas, animation);
+                instruction.runCommand(turtles.get(idx));
             }
             itCmd.remove();
         }
         animation.play();
         animation.getChildren().removeAll(animation.getChildren());
     }
+
     @Override
-    public void changeImage(String url){
+    public void changeImage(String url) {
         turtleStamp = url;
     }
 }

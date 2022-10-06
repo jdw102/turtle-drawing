@@ -16,7 +16,6 @@ import java.util.ResourceBundle;
 
 public abstract class AppModel {
     public CanvasScreen myCanvas;
-    private AppView myDisplay;
     public HashMap<Integer, TurtleView> turtles;
     public ArrayList<Integer> currTurtleIdxs;
     public SequentialTransition animation;
@@ -24,14 +23,14 @@ public abstract class AppModel {
     public Parser parser;
     public double homeX;
     public double homeY;
-    public boolean running = false;
     public String turtleIcon;
     public String turtleStamp;
+    private RunningStatus runningStatus;
 
     //TODO: Can we create polymorphism for parser?
 
-    public AppModel(CanvasScreen canvas, ResourceBundle resources, String imageUrl, AppView display, SequentialTransition animation) {
-        myDisplay = display;
+    public AppModel(CanvasScreen canvas, ResourceBundle resources, SequentialTransition animation) {
+        runningStatus = new RunningStatus();
         this.animation = animation;
         myCanvas = canvas;
         myResources = resources;
@@ -39,6 +38,11 @@ public abstract class AppModel {
         currTurtleIdxs = new ArrayList<>();
         homeX = 0;
         homeY = 0;
+    }
+
+    public TurtleView addNewTurtle(){
+        TurtleView turtleView =  new  TurtleView(homeX, homeY, myCanvas, turtleStamp, turtleIcon, runningStatus, animation);
+        return turtleView;
     }
 
     public void enableInputs(ComboBox<ImageView> imageSelector, Button runButton) {
@@ -52,7 +56,7 @@ public abstract class AppModel {
     }
 
     public void runApp(ArrayList<Command> commands) {
-        running = true;
+        runningStatus.setRunningStatus(true);
     }
 
     public ArrayList<Integer> getCurrTurtleIdxs() {
@@ -71,16 +75,12 @@ public abstract class AppModel {
         turtles.clear(); // TODO: Check if this is correct functionality
         myCanvas.clear();
         currTurtleIdxs.clear();
-        turtles.put(1, new TurtleView(homeX, homeY, myCanvas, this));
+        turtles.put(1, addNewTurtle());
         myCanvas.getShapes().getChildren().add(turtles.get(1).getIcon()); // TODO: We should probably refactor this for scalability
         currTurtleIdxs.add(1);
         animation.stop();
-        running = false;
+        runningStatus.setRunningStatus(false);
         animation.getChildren().removeAll(animation.getChildren());
-    }
-
-    public boolean isRunning() {
-        return running;
     }
 
     public void setHome(double x, double y) {
@@ -100,11 +100,5 @@ public abstract class AppModel {
         return turtleStamp;
     }
 
-    public CanvasScreen getMyCanvas() {
-        return myCanvas;
-    }
-
-    public void changeImage(String url) {
-
-    }
+    public void changeImage(String url) {}
 }

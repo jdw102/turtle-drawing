@@ -79,10 +79,8 @@ public class CanvasScreen {
     public Color getBrushColor() {
         return brushColor;
     }
-    public boolean isClear(){
-        if (shapes.getChildren().size() > 2){
-            return false;
-        }
-        else return true;
+
+    public boolean isClear() {
+        return shapes.getChildren().size() <= 2;
     }
 }

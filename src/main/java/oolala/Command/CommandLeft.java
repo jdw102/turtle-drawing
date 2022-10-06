@@ -9,7 +9,7 @@ public class CommandLeft extends Command {
     public CommandLeft(){
         prefix =CmdName.LEFT;
     }
-    public void runCommand(TurtleView turtle, CanvasScreen canvas, SequentialTransition animation) {
-        turtle.rotateTurtle(-param, animation);
+    public void runCommand(TurtleView turtle) {
+        turtle.rotateTurtle(-param);
     }
 }

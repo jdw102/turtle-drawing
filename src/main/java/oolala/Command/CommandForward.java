@@ -10,7 +10,7 @@ public class CommandForward extends Command {
         prefix =CmdName.FORWARD;
     }
 
-    public void runCommand(TurtleView turtle, CanvasScreen canvas, SequentialTransition animation) {
-        turtle.move(param, canvas, animation);
+    public void runCommand(TurtleView turtle) {
+        turtle.move(param);
     }
 }

@@ -1,10 +1,9 @@
 package oolala.Models;
 
+import javafx.geometry.Pos;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.ImageView;
-import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
-import javafx.scene.shape.StrokeLineCap;
 import oolala.Views.ViewComponents.CanvasScreen;
 
 public class TurtleModel {
@@ -35,7 +34,7 @@ public class TurtleModel {
         yMax = r.getY() + r.getHeight() - iconSize / 2;
     }
 
-    public Line moveTurtle(double dist, CanvasScreen canvas) {
+    public Position calculateMove(double dist) {
         double x = this.posX + dist * Math.cos(Math.toRadians(this.angle + 90));
         double y = this.posY - dist * Math.sin(Math.toRadians(this.angle + 90));
         if (x > xMax) {
@@ -58,9 +57,8 @@ public class TurtleModel {
             y = yMin;
             x = this.posX + distY / Math.tan(Math.toRadians(this.angle + 90));
         }
-        Line l = createLine(posX, posY, x, y, canvas);
         setPosition(x, y);
-        return l;
+        return new Position(x, y);
     }
 
     public void setPosition(double x, double y) {
@@ -88,31 +86,16 @@ public class TurtleModel {
         tooltip.setText("x: " + Double.toString(Math.round(relX)) + " y: " + Double.toString(Math.round(relY)));
     }
 
-    private Line createLine(double xStart, double yStart, double xEnd, double yEnd, CanvasScreen canvas) {
-        Line line = new Line();
-        line.setStartX(xStart);
-        line.setStartY(yStart);
-        line.setEndX(xEnd);
-        line.setEndY(yEnd);
-        line.setStrokeWidth(canvas.getThickness());
-        line.setStroke(canvas.getBrushColor());
-        line.setStrokeLineCap(StrokeLineCap.ROUND);
-        return line;
-    }
-
     public boolean isPenDown() {
         return penDown;
     }
 
-    public double getPosX() {
-        return posX;
+    public Position getPos() {
+        return new Position(posX, posY);
     }
 
-    public double getPosY() {
-        return posY;
-    }
 
-    public double geAngle() {
+    public double getAngle() {
         return angle;
     }
 

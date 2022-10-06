@@ -9,7 +9,7 @@ public class CommandPenDown extends Command {
     public CommandPenDown(){
         prefix =CmdName.PENDOWN;
     }
-    public void runCommand(TurtleView turtle, CanvasScreen canvas, SequentialTransition animation) {
+    public void runCommand(TurtleView turtle) {
         turtle.putPenDown();
     }
 }

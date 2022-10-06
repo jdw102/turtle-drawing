@@ -16,7 +16,7 @@ public class LSystemAppView extends AppView {
 
     public LSystemAppView(Stage stage, String language, String defaultResourceFolder, String styleSheet, String darkModeStyleSheet) {
         super(stage, language, defaultResourceFolder, styleSheet, darkModeStyleSheet);
-        currentAppModel = new LSystemModel(canvasScreen, myResources, "SimpleLeafStamp", this, animation);
+        currentAppModel = new LSystemModel(canvasScreen, myResources, "SimpleLeafStamp", animation);
         terminal = new LSystemTerminal(myResources, (LSystemParser) currentAppModel.getParser());
         imageSelector = makeImageSelector("StampChange", stampLabels);
     }

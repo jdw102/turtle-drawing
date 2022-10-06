@@ -15,12 +15,12 @@ import static oolala.Command.Command.CmdName.TELL;
 
 public class LogoModel extends AppModel {
 
-    public LogoModel(CanvasScreen canvas, ResourceBundle myResources, String iconUrl, AppView display, SequentialTransition animation) {
-        super(canvas, myResources, iconUrl, display, animation);
+    public LogoModel(CanvasScreen canvas, ResourceBundle myResources, String iconUrl, SequentialTransition animation) {
+        super(canvas, myResources, animation);
         turtleStamp = myResources.getString(iconUrl);
         turtleIcon = myResources.getString(iconUrl);
         parser = new LogoParser(myResources);
-        turtles.put(1, new TurtleView(homeX, homeY, myCanvas, this));
+        turtles.put(1, addNewTurtle());
         currTurtleIdxs.add(1);
         myCanvas.getShapes().getChildren().add(turtles.get(1).getIcon());
 
@@ -39,25 +39,26 @@ public class LogoModel extends AppModel {
                 for (Integer param : instruction.params) {
                     if (!turtles.containsKey(param)) {
                         System.out.println("Creating new turtle");
-                        turtles.put(param, new TurtleView(homeX, homeY, myCanvas, this));
+                        turtles.put(param, addNewTurtle());
                         myCanvas.getShapes().getChildren().add(turtles.get(param).getIcon());
                     }
                 }
             }
             for (Integer idx : currTurtleIdxs) {
-                instruction.runCommand(turtles.get(idx), myCanvas, animation);
+                instruction.runCommand(turtles.get(idx));
             }
             itCmd.remove();
         }
         animation.play();
         animation.getChildren().removeAll(animation.getChildren());
     }
+
     @Override
-    public void changeImage(String url){
+    public void changeImage(String url) {
         turtleIcon = url;
         turtleStamp = url;
-        for (Integer i: currTurtleIdxs){
-            turtles.get(i).changeIcon(url, this);
+        for (Integer i : currTurtleIdxs) {
+            turtles.get(i).changeIcon(url);
             turtles.get(i).changeStamp(url);
         }
     }

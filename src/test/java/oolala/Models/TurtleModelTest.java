@@ -4,22 +4,36 @@ import javafx.scene.shape.Rectangle;
 import oolala.Command.Command;
 import oolala.Command.CommandForward;
 import oolala.Views.TurtleView;
+import oolala.Views.ViewComponents.CanvasScreen;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.util.ResourceBundle;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class TurtleModelTest {
     TurtleModel turtleModel;
     TurtleView turtleView;
-    Rectangle borderRectangle;
+    CanvasScreen canvasScreen;
     Command command;
+    private static final String DEFAULT_RESOURCE_PACKAGE = "Properties.";
+    private static final String DEFAULT_LANGUAGE = "English";
+    ResourceBundle myResources;
+    String turtleIcon;
+    String turtleStamp;
+    RunningStatus runningStatus;
 
 
     @BeforeEach
     void setUp() {
-        borderRectangle = new Rectangle(0, 0, 500, 500);
-        turtleView = new TurtleView(0, 0, )
+        myResources = ResourceBundle.getBundle(DEFAULT_RESOURCE_PACKAGE + DEFAULT_LANGUAGE);
+        turtleIcon = myResources.getString("CursorIcon");
+        turtleStamp = myResources.getString("SimpleLeafStamp");
+        canvasScreen = new CanvasScreen(myResources);
+        runningStatus = new RunningStatus();
+
+        turtleView = new TurtleView(0, 0, canvasScreen, turtleIcon, turtleStamp, runningStatus);
     }
 
     @Test
@@ -29,7 +43,7 @@ class TurtleModelTest {
     @Test
     void setPosition() {
         command = new CommandForward();
-        command.runCommand(turtleModel, );
+        command.runCommand(turtleView, canvasScreen, );
     }
 
     @Test
