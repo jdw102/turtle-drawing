@@ -1,6 +1,7 @@
 package oolala.Parsers;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 import java.util.Scanner;
 
@@ -31,7 +32,7 @@ public class LogoParser extends Parser {
      * @return An ArrayList of the parsed commands
      * @author Aditya Paul
      */
-    public ArrayList<Command> parse(String inputText) {
+    public List<Command> parse(String inputText) {
         program = new ArrayList<>();
         Command c = new Command();
         Scanner scan = new Scanner(inputText);
@@ -113,8 +114,7 @@ public class LogoParser extends Parser {
                     break;
                 default:
                     // TODO: Handle bad input
-                    Alert alert = new Alert(Alert.AlertType.ERROR,
-                            myResources.getString("CommandError"));
+                    Alert alert = new Alert(Alert.AlertType.ERROR, myResources.getString("CommandError"));
                     alert.showAndWait();
                     return new ArrayList<>();
             }

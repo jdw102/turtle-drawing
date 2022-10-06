@@ -125,7 +125,7 @@ public abstract class AppView {
         Button saveButton = makeButton("SaveButton", saveCommand);
         EventHandler<ActionEvent> setBrushColor = event -> canvasScreen.setBrushColor(colorPicker.getValue());
         EventHandler<ActionEvent> setColorBackGround = event -> canvasScreen.getBorderRectangle().setFill(colorPickerBackGround.getValue());
-        thicknessTextField = makeTextField("Thickness", "3", thicknessCommand);
+        thicknessTextField = makeTextField("ThicknessTextField", "3", thicknessCommand);
         thicknessTextField.setTooltip(new Tooltip(myResources.getString("ThicknessTextField")));
         colorPicker = makeColorPicker(setBrushColor, Color.BLACK, "BrushColorPicker");
         colorPickerBackGround = makeColorPicker(setColorBackGround, Color.AZURE, "CanvasColorPicker");
@@ -147,9 +147,9 @@ public abstract class AppView {
         KeyCombination keyCombination = new KeyCodeCombination(KeyCode.ENTER, KeyCombination.ALT_DOWN);
         EventHandler<KeyEvent> runKeyCombinationEventHandler = event -> {
             if (keyCombination.match(event)) {
-                ArrayList<Command> commands = currentAppModel.getParser().parse(terminal.getTextArea().getText().toLowerCase());
+                List<Command> commands = currentAppModel.getParser().parse(terminal.getTextArea().getText().toLowerCase());
                 terminal.updateRecentlyUsed(commands, terminal.getRecentlyUsed());
-                currentAppModel.runApp(commands);
+                currentAppModel.runApp(commands, this);
                 disableInputs();
             }
         };
@@ -158,10 +158,10 @@ public abstract class AppView {
 
     private EventHandler<ActionEvent> makePassCommandEventEventHandler() {
         EventHandler<ActionEvent> passCommand = event -> {
-            ArrayList<Command> commands = currentAppModel.getParser().parse(terminal.getTextArea().getText().toLowerCase());
+            List<Command> commands = currentAppModel.getParser().parse(terminal.getTextArea().getText().toLowerCase());
+            System.out.println(terminal.getTextArea().getText());
             terminal.updateRecentlyUsed(commands, terminal.getRecentlyUsed());
-            currentAppModel.runApp(commands);
-            disableInputs();
+            currentAppModel.runApp(commands, this);
         };
         return passCommand;
     }
@@ -228,7 +228,7 @@ public abstract class AppView {
     }
 
     public HBox makeDisplayModeSwitcher() {
-        Slider modeSwitcher = makeToggleBar(0, 1, 0, 50);
+        Slider modeSwitcher = makeToggleBar(0, 1, 0, 50, "ModeSwitcher");
         Label label = new Label(myResources.getString("LightMode"));
         modeSwitcher.valueProperty().addListener((obs, oldVal, newVal) -> {
             modeSwitcher.setValue(newVal.intValue());

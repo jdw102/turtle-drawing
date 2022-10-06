@@ -11,9 +11,11 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
+import oolala.Views.ViewComponents.ViewUtils;
 
 import java.util.ResourceBundle;
 
+import static oolala.Views.ViewComponents.ViewUtils.makeButton;
 
 
 public class StartingView {
@@ -24,17 +26,16 @@ public class StartingView {
     private static final String STARTING_LANGUAGE = "English";
     private Button startButton;
     private ObservableList<String> languageOptions = FXCollections.observableArrayList("English", "日本語", "简体中文", "繁體中文");
+    private ViewUtils viewUtils;
 
     public Scene setUpScene(int sizeWidth, int sizeHeight, EventHandler<ActionEvent> startApp){
         root = new BorderPane();
         myResources = ResourceBundle.getBundle(DEFAULT_RESOURCE_PACKAGE + STARTING_LANGUAGE);
-        languageSelector = makeLanguageSelector();
-        languageSelector.getStyleClass().add("start-combo-box");
-        languageSelector.setId("LanguageSelector");
+        viewUtils = new ViewUtils(myResources);
+        languageSelector = makeLanguageSelector("LanguageSelector");
         Label languageLabel = new Label("Select Language");
         languageLabel.getStyleClass().add("start-label");
-        startButton = new Button(myResources.getString("StartButton"));
-        startButton.setOnAction(startApp);
+        startButton = makeButton("StartButton", startApp);
         startButton.getStyleClass().add("start-button");
         VBox box = new VBox(languageLabel, languageSelector, startButton);
         box.setAlignment(Pos.CENTER);
@@ -43,9 +44,11 @@ public class StartingView {
         Scene scene = new Scene(root, sizeWidth, sizeHeight);
         return scene;
     }
-    private ComboBox<String> makeLanguageSelector(){
+    private ComboBox<String> makeLanguageSelector(String name){
         ComboBox<String> c = new ComboBox<>(languageOptions);
         c.setValue(languageOptions.get(0));
+        c.getStyleClass().add("start-combo-box");
+        c.setId(name);
         return c;
     }
     public String getLanguage(){

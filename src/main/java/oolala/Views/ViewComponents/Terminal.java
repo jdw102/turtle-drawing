@@ -12,10 +12,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import oolala.Command.Command;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.ResourceBundle;
+import java.util.*;
 
 public abstract class Terminal {
     public ResourceBundle myResources;
@@ -27,6 +24,7 @@ public abstract class Terminal {
         this.myResources = myResources;
         textArea = new TextArea("");
         textArea.getStyleClass().add("text-area");
+        textArea.setId("TerminalText");
         EventHandler<MouseEvent> addLineEvent = event -> {
             addLine(recentlyUsed.getSelectionModel().getSelectedItem(), textArea);
         };
@@ -43,11 +41,12 @@ public abstract class Terminal {
         ListView<String> listView = new ListView<String>();
         listView.setOnMouseClicked(handler);
         listView.setMaxHeight(maxHeight);
+        listView.setId("CommandHistoryListView");
         return listView;
     }
 
-    public void updateRecentlyUsed(ArrayList<Command> commands, ListView recentlyUsed) {
-        HashSet<String> commandSet = new HashSet<>();
+    public void updateRecentlyUsed(List<Command> commands, ListView recentlyUsed) {
+        Set<String> commandSet = new HashSet<>();
         for (Command c : commands) {
             commandSet.add(c.toString());
         }

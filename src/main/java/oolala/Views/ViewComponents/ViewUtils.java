@@ -29,6 +29,7 @@ public class ViewUtils {
         String label = myResources.getString(property);
         result.setText(label);
         result.setOnAction(handler);
+        result.setId(property);
         return result;
     }
 
@@ -42,6 +43,7 @@ public class ViewUtils {
         TextField textField = new TextField(property);
         textField.setText(defaultValue);
         textField.setOnAction(handler);
+        textField.setId(property);
         return textField;
     }
     public static ComboBox<ImageView> makeImageSelector(List<String> labels, String title) {
@@ -70,6 +72,7 @@ public class ViewUtils {
         c.setValue(c.getItems().get(0));
         Tooltip t = new Tooltip(myResources.getString(title));
         Tooltip.install(c, t);
+        c.setId(title);
         return c;
     }
 
@@ -84,10 +87,11 @@ public class ViewUtils {
         colorPicker.setValue(defaultColor);
         colorPicker.setOnAction(handler);
         Tooltip.install(colorPicker, new Tooltip(myResources.getString(tooltip)));
+        colorPicker.setId(tooltip);
         return colorPicker;
     }
 
-    public static Slider makeToggleBar(double min, double max, double value, int maxWidth) {
+    public static Slider makeToggleBar(double min, double max, double value, int maxWidth, String name) {
         Slider slider = new Slider(min, max, value);
         slider.setMaxWidth(maxWidth);
         slider.setOnMousePressed(event -> {
@@ -97,6 +101,7 @@ public class ViewUtils {
                 slider.setValue(0);
             }
         });
+        slider.setId(name);
         return slider;
     }
 }

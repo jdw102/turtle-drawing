@@ -19,12 +19,14 @@ public class TurtleModel {
     private double yMin;
     private double relX;
     private double relY;
+    private boolean inBounds;
 
     public TurtleModel(double posX, double posY, Rectangle border, double iconSize){
         this.posX = posX + border.getX() + border.getWidth()/2;
         this.posY = posY + border.getY() + border.getHeight()/2;
         this.angle = DEFAULT_ANGLE;
         this.penDown = true;
+        this.inBounds = true;
         calcBounds(border, iconSize);
     }
     private void calcBounds(Rectangle r, double iconSize){
@@ -36,6 +38,7 @@ public class TurtleModel {
     public Line createTurtlePath(double dist, CanvasScreen canvas){
         double x = this.posX + dist * Math.cos(Math.toRadians(this.angle + 90));
         double y = this.posY - dist * Math.sin(Math.toRadians(this.angle + 90));
+        inBounds = !(x > xMax || x < xMin || y > yMax || y < yMin);
         if (x > xMax){
             double distX = xMax - this.posX;
             x = xMax;
@@ -47,7 +50,7 @@ public class TurtleModel {
             y = this.posY - distX * Math.tan(Math.toRadians(this.angle + 90));
         }
         if (y > yMax){
-            double distY = this.posY - yMax;
+            double distY = this.posY -  yMax ;
             y = yMax;
             x = this.posX + distY / Math.tan(Math.toRadians(this.angle + 90));
         }
@@ -60,6 +63,9 @@ public class TurtleModel {
         posX = x;
         posY = y;
         return l;
+    }
+    public boolean inBounds(){
+        return inBounds;
     }
     public void setPosition(double x, double y){
         posX = x;

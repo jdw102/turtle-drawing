@@ -7,15 +7,12 @@ import oolala.Parsers.Parser;
 import oolala.Views.AppView;
 import oolala.Views.TurtleView;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.ResourceBundle;
+import java.util.*;
 
 public abstract class AppModel {
     public CanvasScreen myCanvas;
-    private AppView myDisplay;
-    public HashMap<Integer, TurtleView> turtles;
-    public ArrayList<Integer> currTurtleIdxs;
+    public Map<Integer, TurtleView> turtles;
+    public List<Integer> currTurtleIdxs;
     public SequentialTransition animation;
     public ResourceBundle myResources;
     public Parser parser;
@@ -24,11 +21,11 @@ public abstract class AppModel {
     public boolean running = false;
     public String turtleIcon;
     public String turtleStamp;
+    public boolean turtlesInBound;
 
     //TODO: Can we create polymorphism for parser?
 
     public AppModel(CanvasScreen canvas, ResourceBundle resources, String imageUrl, AppView display, SequentialTransition animation) {
-        myDisplay = display;
         this.animation = animation;
         myCanvas = canvas;
         myResources = resources;
@@ -36,17 +33,22 @@ public abstract class AppModel {
         currTurtleIdxs = new ArrayList<>();
         homeX = 0;
         homeY = 0;
+        animation.setOnFinished(event ->{
+            display.enableInputs();
+        });
+        turtlesInBound = true;
     }
 
-    public void runApp(ArrayList<Command> commands) {
+    public void runApp(List<Command> commands, AppView display) {
         running = true;
+        display.disableInputs();
     }
 
-    public ArrayList<Integer> getCurrTurtleIdxs() {
+    public List<Integer> getCurrTurtleIdxs() {
         return currTurtleIdxs;
     }
 
-    public HashMap<Integer, TurtleView> getTurtles() {
+    public Map<Integer, TurtleView> getTurtles() {
         return turtles;
     }
 
@@ -64,6 +66,7 @@ public abstract class AppModel {
         animation.stop();
         running = false;
         animation.getChildren().removeAll(animation.getChildren());
+        turtlesInBound = true;
     }
 
     public boolean isRunning() {
