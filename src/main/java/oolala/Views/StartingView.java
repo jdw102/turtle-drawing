@@ -33,7 +33,7 @@ public class StartingView {
         languageSelector.setId("LanguageSelector");
         Label languageLabel = new Label("Select Language");
         languageLabel.getStyleClass().add("start-label");
-        startButton = new Button("START");
+        startButton = new Button(myResources.getString("StartButton"));
         startButton.setOnAction(startApp);
         startButton.getStyleClass().add("start-button");
         VBox box = new VBox(languageLabel, languageSelector, startButton);
