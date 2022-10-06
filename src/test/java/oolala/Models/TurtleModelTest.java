@@ -3,6 +3,7 @@ package oolala.Models;
 import javafx.scene.shape.Rectangle;
 import oolala.Command.Command;
 import oolala.Command.CommandForward;
+import oolala.Views.TurtleView;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -10,6 +11,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class TurtleModelTest {
     TurtleModel turtleModel;
+    TurtleView turtleView;
     Rectangle borderRectangle;
     Command command;
 
@@ -17,7 +19,7 @@ class TurtleModelTest {
     @BeforeEach
     void setUp() {
         borderRectangle = new Rectangle(0, 0, 500, 500);
-        turtleModel = new TurtleModel(0, 0, borderRectangle, 30);
+        turtleView = new TurtleView(0, 0, )
     }
 
     @Test

@@ -44,7 +44,7 @@ public class TurtleView {
     this.stamps = new ArrayList<>();
   }
   public void move(double dist, CanvasScreen canvas, SequentialTransition animation){
-    Line path = model.createTurtlePath(dist, canvas);
+    Line path = model.moveTurtle(dist, canvas);
     animation.getChildren().add(createPathAnimation(path, canvas));
   }
   public void rotateTurtle(int newAngle, SequentialTransition animation){
@@ -116,20 +116,18 @@ public class TurtleView {
   public void installPositionLabel(ImageView i, Tooltip tooltip, AppModel app){
     i.setOnMouseEntered(event -> onHover());
     i.setOnMouseExited(event -> offHover());
-    i.setOnMouseDragged(event -> onDrag(event, app));
+    i.setOnMouseDragged(event -> onDrag(event));
     model.updateRelativePosition(i, tooltip);
     Tooltip.install(i, tooltip);
   }
-  private void onDrag(MouseEvent e, AppModel app){
+  private void onDrag(MouseEvent e){
     double x = e.getX();
     double y = e.getY();
-    if (!app.isRunning() && app.getMyCanvas().isClear() && x < model.getXMax() && x > model.getXMin() && y > model.getYMin() && y < model.getYMax()){
-      moveIcon(x, y);
-      model.setPosition(x, y);
-      app.setHome(model.getRelX(), -model.getRelY());
-      homeX = x;
-      homeY = y;
-    }
+    moveIcon(x, y);
+    model.setPosition(x, y);
+    //app.setHome(model.getRelX(), -model.getRelY());
+    homeX = x;
+    homeY = y;
   }
   private void onHover(){
     icon.setScaleX(1.1);

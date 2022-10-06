@@ -20,33 +20,35 @@ public class TurtleModel {
     private double relX;
     private double relY;
 
-    public TurtleModel(double posX, double posY, Rectangle border, double iconSize){
-        this.posX = posX + border.getX() + border.getWidth()/2;
-        this.posY = posY + border.getY() + border.getHeight()/2;
+    public TurtleModel(double posX, double posY, Rectangle border, double iconSize) {
+        this.posX = posX + border.getX() + border.getWidth() / 2;
+        this.posY = posY + border.getY() + border.getHeight() / 2;
         this.angle = DEFAULT_ANGLE;
         this.penDown = true;
         calcBounds(border, iconSize);
     }
-    private void calcBounds(Rectangle r, double iconSize){
+
+    private void calcBounds(Rectangle r, double iconSize) {
         xMin = r.getX() + iconSize / 2;
         xMax = r.getX() + r.getWidth() - iconSize / 2;
         yMin = r.getY() + iconSize / 2;
         yMax = r.getY() + r.getHeight() - iconSize / 2;
     }
-    public Line createTurtlePath(double dist, CanvasScreen canvas){
+
+    public Line moveTurtle(double dist, CanvasScreen canvas) {
         double x = this.posX + dist * Math.cos(Math.toRadians(this.angle + 90));
         double y = this.posY - dist * Math.sin(Math.toRadians(this.angle + 90));
-        if (x > xMax){
+        if (x > xMax) {
             double distX = xMax - this.posX;
             x = xMax;
             y = this.posY - distX * Math.tan(Math.toRadians(this.angle + 90));
         }
-        if (x < xMin){
+        if (x < xMin) {
             double distX = xMin - this.posX;
             x = xMin;
             y = this.posY - distX * Math.tan(Math.toRadians(this.angle + 90));
         }
-        if (y > yMax){
+        if (y > yMax) {
             double distY = this.posY - yMax;
             y = yMax;
             x = this.posX + distY / Math.tan(Math.toRadians(this.angle + 90));
@@ -57,30 +59,35 @@ public class TurtleModel {
             x = this.posX + distY / Math.tan(Math.toRadians(this.angle + 90));
         }
         Line l = createLine(posX, posY, x, y, canvas);
-        posX = x;
-        posY = y;
+        setPosition(x, y);
         return l;
     }
-    public void setPosition(double x, double y){
+
+    public void setPosition(double x, double y) {
         posX = x;
         posY = y;
     }
-    public void rotate(double newAngle){
+
+    public void rotate(double newAngle) {
         angle -= newAngle;
     }
-    public void putPenDown(){
+
+    public void putPenDown() {
         penDown = true;
     }
-    public void putPenUp(){
+
+    public void putPenUp() {
         penDown = false;
     }
-    public void updateRelativePosition(ImageView i, Tooltip tooltip){
+
+    public void updateRelativePosition(ImageView i, Tooltip tooltip) {
         double width = xMax - xMin;
         double height = yMax - yMin;
         relX = i.getX() - xMin - width / 2 + i.getFitWidth() / 2;
         relY = -(i.getY() - yMin - height / 2 + i.getFitWidth() / 2);
         tooltip.setText("x: " + Double.toString(Math.round(relX)) + " y: " + Double.toString(Math.round(relY)));
     }
+
     private Line createLine(double xStart, double yStart, double xEnd, double yEnd, CanvasScreen canvas) {
         Line line = new Line();
         line.setStartX(xStart);
@@ -92,37 +99,44 @@ public class TurtleModel {
         line.setStrokeLineCap(StrokeLineCap.ROUND);
         return line;
     }
-    public void move(double dist){
 
-    }
-    public boolean isPenDown(){
+    public boolean isPenDown() {
         return penDown;
     }
-    public double getPosX(){
+
+    public double getPosX() {
         return posX;
     }
-    public double getPosY(){
+
+    public double getPosY() {
         return posY;
     }
-    public double geAngle(){
+
+    public double geAngle() {
         return angle;
     }
-    public double getXMin(){
+
+    public double getXMin() {
         return xMin;
     }
-    public double getXMax(){
+
+    public double getXMax() {
         return xMax;
     }
-    public double getYMin(){
+
+    public double getYMin() {
         return yMin;
     }
-    public double getYMax(){
+
+    public double getYMax() {
         return yMax;
     }
-    public double getRelX(){
+
+    public double getRelX() {
         return relX;
     }
-    public double getRelY(){
+
+    public double getRelY() {
         return relY;
     }
 }
