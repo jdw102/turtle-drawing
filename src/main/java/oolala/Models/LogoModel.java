@@ -9,12 +9,12 @@ import oolala.Views.TurtleView;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import static oolala.Command.Command.CmdName.TELL;
 
 public class LogoModel extends AppModel {
-
     public LogoModel(CanvasScreen canvas, ResourceBundle myResources, String iconUrl, AppView display, SequentialTransition animation) {
         super(canvas, myResources, iconUrl, display, animation);
         turtleStamp = myResources.getString(iconUrl);
@@ -24,14 +24,13 @@ public class LogoModel extends AppModel {
         currTurtleIdxs.add(1);
         turtles.get(1).getIcon().setId("Turtle" + Integer.toString(1));
         myCanvas.getShapes().getChildren().add(turtles.get(1).getIcon());
-
     }
 
     @Override
-    public void runApp(ArrayList<Command> commands, AppView display) {
+    public void runApp(List<Command> commands, AppView display) {
         super.runApp(commands, display);
         Iterator<Command> itCmd = commands.iterator();
-        while (itCmd.hasNext()) {
+        while (itCmd.hasNext() && turtlesInBound) {
             Command instruction = itCmd.next();
             //TODO: Handle tell command
             if (instruction.prefix == TELL) {
@@ -48,6 +47,10 @@ public class LogoModel extends AppModel {
             }
             for (Integer idx : currTurtleIdxs) {
                 instruction.runCommand(turtles.get(idx), myCanvas, animation);
+                if (!turtles.get(idx).getModel().inBounds()){
+                    turtlesInBound = false;
+                    break;
+                }
             }
             itCmd.remove();
         }

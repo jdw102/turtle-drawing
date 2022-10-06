@@ -1,9 +1,8 @@
 package oolala.Parsers;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.ResourceBundle;
-import java.util.Scanner;
+import java.util.*;
+
+import javafx.scene.control.Alert;
 import oolala.Command.Command;
 import oolala.Parsers.LogoParser;
 import oolala.Parsers.Parser;
@@ -11,11 +10,14 @@ import oolala.Parsers.Parser;
 public class LSystemParser extends Parser {
 
     public static final char[] ALPHA_SYM = {'f', 'g', 'a', 'b', '+', '-', 'x'};
-    public static final String[] ALPHA_COMM = {"pd fd ", "pu fd ", "pu bk ", "pd bk ",
-            "rt ", "lt ", "stamp"};
+    public static final String[] ALPHA_COMM = {"pd fd length", "pu fd length", "pu bk length", "pd bk length",
+            "rt angle", "lt angle", "stamp"};
     public static final int DEFAULT_DIST = 10;
     public static final int DEFAULT_ANGLE = 30;
     public static final int DEFAULT_LEVEL = 3;
+    public static final String LENGTH_MARKER = "length";
+    public static final String ANGLE_MARKER = "angle";
+    public static final String QUOTE_REGEX = "([\"'])(?:(?=(\\\\?))\\2.)*?\\1";
 
     private boolean usingRandomDist = false;
     private boolean usingRandomAngle = false;
@@ -26,8 +28,8 @@ public class LSystemParser extends Parser {
     private int dist = DEFAULT_DIST;
     private int ang = DEFAULT_ANGLE;
     private int level = DEFAULT_LEVEL;
-    private HashMap<Character, String> alphabet;
-    private HashMap<Character, String> rules;
+    private Map<Character, String> alphabet;
+    private Map<Character, String> rules;
     private String start;
     private LogoParser logoParser;
     private ResourceBundle myResources;
@@ -41,7 +43,13 @@ public class LSystemParser extends Parser {
         rules = new HashMap<>();
         logoParser = new LogoParser(myResources);
     }
-
+    private void reset(){
+        alphabet.clear();
+        for (int i = 0; i < ALPHA_COMM.length; i++) {
+            alphabet.put(ALPHA_SYM[i], ALPHA_COMM[i]);
+        }
+        rules.clear();
+    }
     /**
      * A function that expands the given root according to the given rules.
      *
@@ -69,19 +77,12 @@ public class LSystemParser extends Parser {
             char currChar = expansion.charAt(i);
             if (alphabet.containsKey(currChar)) {
                 String cmd = alphabet.get(currChar);
-                if (cmd.substring(cmd.length() - 3).equals("fd ") ||
-                        cmd.substring(cmd.length() - 3).equals("bk ")) {
-                    if (usingRandomDist) {
-                        dist = (int) Math.round(Math.random() * (distMax - distMin) + distMin);
-                    }
-                    cmd = cmd.concat(Integer.toString(dist));
-                } else if (cmd.substring(cmd.length() - 3).equals("lt ") ||
-                        cmd.substring(cmd.length() - 3).equals("rt ")) {
-                    if (usingRandomAngle) {
-                        ang = (int) Math.round(Math.random() * (angMax - angMin) + angMin);
-                    }
-                    cmd = cmd.concat(Integer.toString(ang));
-                }
+                if (usingRandomDist)
+                    dist = (int) Math.round(Math.random() * (distMax - distMin) + distMin);
+                if (usingRandomAngle)
+                    dist = (int) Math.round(Math.random() * (angMax - angMin) + angMin);
+                cmd = cmd.replace(LENGTH_MARKER, Integer.toString(this.getDist()));
+                cmd = cmd.replace(ANGLE_MARKER, Integer.toString(this.getAng()));
                 commandString = commandString.concat(cmd).concat(" ");
             }
         }
@@ -104,6 +105,10 @@ public class LSystemParser extends Parser {
         String expansion;
         while (scan.hasNext()) {
             String prefix = scan.next();
+            if (prefix.charAt(0) == '#') {
+                scan.nextLine();
+                continue;
+            }
             switch (prefix) {
                 case "start" -> start = scan.next();
                 case "rule" -> {
@@ -123,12 +128,16 @@ public class LSystemParser extends Parser {
                 }
                 case "set" -> {
                     symbol = scan.next().charAt(0);
-                    expansion = scan.next();
+                    expansion = scan.findInLine(QUOTE_REGEX);
+                    expansion = expansion.substring(1, expansion.length() - 1);
                     alphabet.put(symbol, expansion);
                 }
-                default ->
+                default -> {
                     // TODO: Handle bad input
-                        System.err.println("Unrecognized Command!");
+                    Alert alert = new Alert(Alert.AlertType.ERROR, myResources.getString("CommandError"));
+                    alert.showAndWait();
+                    System.err.println("Unrecognized Command!");
+                }
             }
         }
     }
@@ -157,8 +166,11 @@ public class LSystemParser extends Parser {
         this.level = level;
     }
 
-    public ArrayList<Command> parse(String input) {
+    public List<Command> parse(String input) {
+        reset();
         parseConfig(input);
+        System.out.println(getCommandString(applyRules()));
         return logoParser.parse(getCommandString(applyRules()));
     }
+
 }

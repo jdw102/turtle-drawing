@@ -3,11 +3,12 @@ package oolala.Parsers;
 import oolala.Command.Command;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Parser {
-    public ArrayList<Command> program;
+    protected List<Command> program;
 
-    public ArrayList<Command> parse(String input) {
+    public List<Command> parse(String input) {
         return program;
     }
 

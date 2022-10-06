@@ -147,7 +147,7 @@ public abstract class AppView {
         KeyCombination keyCombination = new KeyCodeCombination(KeyCode.ENTER, KeyCombination.ALT_DOWN);
         EventHandler<KeyEvent> runKeyCombinationEventHandler = event -> {
             if (keyCombination.match(event)) {
-                ArrayList<Command> commands = currentAppModel.getParser().parse(terminal.getTextArea().getText().toLowerCase());
+                List<Command> commands = currentAppModel.getParser().parse(terminal.getTextArea().getText().toLowerCase());
                 terminal.updateRecentlyUsed(commands, terminal.getRecentlyUsed());
                 currentAppModel.runApp(commands, this);
                 disableInputs();
@@ -158,7 +158,8 @@ public abstract class AppView {
 
     private EventHandler<ActionEvent> makePassCommandEventEventHandler() {
         EventHandler<ActionEvent> passCommand = event -> {
-            ArrayList<Command> commands = currentAppModel.getParser().parse(terminal.getTextArea().getText().toLowerCase());
+            List<Command> commands = currentAppModel.getParser().parse(terminal.getTextArea().getText().toLowerCase());
+            System.out.println(terminal.getTextArea().getText());
             terminal.updateRecentlyUsed(commands, terminal.getRecentlyUsed());
             currentAppModel.runApp(commands, this);
         };

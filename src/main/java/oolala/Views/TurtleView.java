@@ -14,6 +14,7 @@ import oolala.Models.TurtleModel;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * A turtle/cursor to draw things with.
@@ -27,7 +28,6 @@ public class TurtleView {
   private String stampUrl;
   public static final double DEFAULT_ICON_SIZE = 30;
   public ImageView icon;
-  public ArrayList<ImageView> stamps;
   private double iconSize;
   private Tooltip position;
   private final double TURTLE_SPEED = 100;
@@ -41,7 +41,6 @@ public class TurtleView {
     this.position = new Tooltip();
     this.icon = createIcon(model.getPosX(), model.getPosY(), iconSize, app.getTurtleIconUrl());
     installPositionLabel(icon, position, app);
-    this.stamps = new ArrayList<>();
   }
   public void move(double dist, CanvasScreen canvas, SequentialTransition animation){
     Line path = model.createTurtlePath(dist, canvas);
@@ -88,7 +87,6 @@ public class TurtleView {
   public void stamp(CanvasScreen canvas, SequentialTransition animation){
     ImageView s = createIcon(model.getPosX(), model.getPosY(), iconSize, stampUrl);
     s.toFront();
-    stamps.add(s);
     s.setOpacity(0.0);
     canvas.getShapes().getChildren().add(s);
     FadeTransition fade = new FadeTransition(Duration.seconds(0.25), s);
@@ -169,6 +167,9 @@ public class TurtleView {
   }
   public void changeStamp(String s) {
     stampUrl = s;
+  }
+  public TurtleModel getModel(){
+    return model;
   }
 }
 
