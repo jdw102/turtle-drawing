@@ -13,7 +13,6 @@ import java.util.ResourceBundle;
 
 public abstract class AppModel {
     public CanvasScreen myCanvas;
-    private AppView myDisplay;
     public HashMap<Integer, TurtleView> turtles;
     public ArrayList<Integer> currTurtleIdxs;
     public SequentialTransition animation;
@@ -28,7 +27,6 @@ public abstract class AppModel {
     //TODO: Can we create polymorphism for parser?
 
     public AppModel(CanvasScreen canvas, ResourceBundle resources, String imageUrl, AppView display, SequentialTransition animation) {
-        myDisplay = display;
         this.animation = animation;
         myCanvas = canvas;
         myResources = resources;
@@ -36,10 +34,14 @@ public abstract class AppModel {
         currTurtleIdxs = new ArrayList<>();
         homeX = 0;
         homeY = 0;
+        animation.setOnFinished(event ->{
+            display.enableInputs();
+        });
     }
 
-    public void runApp(ArrayList<Command> commands) {
+    public void runApp(ArrayList<Command> commands, AppView display) {
         running = true;
+        display.disableInputs();
     }
 
     public ArrayList<Integer> getCurrTurtleIdxs() {

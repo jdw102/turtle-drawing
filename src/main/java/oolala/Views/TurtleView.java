@@ -45,6 +45,8 @@ public class TurtleView {
   }
   public void move(double dist, CanvasScreen canvas, SequentialTransition animation){
     Line path = model.createTurtlePath(dist, canvas);
+    path.setId("Line" + Integer.toString(canvas.getLines().size() + 1));
+    canvas.addLine(path);
     animation.getChildren().add(createPathAnimation(path, canvas));
   }
   public void rotateTurtle(int newAngle, SequentialTransition animation){

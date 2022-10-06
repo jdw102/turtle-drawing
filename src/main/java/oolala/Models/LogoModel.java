@@ -22,13 +22,14 @@ public class LogoModel extends AppModel {
         parser = new LogoParser(myResources);
         turtles.put(1, new TurtleView(homeX, homeY, myCanvas, this));
         currTurtleIdxs.add(1);
+        turtles.get(1).getIcon().setId("Turtle" + Integer.toString(1));
         myCanvas.getShapes().getChildren().add(turtles.get(1).getIcon());
 
     }
 
     @Override
-    public void runApp(ArrayList<Command> commands) {
-        super.runApp(commands);
+    public void runApp(ArrayList<Command> commands, AppView display) {
+        super.runApp(commands, display);
         Iterator<Command> itCmd = commands.iterator();
         while (itCmd.hasNext()) {
             Command instruction = itCmd.next();
@@ -40,6 +41,7 @@ public class LogoModel extends AppModel {
                     if (!turtles.containsKey(param)) {
                         System.out.println("Creating new turtle");
                         turtles.put(param, new TurtleView(homeX, homeY, myCanvas, this));
+                        turtles.get(param).getIcon().setId("Turtle" + Integer.toString(param));
                         myCanvas.getShapes().getChildren().add(turtles.get(param).getIcon());
                     }
                 }

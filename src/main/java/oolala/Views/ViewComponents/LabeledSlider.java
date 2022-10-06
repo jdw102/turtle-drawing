@@ -20,6 +20,7 @@ public class LabeledSlider {
                     label.setText(Integer.toString((int) slider.getValue()));
         });
         slider.setShowTickMarks(true);
+        slider.setId(title + "Slider");
         name = new Label(title);
         label = new Label(Integer.toString((int) slider.getValue()));
         box = new HBox(name, slider, label);

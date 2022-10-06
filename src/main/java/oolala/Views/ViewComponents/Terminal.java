@@ -27,6 +27,7 @@ public abstract class Terminal {
         this.myResources = myResources;
         textArea = new TextArea("");
         textArea.getStyleClass().add("text-area");
+        textArea.setId("TerminalText");
         EventHandler<MouseEvent> addLineEvent = event -> {
             addLine(recentlyUsed.getSelectionModel().getSelectedItem(), textArea);
         };
@@ -43,6 +44,7 @@ public abstract class Terminal {
         ListView<String> listView = new ListView<String>();
         listView.setOnMouseClicked(handler);
         listView.setMaxHeight(maxHeight);
+        listView.setId("CommandHistoryListView");
         return listView;
     }
 
