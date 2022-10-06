@@ -1,5 +1,6 @@
 package oolala.Models;
 
+import javafx.animation.SequentialTransition;
 import oolala.Views.ViewComponents.CanvasScreen;
 import oolala.Command.Command;
 import oolala.Parsers.LogoParser;
@@ -14,8 +15,8 @@ import static oolala.Command.Command.CmdName.TELL;
 
 public class LogoModel extends AppModel {
 
-    public LogoModel(CanvasScreen canvas, ResourceBundle myResources, String iconUrl, AppView display) {
-        super(canvas, myResources, iconUrl, display);
+    public LogoModel(CanvasScreen canvas, ResourceBundle myResources, String iconUrl, AppView display, SequentialTransition animation) {
+        super(canvas, myResources, iconUrl, display, animation);
         turtleStamp = myResources.getString(iconUrl);
         turtleIcon = myResources.getString(iconUrl);
         parser = new LogoParser(myResources);
@@ -26,8 +27,8 @@ public class LogoModel extends AppModel {
     }
 
     @Override
-    public void runApp(ArrayList<Command> commands, AppView display) {
-        super.runApp(commands, display);
+    public void runApp(ArrayList<Command> commands) {
+        super.runApp(commands);
         Iterator<Command> itCmd = commands.iterator();
         while (itCmd.hasNext()) {
             Command instruction = itCmd.next();

@@ -9,10 +9,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyCodeCombination;
-import javafx.scene.input.KeyCombination;
-import javafx.scene.input.MouseEvent;
+import javafx.scene.input.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import oolala.Command.Command;
@@ -29,16 +26,12 @@ public abstract class Terminal {
     public ResourceBundle myResources;
     private TextArea textArea;
     public VBox box;
-    private HBox leftToolBar;
     private ListView<String> recentlyUsed;
-    public Button runButton;
 
-
-    public Terminal(int width, int height, ResourceBundle myResources, AppModel currentApp, AppView display, ViewUtils viewUtils) {
+    public Terminal(ResourceBundle myResources) {
         this.myResources = myResources;
         textArea = new TextArea("");
         textArea.getStyleClass().add("text-area");
-        textArea.setPrefSize(width, 3 * height / 4);
         EventHandler<MouseEvent> addLineEvent = event -> {
             addLine(recentlyUsed.getSelectionModel().getSelectedItem(), textArea);
         };
@@ -47,16 +40,8 @@ public abstract class Terminal {
         historyTitle.setAlignment(Pos.CENTER);
         historyTitle.getStyleClass().add("box");
         recentlyUsed = makeListView(200, addLineEvent);
-        KeyCombination keyCombination = new KeyCodeCombination(KeyCode.ENTER, KeyCombination.ALT_DOWN);
-        textArea.setOnKeyPressed(event -> {
-            if (keyCombination.match(event)) {
-                ArrayList<Command> commands = currentApp.getParser().parse(textArea.getText().toLowerCase());
-                updateRecentlyUsed(commands, recentlyUsed);
-                display.setCommands(commands);
-            }
-        });
-        leftToolBar = makeLeftToolbarHBox(width, currentApp, display, viewUtils);
-        box = new VBox(leftToolBar, textArea, historyTitle, recentlyUsed);
+
+        box = new VBox(textArea, historyTitle, recentlyUsed);
         box.setSpacing(5);
     }
     public ListView<String> makeListView(int maxHeight, EventHandler<MouseEvent> handler){
@@ -91,46 +76,18 @@ public abstract class Terminal {
             textArea.appendText(s);
         }
     }
-    private HBox makeLeftToolbarHBox(int width, AppModel currentApp, AppView display, ViewUtils viewUtils) {
-        EventHandler<ActionEvent> passCommands = makePassCommandsEventEventHandler(currentApp, display);
-        EventHandler<ActionEvent> clearText = event -> textArea.clear();
-        runButton = viewUtils.makeButton("RunButton", passCommands);
-        Button clearTextButton = viewUtils.makeButton("ClearTextButton", clearText);
-        Button fileOpenButton = viewUtils.makeButton("ImportButton", display.openFileChooserEventHandler());
-        Button saveButton = viewUtils.makeButton("SaveButton", display.makeSaveFileEventHandler());
-        HBox hBox = new HBox();
-        hBox.setAlignment(Pos.CENTER);
-        hBox.setMinWidth(width);
-        saveButton.setMinWidth(width / 4);
-        runButton.setMinWidth(width / 4);
-        clearTextButton.setMinWidth(width / 4);
-        fileOpenButton.setMinWidth(width / 4);
-        hBox.getChildren().addAll(fileOpenButton, saveButton, runButton, clearTextButton);
-        hBox.setSpacing(5);
 
-        return hBox;
+    public ListView<String> getRecentlyUsed() {
+        return recentlyUsed;
     }
-    private EventHandler<ActionEvent> makePassCommandsEventEventHandler(AppModel currentApp, AppView display) {
-        EventHandler<ActionEvent> passCommands = event -> {
-            ArrayList<Command> commands = currentApp.getParser().parse(textArea.getText().toLowerCase());
-            updateRecentlyUsed(commands, recentlyUsed);
-            currentApp.runApp(commands, display);
-        };
-        return passCommands;
-    }
+
     public VBox getBox(){
         return box;
     }
     public void setText(String content){
         textArea.setText(content);
     }
-    public String getText(){
-        return textArea.getText();
-    }
-    public void disableRunButton(){
-        runButton.setDisable(true);
-    }
-    public void enableRunButton(){
-        runButton.setDisable(false);
+    public TextArea getTextArea(){
+        return textArea;
     }
 }

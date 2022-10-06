@@ -4,29 +4,30 @@ import javafx.event.EventHandler;
 import javafx.scene.input.MouseEvent;
 import oolala.Models.AppModel;
 import oolala.Parsers.LSystemParser;
+import oolala.Parsers.Parser;
 import oolala.Views.AppView;
 import oolala.Views.ViewUtils;
 
 import java.util.ResourceBundle;
 
 public class LSystemTerminal extends Terminal {
-    public LSystemTerminal(int width, int height, ResourceBundle myResources, AppModel currentApp, AppView display, ViewUtils viewUtils) {
-        super(width, height, myResources, currentApp, display, viewUtils);
-        makeSliders(currentApp);
+    public LSystemTerminal(ResourceBundle myResources, LSystemParser lSystemParser) {
+        super(myResources);
+        makeSliders(lSystemParser);
     }
-    public void makeSliders(AppModel currentApp){
+    public void makeSliders(LSystemParser lSystemParser){
         LabeledSlider lengthSlider = new LabeledSlider(1, 100, 10, myResources.getString("LengthSlider"));
         LabeledSlider angleSlider = new LabeledSlider(1, 180, 30, myResources.getString("AngleSlider"));
         LabeledSlider levelSlider = new LabeledSlider(0, 5, 3, myResources.getString("LevelSlider"));
         EventHandler<MouseEvent> lengthChange = event -> {
             System.out.println("test");
-            ( (LSystemParser) currentApp.getParser()).setDist((int) lengthSlider.getSlider().getValue());
+            lSystemParser.setDist((int) lengthSlider.getSlider().getValue());
         };
         EventHandler<MouseEvent> angleChange = event -> {
-            ( (LSystemParser) currentApp.getParser()).setAng((int) angleSlider.getSlider().getValue());
+            lSystemParser.setAng((int) angleSlider.getSlider().getValue());
         };
         EventHandler<MouseEvent> levelChange = event -> {
-            ( (LSystemParser) currentApp.getParser()).setLevel((int) levelSlider.getSlider().getValue());
+            lSystemParser.setLevel((int) levelSlider.getSlider().getValue());
         };
         lengthSlider.setHandler(lengthChange);
         angleSlider.setHandler(angleChange);
