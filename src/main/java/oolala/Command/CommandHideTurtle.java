@@ -9,7 +9,7 @@ public class CommandHideTurtle extends Command {
         prefix =CmdName.HIDET;
     }
 
-    public void runCommand(TurtleView turtle, CanvasScreen canvas, SequentialTransition animation) {
-        turtle.hideTurtle(animation);
+    public void runCommand(TurtleView turtle) {
+        turtle.hideTurtle();
     }
 }

@@ -9,7 +9,7 @@ public class CommandPenUp extends Command {
         prefix =CmdName.PENUP;
     }
 
-    public void runCommand(TurtleView turtle, CanvasScreen canvas, SequentialTransition animation) {
+    public void runCommand(TurtleView turtle) {
         turtle.putPenUp();
     }
 }

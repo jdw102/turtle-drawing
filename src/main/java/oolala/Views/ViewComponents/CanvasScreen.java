@@ -18,7 +18,12 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
-
+/**
+ * A class to contain the rectangle to act as the canvas and a group of shapes that the turtle will add lines and stamps
+ * to when it moves. It also contains the color and thickness of the lines.
+ *
+ * @author Luyao Wang
+ */
 public class CanvasScreen {
     private Rectangle borderRectangle;
     private Group shapes;
@@ -47,7 +52,12 @@ public class CanvasScreen {
     public void setBrushColor(Color color) {
         brushColor = color;
     }
-
+    /**
+     * A method to change the thickness of the line drawn, if it is not a valid number an alert is displayed.
+     *
+     * @param value - The new thickness value.
+     * @author Luyao Wang
+     */
     public void setThickness(String value) {
         Alert alert = new Alert(Alert.AlertType.ERROR, myResources.getString("NumberFormatException"));
         try {
@@ -59,12 +69,21 @@ public class CanvasScreen {
         }
     }
 
-
+    /**
+     * A method to create writable image to be saved in the view.
+     *
+     * @return A writeable image.
+     * @author Luyao Wang
+     */
     public WritableImage screenShot() {
         WritableImage snapshot = shapes.snapshot(null, null);
         return snapshot;
     }
-
+    /**
+     * A method to clear all shapes except for the rectangle.
+     *
+     * @author Jerry Worthy
+     */
     public void clear() {
         shapes.getChildren().removeIf(i -> i instanceof ImageView);
         shapes.getChildren().removeAll(lines);
@@ -73,15 +92,12 @@ public class CanvasScreen {
     public Group getShapes() {
         return shapes;
     }
-
     public Rectangle getBorderRectangle() {
         return borderRectangle;
     }
-
     public Double getThickness() {
         return thickness;
     }
-
     public Color getBrushColor() {
         return brushColor;
     }

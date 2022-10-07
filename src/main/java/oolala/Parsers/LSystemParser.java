@@ -44,6 +44,8 @@ public class LSystemParser extends Parser {
         logoParser = new LogoParser(myResources);
     }
     private void reset(){
+        usingRandomAngle = false;
+        usingRandomDist = false;
         alphabet.clear();
         for (int i = 0; i < ALPHA_COMM.length; i++) {
             alphabet.put(ALPHA_SYM[i], ALPHA_COMM[i]);
@@ -81,7 +83,7 @@ public class LSystemParser extends Parser {
                 if (usingRandomDist)
                     dist = (int) Math.round(Math.random() * (distMax - distMin) + distMin);
                 if (usingRandomAngle)
-                    dist = (int) Math.round(Math.random() * (angMax - angMin) + angMin);
+                    ang = (int) Math.round(Math.random() * (angMax - angMin) + angMin);
                 cmd = cmd.replace(LENGTH_MARKER, Integer.toString(this.getDist()));
                 cmd = cmd.replace(ANGLE_MARKER, Integer.toString(this.getAng()));
                 commandString = commandString.concat(cmd).concat(" ");
@@ -147,24 +149,24 @@ public class LSystemParser extends Parser {
         return dist;
     }
 
-    public void setDist(int dist) {
-        this.dist = dist;
+    public void setDist(double dist) {
+        this.dist = (int) dist;
     }
 
     public int getAng() {
         return ang;
     }
 
-    public void setAng(int ang) {
-        this.ang = ang;
+    public void setAng(double ang) {
+        this.ang =  (int) ang;
     }
 
     public int getLevel() {
         return level;
     }
 
-    public void setLevel(int level) {
-        this.level = level;
+    public void setLevel(double level) {
+        this.level =  (int) level;
     }
 
     public List<Command> parse(String input) {

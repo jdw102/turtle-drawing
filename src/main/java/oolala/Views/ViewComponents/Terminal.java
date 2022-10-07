@@ -14,6 +14,12 @@ import oolala.Command.Command;
 
 import java.util.*;
 
+/**
+ * A terminal abstract class that contains the text area for typing program, and the command history of the programs.
+ * Will have subclasses that can add more specific features for different app views if necessary.
+ *
+ * @author Jerry Worthy
+ */
 public abstract class Terminal {
     public ResourceBundle myResources;
     private TextArea textArea;
@@ -37,6 +43,14 @@ public abstract class Terminal {
         box = new VBox(textArea, historyTitle, recentlyUsed);
         box.setSpacing(5);
     }
+    /**
+     * A method to create the command history list view.
+     *
+     * @param maxHeight - The maximum allowed height of the list view.
+     * @param handler - The action to be performed when clicking a list item.
+     * @return A ListView of strings
+     * @author Jerry Worthy
+     */
     public ListView<String> makeListView(int maxHeight, EventHandler<MouseEvent> handler){
         ListView<String> listView = new ListView<String>();
         listView.setOnMouseClicked(handler);
@@ -44,7 +58,12 @@ public abstract class Terminal {
         listView.setId("CommandHistoryListView");
         return listView;
     }
-
+    /**
+     * A method to update the previous commands displayed by the list view.
+     *
+     * @param commands - The List of commands as strings.
+     * @author Jerry Worthy
+     */
     public void updateRecentlyUsed(List<String> commands) {
         Set<String> commandSet = new HashSet<>();
         commandSet.addAll(commands);
@@ -61,18 +80,12 @@ public abstract class Terminal {
         }
         recentlyUsed.setItems(displayedLines);
     }
-
     public void addLine(String s, TextArea textArea) {
         if (s != null) {
             textArea.appendText("\n");
             textArea.appendText(s);
         }
     }
-
-    public ListView<String> getRecentlyUsed() {
-        return recentlyUsed;
-    }
-
     public VBox getBox(){
         return box;
     }

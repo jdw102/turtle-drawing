@@ -1,7 +1,9 @@
 package oolala.Models;
 
-import javafx.animation.PathTransition;
 import javafx.animation.SequentialTransition;
+import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
+import javafx.scene.image.ImageView;
 import oolala.Views.ViewComponents.CanvasScreen;
 import oolala.Command.Command;
 import oolala.Parsers.Parser;
@@ -14,19 +16,21 @@ public abstract class AppModel {
     public CanvasScreen myCanvas;
     public Map<Integer, TurtleView> turtles;
     public List<Integer> currTurtleIdxs;
+    public SequentialTransition animation;
     public ResourceBundle myResources;
     public Parser parser;
     public double homeX;
     public double homeY;
-    public boolean running;
     public String turtleIcon;
     public String turtleStamp;
+    protected RunningStatus runningStatus;
     public boolean turtlesInBound;
 
     //TODO: Can we create polymorphism for parser?
 
-    public AppModel(CanvasScreen canvas, ResourceBundle resources, String imageUrl, AppView display) {
-        running = false;
+    public AppModel(CanvasScreen canvas, ResourceBundle resources, SequentialTransition animation) {
+        runningStatus = new RunningStatus();
+        this.animation = animation;
         myCanvas = canvas;
         myResources = resources;
         turtles = new HashMap<>();
@@ -36,8 +40,19 @@ public abstract class AppModel {
         turtlesInBound = true;
     }
 
-    public void runApp(List<Command> commands, AppView display, SequentialTransition animation) {
+    public TurtleView addNewTurtle(){
+        TurtleView turtleView =  new TurtleView(homeX, homeY, myCanvas, turtleStamp, turtleIcon, runningStatus, animation, this);
+        return turtleView;
     }
+
+    public void runApp(List<Command> commands) {
+        runningStatus.setRunningStatus(true);
+    }
+
+    public void setRunning(boolean isRunning){
+        runningStatus.setRunningStatus(isRunning);
+    }
+
 
     public List<Integer> getCurrTurtleIdxs() {
         return currTurtleIdxs;
@@ -55,18 +70,11 @@ public abstract class AppModel {
         turtles.clear(); // TODO: Check if this is correct functionality
         myCanvas.clear();
         currTurtleIdxs.clear();
-        turtles.put(1, new TurtleView(homeX, homeY, myCanvas, this));
+        turtles.put(1, addNewTurtle());
         myCanvas.getShapes().getChildren().add(turtles.get(1).getIcon()); // TODO: We should probably refactor this for scalability
         currTurtleIdxs.add(1);
-        running = false;
+        runningStatus.setRunningStatus(false);
         turtlesInBound = true;
-    }
-
-    public boolean isRunning() {
-        return running;
-    }
-    public void setRunning(boolean b){
-        running = b;
     }
 
     public void setHome(double x, double y) {
