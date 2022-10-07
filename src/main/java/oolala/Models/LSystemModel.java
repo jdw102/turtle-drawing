@@ -47,7 +47,7 @@ public class LSystemModel extends AppModel {
             }
             for (Integer idx : currTurtleIdxs) {
                 instruction.runCommand(turtles.get(idx));
-                if (!turtles.get(idx).getModel().inBounds()){
+                if (!turtles.get(idx).getModel().inBounds()) {
                     turtlesInBound = false;
                     break;
                 }
@@ -55,12 +55,12 @@ public class LSystemModel extends AppModel {
             itCmd.remove();
         }
         animation.play();
-        if (animation.getChildren().size() == 0) running = false;
+        if (animation.getChildren().size() == 0) runningStatus.setRunningStatus(false);
         animation.getChildren().removeAll(animation.getChildren());
     }
 
     @Override
-    public void changeImage(String url){
+    public void changeImage(String url) {
         turtleStamp = url;
     }
 }

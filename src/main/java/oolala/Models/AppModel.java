@@ -1,15 +1,16 @@
 package oolala.Models;
 
 import javafx.animation.SequentialTransition;
+import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
+import javafx.scene.image.ImageView;
 import oolala.Views.ViewComponents.CanvasScreen;
 import oolala.Command.Command;
 import oolala.Parsers.Parser;
 import oolala.Views.AppView;
 import oolala.Views.TurtleView;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.ResourceBundle;
+import java.util.*;
 
 public abstract class AppModel {
     public CanvasScreen myCanvas;
@@ -22,7 +23,7 @@ public abstract class AppModel {
     public double homeY;
     public String turtleIcon;
     public String turtleStamp;
-    private RunningStatus runningStatus;
+    protected RunningStatus runningStatus;
     public boolean turtlesInBound;
 
     //TODO: Can we create polymorphism for parser?
@@ -44,19 +45,14 @@ public abstract class AppModel {
         return turtleView;
     }
 
-    public void enableInputs(ComboBox<ImageView> imageSelector, Button runButton) {
-        imageSelector.setDisable(false);
-        runButton.setDisable(false);
-    }
-
-    public void disableInputs(ComboBox<ImageView> imageSelector, Button runButton) {
-        imageSelector.setDisable(true);
-        runButton.setDisable(true);
-    }
-
     public void runApp(List<Command> commands) {
         runningStatus.setRunningStatus(true);
     }
+
+    public void setRunning(boolean isRunning){
+        runningStatus.setRunningStatus(isRunning);
+    }
+
 
     public List<Integer> getCurrTurtleIdxs() {
         return currTurtleIdxs;

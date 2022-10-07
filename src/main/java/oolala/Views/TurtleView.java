@@ -69,8 +69,8 @@ public class TurtleView {
         Position oldPos = model.getPos();
         Position newPos = model.calculateMove(dist);
         Line path = createLine(oldPos.PosX, oldPos.PosY, newPos.PosX, newPos.PosY);
-        path.setId("Line" + Integer.toString(canvas.getLines().size() + 1));
-        animation.getChildren().add(createPathAnimation(line));
+        path.setId("Line" + Integer.toString(canvasScreen.getLines().size() + 1));
+        animation.getChildren().add(createPathAnimation(path));
     }
 
     public void rotateTurtle(int newAngle) {
@@ -105,7 +105,7 @@ public class TurtleView {
             System.out.println("test");
             moveIcon(homeX, homeY);
             model.setTooltipRelativePosition(icon, tooltip);
-            model.updateRelativePosition(icon, position);
+            model.updateRelativePosition();
         });
         FadeTransition fadeIn = new FadeTransition(Duration.seconds(0.25), icon);
         fadeIn.setFromValue(0.0);
@@ -117,7 +117,6 @@ public class TurtleView {
     public void stamp() {
         ImageView s = createIcon(model.getPos().PosX, model.getPos().PosY, iconSize, stampUrl);
         s.toFront();
-        stamps.add(s);
         s.setOpacity(0.0);
         canvasScreen.getShapes().getChildren().add(s);
         FadeTransition fade = new FadeTransition(Duration.seconds(0.25), s);
@@ -134,7 +133,7 @@ public class TurtleView {
         this.icon.setX(x - iconSize / 2);
         this.icon.setY(y - iconSize / 2);
         this.icon.toFront();
-        model.updateRelativePosition(icon, position);
+        model.updateRelativePosition();
         model.setTooltipRelativePosition(icon, tooltip);
     }
 
@@ -172,8 +171,6 @@ public class TurtleView {
         homeY = y;
     }
 
-}
-
     private void onHover() {
         icon.setScaleX(1.1);
         icon.setScaleY(1.1);
@@ -192,30 +189,34 @@ public class TurtleView {
         model.putPenDown();
     }
 
-    private PathTransition createPathAnimation(Line line, CanvasScreen canvas) {
+    private PathTransition createPathAnimation(Line line) {
         double distance = Math.sqrt(Math.pow((line.getEndX() - line.getStartX()), 2) + Math.pow((line.getEndY() - line.getStartY()), 2));
-        Circle pen = new Circle(canvas.getThickness() / 2);
-        pen.setFill(canvas.getBrushColor());
+        Circle pen = new Circle(canvasScreen.getThickness() / 2);
+        pen.setFill(canvasScreen.getBrushColor());
         Collection<Circle> penPoints = new ArrayList<>();
         boolean show = model.isPenDown();
         pen.translateXProperty().addListener((ov, t, t1) -> moveIcon(pen.getTranslateX(), pen.getTranslateY()));
         pen.translateYProperty().addListener((ov, t, t1) -> moveIcon(pen.getTranslateX(), pen.getTranslateY()));
         PathTransition pathTransition = new PathTransition(Duration.seconds(distance / TURTLE_SPEED), line, pen);
         pathTransition.setOnFinished(event -> {
-            if (show) canvas.getShapes().getChildren().add(1, line);
+            if (show) canvasScreen.getShapes().getChildren().add(1, line);
         });
         return pathTransition;
     }
 
-    public void changeIcon(String s, AppModel app) {
-        app.getMyCanvas().getShapes().getChildren().remove(icon);
-        icon = createIcon(model.getPosX(), model.getPosY(), iconSize, s);
-        installPositionLabel(icon, position, app);
-        app.getMyCanvas().getShapes().getChildren().add(icon);
+    public void changeIcon(String s) {
+        shapes.getChildren().remove(icon);
+        icon = createIcon(model.getPos().PosX, model.getPos().PosY, iconSize, s);
+        installPositionLabel(icon, tooltip);
+        shapes.getChildren().add(icon);
     }
 
     public void changeStamp(String s) {
         stampUrl = s;
+    }
+
+    public TurtleModel getModel() {
+        return model;
     }
 }
 

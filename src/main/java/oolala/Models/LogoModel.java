@@ -29,7 +29,7 @@ public class LogoModel extends AppModel {
     }
 
     @Override
-    public void runApp(ArrayList<Command> commands) {
+    public void runApp(List<Command> commands) {
         super.runApp(commands);
         Iterator<Command> itCmd = commands.iterator();
         while (itCmd.hasNext() && turtlesInBound) {
@@ -65,7 +65,7 @@ public class LogoModel extends AppModel {
         turtleIcon = url;
         turtleStamp = url;
         for (Integer i: currTurtleIdxs){
-            turtles.get(i).changeIcon(url, this);
+            turtles.get(i).changeIcon(url);
             turtles.get(i).changeStamp(url);
         }
     }

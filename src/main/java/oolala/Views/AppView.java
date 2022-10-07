@@ -75,8 +75,17 @@ public abstract class AppView {
         animation.setOnFinished(event -> {
             enableInputs();
             currentAppModel.setRunning(false);
-            //            currentAppModel.enableInputs(imageSelector, runButton);
         });
+    }
+
+    public void enableInputs() {
+        imageSelector.setDisable(false);
+        runButton.setDisable(false);
+    }
+
+    public void disableInputs() {
+        imageSelector.setDisable(true);
+        runButton.setDisable(true);
     }
 
     public BorderPane setUpRootBorderPane() {
@@ -93,12 +102,14 @@ public abstract class AppView {
         root.setPadding(new Insets(10, 10, 10, 10));
         return root;
     }
-    private void stopAnimation(){
+
+    private void stopAnimation() {
         animation.stop();
         animation.getChildren().removeAll(animation.getChildren());
     }
+
     public HBox makeLeftToolbarHBox() {
-        runButton = makeButton("RunButton", event  -> runModel());
+        runButton = makeButton("RunButton", event -> runModel());
         Button clearTextButton = makeButton("ClearTextButton", event -> terminal.getTextArea().clear());
         Button fileOpenButton = makeButton("ImportButton", openFileChooserEventHandler());
         Button saveButton = makeButton("SaveButton", makeSaveFileEventHandler());
@@ -128,7 +139,8 @@ public abstract class AppView {
         hBox.getStyleClass().add("right-hbox");
         return hBox;
     }
-    private void resetModel(boolean resetHome){
+
+    private void resetModel(boolean resetHome) {
         stopAnimation();
         currentAppModel.reset(resetHome);
         enableInputs();
@@ -140,16 +152,16 @@ public abstract class AppView {
             if (keyCombination.match(event)) runModel();
         });
     }
-    private void runModel(){
+
+    private void runModel() {
         List<Command> commands = currentAppModel.getParser().parse(terminal.getTextArea().getText().toLowerCase());
         terminal.updateRecentlyUsed(currentAppModel.getParser().getRecentCommandStrings());
-        currentAppModel.runApp(commands, this, animation);
+        currentAppModel.runApp(commands);
         disableInputs();
         if (animation.getChildren().size() == 0) {
             currentAppModel.setRunning(false);
             enableInputs();
-        }
-        else{
+        } else {
             animation.play();
             animation.getChildren().removeAll(animation.getChildren());
         }
