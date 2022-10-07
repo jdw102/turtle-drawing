@@ -5,14 +5,12 @@ import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
@@ -29,7 +27,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 
-import static oolala.Main.*;
 import static oolala.Views.ViewComponents.ViewUtils.*;
 
 /**
@@ -74,7 +71,7 @@ public abstract class AppView {
         animation.setRate(3);
         animation.setOnFinished(event -> {
             enableInputs();
-            currentAppModel.setRunning(false);
+            currentAppModel.setRunningStatus(false);
         });
     }
 
@@ -154,7 +151,7 @@ public abstract class AppView {
         currentAppModel.runApp(commands);
         disableInputs();
         if (animation.getChildren().size() == 0) {
-            currentAppModel.setRunning(false);
+            currentAppModel.setRunningStatus(false);
             enableInputs();
         } else {
             animation.play();

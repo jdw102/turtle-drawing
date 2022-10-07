@@ -1,18 +1,15 @@
 package oolala.Models;
 
 import javafx.animation.SequentialTransition;
+import oolala.Command.CommandName;
 import oolala.Views.ViewComponents.CanvasScreen;
 import oolala.Command.Command;
 import oolala.Parsers.LSystemParser;
-import oolala.Views.AppView;
-import oolala.Views.TurtleView;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import static oolala.Command.Command.CmdName.TELL;
 
 public class LSystemModel extends AppModel {
     public LSystemModel(CanvasScreen canvas, ResourceBundle myResources, String stampUrl, SequentialTransition animation) {
@@ -34,10 +31,10 @@ public class LSystemModel extends AppModel {
         while (itCmd.hasNext() && turtlesInBound) {
             Command instruction = itCmd.next();
             //TODO: Handle tell command
-            if (instruction.prefix == TELL) {
+            if (instruction.prefix == CommandName.TELL) {
                 currTurtleIdxs.clear();
-                currTurtleIdxs.addAll(instruction.params);
-                for (Integer param : instruction.params) {
+                currTurtleIdxs.addAll(instruction.getParams());
+                for (Integer param : instruction.getParams()) {
                     if (!turtles.containsKey(param)) {
                         System.out.println("Creating new turtle");
                         turtles.put(param, addNewTurtle());
@@ -55,10 +52,10 @@ public class LSystemModel extends AppModel {
             itCmd.remove();
         }
     }
+
     @Override
-    public void changeImage(String url){
-        turtleStamp = url;
-        for (Integer i: currTurtleIdxs)
-            turtles.get(i).changeStamp(turtleStamp);
+    public void changeImage(String url) {
+        for (Integer i : currTurtleIdxs)
+            turtles.get(i).changeStamp(url);
     }
 }

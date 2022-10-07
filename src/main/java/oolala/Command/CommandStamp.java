@@ -6,7 +6,7 @@ import oolala.Views.TurtleView;
 
 public class CommandStamp extends Command {
     public CommandStamp(){
-        prefix =CmdName.STAMP;
+        prefix =CommandName.STAMP;
     }
 
     public void runCommand(TurtleView turtle) {

@@ -7,7 +7,7 @@ import oolala.Views.TurtleView;
 public class CommandShowTurtle extends Command {
 
     public CommandShowTurtle(){
-        prefix =CmdName.SHOWT;
+        prefix =CommandName.SHOWT;
     }
     public void runCommand(TurtleView turtle) {
         turtle.showTurtle();
