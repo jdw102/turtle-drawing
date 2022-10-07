@@ -122,7 +122,14 @@ public class LogoParser extends Parser {
         }
         return program;
     }
-
+    @Override
+    public List<String> getRecentCommandStrings(){
+        List<String> recent = new ArrayList<>();
+        for (Command c: program){
+            recent.add(c.toString());
+        }
+        return recent;
+    }
     public void setLanguage(ResourceBundle resources) {
         myResources = resources;
     }

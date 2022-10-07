@@ -17,4 +17,7 @@ public class Parser {
     public void setDist(int dist) {}
 
     public void setAng(int ang) {}
+    public List<String> getRecentCommandStrings(){
+        return new ArrayList<>();
+    }
 }

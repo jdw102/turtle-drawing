@@ -32,4 +32,5 @@ public class LSystemTerminal extends Terminal {
         box.getChildren().add(1, angleSlider.getSliderBox());
         box.getChildren().add(1, levelSlider.getSliderBox());
     }
+    
 }

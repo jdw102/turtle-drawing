@@ -4,8 +4,6 @@ import java.util.*;
 
 import javafx.scene.control.Alert;
 import oolala.Command.Command;
-import oolala.Parsers.LogoParser;
-import oolala.Parsers.Parser;
 
 public class LSystemParser extends Parser {
 
@@ -33,9 +31,11 @@ public class LSystemParser extends Parser {
     private String start;
     private LogoParser logoParser;
     private ResourceBundle myResources;
+    private List<String> seenCommands;
 
     public LSystemParser(ResourceBundle resources) {
         myResources = resources;
+        seenCommands = new ArrayList<>();
         alphabet = new HashMap<>();
         for (int i = 0; i < ALPHA_COMM.length; i++) {
             alphabet.put(ALPHA_SYM[i], ALPHA_COMM[i]);
@@ -76,6 +76,7 @@ public class LSystemParser extends Parser {
         for (int i = 0; i < expansion.length(); i++) {
             char currChar = expansion.charAt(i);
             if (alphabet.containsKey(currChar)) {
+                seenCommands.add(Character.toString(currChar).toUpperCase());
                 String cmd = alphabet.get(currChar);
                 if (usingRandomDist)
                     dist = (int) Math.round(Math.random() * (distMax - distMin) + distMin);
@@ -172,5 +173,7 @@ public class LSystemParser extends Parser {
         System.out.println(getCommandString(applyRules()));
         return logoParser.parse(getCommandString(applyRules()));
     }
-
+    public List<String> getRecentCommandStrings(){
+        return seenCommands;
+    }
 }

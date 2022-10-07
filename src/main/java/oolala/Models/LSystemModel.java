@@ -15,8 +15,8 @@ import java.util.ResourceBundle;
 import static oolala.Command.Command.CmdName.TELL;
 
 public class LSystemModel extends AppModel {
-    public LSystemModel(CanvasScreen canvas, ResourceBundle myResources, String stampUrl, AppView display, SequentialTransition animation) {
-        super(canvas, myResources, stampUrl, display, animation);
+    public LSystemModel(CanvasScreen canvas, ResourceBundle myResources, String stampUrl, AppView display) {
+        super(canvas, myResources, stampUrl, display);
         turtleIcon = myResources.getString("CursorIcon");
         turtleStamp = myResources.getString(stampUrl);
         parser = new LSystemParser(myResources);
@@ -27,9 +27,10 @@ public class LSystemModel extends AppModel {
     }
 
     @Override
-    public void runApp(List<Command> commands, AppView display) {
+    public void runApp(List<Command> commands, AppView display, SequentialTransition animation) {
+        running = true;
         turtles.get(1).hideTurtle(animation);
-        super.runApp(commands, display);
+        super.runApp(commands, display, animation);
         Iterator<Command> itCmd = commands.iterator();
         while (itCmd.hasNext() && turtlesInBound) {
             Command instruction = itCmd.next();
@@ -55,6 +56,7 @@ public class LSystemModel extends AppModel {
             itCmd.remove();
         }
         animation.play();
+        if (animation.getChildren().size() == 0) running = false;
         animation.getChildren().removeAll(animation.getChildren());
     }
     @Override
