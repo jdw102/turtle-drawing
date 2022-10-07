@@ -7,12 +7,17 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
-
+/**
+ * A labeled slider for the LSystem terminal
+ *
+ * @author Jerry Worthy
+ */
 public class LabeledSlider {
     private Slider slider;
     private Label label;
     private HBox box;
     private Label name;
+
 
     public LabeledSlider(int min, int max, int curr, String title, String id){
         slider = new Slider(min, max, curr);

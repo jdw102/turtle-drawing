@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 /**
- * A turtle/cursor to draw things with.
+ * A view class to display the turtle, communicate with the turtle model, and adjust according to commands.
  *
  * @author Aditya Paul
  */
@@ -52,7 +52,16 @@ public class TurtleView {
         this.icon = createIcon(model.getPos().getX(), model.getPos().getY(), iconSize, turtleIconUrl);
         installPositionLabel(icon, tooltip, app);
     }
-
+    /**
+     * A method to create a line to be added to the canvas.
+     *
+     * @param xStart - Starting x coordinate of line.
+     * @param yStart - Starting y coordinate of line.
+     * @param xEnd - Ending x coordinate of line.
+     * @param yEnd - Ending y coordinate of line.
+     * @return A Line of specified parameters.
+     * @author Jerry Worthy
+     */
     private Line createLine(double xStart, double yStart, double xEnd, double yEnd) {
         Line line = new Line();
         line.setStartX(xStart);
@@ -64,7 +73,13 @@ public class TurtleView {
         line.setStrokeLineCap(StrokeLineCap.ROUND);
         return line;
     }
-
+    /**
+     * A method to be called to move the turtle icon a certain distance, positive or negative, update the model,
+     * and add the line to the canvas screen.
+     *
+     * @param dist - The distance to travel.
+     * @author Jerry Worthy
+     */
     public void move(double dist) {
         Position oldPos = model.getPos();
         Position newPos = model.calculateMove(dist);
@@ -73,11 +88,17 @@ public class TurtleView {
         canvasScreen.addLine(path);
         animation.getChildren().add(createPathAnimation(path));
     }
-
+    /**
+     * A method to create a rotation animation of the icon and add it to the final animation and update the angle of the model.
+     *
+     * @param newAngle - The angle by which to rotate the icon/update the model.
+     * @author Jerry Worthy
+     */
     public void rotateTurtle(int newAngle) {
         RotateTransition rotate = new RotateTransition(Duration.seconds(0.5), icon);
         rotate.setByAngle(newAngle);
         model.rotate(newAngle);
+        model.setTooltipRelativePosition(icon, tooltip);
         animation.getChildren().add(rotate);
     }
 
@@ -160,7 +181,7 @@ public class TurtleView {
     private void onDrag(MouseEvent e, RunningStatus runningStatus, AppModel app) {
         double x = e.getX();
         double y = e.getY();
-        if (!runningStatus.getRunningStatus() && app.getMyCanvas().isClear() && x < model.getXMax() && x > model.getXMin() && y > model.getYMin() && y < model.getYMax()) {
+        if (!runningStatus.getRunningStatus() && app.getMyCanvas().isClear() && model.getAngle() % 360 == 0 && x < model.getXMax() && x > model.getXMin() && y > model.getYMin() && y < model.getYMax()) {
             changeHome(x, y, app);
         }
     }

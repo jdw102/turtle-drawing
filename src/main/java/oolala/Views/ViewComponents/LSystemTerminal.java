@@ -6,11 +6,22 @@ import oolala.Parsers.LSystemParser;
 
 import java.util.ResourceBundle;
 
+/**
+ * A terminal for the LSystem app. It adds the length, angle, and level slider inputs to the terminal.
+ *
+ * @author Jerry Worthy
+ */
 public class LSystemTerminal extends Terminal {
     public LSystemTerminal(ResourceBundle myResources, LSystemParser lSystemParser) {
         super(myResources);
         makeSliders(lSystemParser);
     }
+    /**
+     * A method to create the sliders that control parser settings.
+     *
+     * @param lSystemParser - The parser that will have its settings changed by the sliders.
+     * @author Jerry Worthy
+     */
     public void makeSliders(LSystemParser lSystemParser){
         LabeledSlider lengthSlider = new LabeledSlider(1, 100, 10, myResources.getString("LengthSlider"), "LengthSlider");
         LabeledSlider angleSlider = new LabeledSlider(1, 180, 30, myResources.getString("AngleSlider"),  "AngleSlider");

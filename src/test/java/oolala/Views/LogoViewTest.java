@@ -91,14 +91,14 @@ public class LogoViewTest extends DukeApplicationTest {
         assertEquals(expected, canvasShapes.getChildren().size());
     }
     @Test
-    void changeCanvasColor() {
+    void testChangeCanvasColor() {
         Color expected = Color.RED;
         setValue(canvasColorPicker, Color.RED);
         Rectangle borderRectangle = lookup("#BorderRectangle").query();
         assertEquals(expected, borderRectangle.getFill());
     }
     @Test
-    void changeBrushColor(){
+    void testChangeBrushColor(){
         Color expected = Color.RED;
         setValue(brushColorPicker, Color.RED);
         clickOn(terminalText).write("fd 100").write(KeyCode.ENTER.getChar());
@@ -108,7 +108,7 @@ public class LogoViewTest extends DukeApplicationTest {
         assertEquals(expected, line.getStroke());
     }
     @Test
-    void changeLineThickness(){
+    void testChangeLineThickness(){
         double expected = 7;
         clickOn(thicknessTextField).press(KeyCode.BACK_SPACE).write('7');
         press(KeyCode.ENTER);

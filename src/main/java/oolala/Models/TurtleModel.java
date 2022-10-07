@@ -85,7 +85,7 @@ public class TurtleModel {
     }
 
     public void setTooltipRelativePosition(ImageView i, Tooltip tooltip) {
-        tooltip.setText("x: " + Double.toString(Math.round(relX)) + " y: " + Double.toString(Math.round(relY)));
+        tooltip.setText("x: " + Double.toString(Math.round(relX)) + " y: " + Double.toString(Math.round(relY)) + ", " + Integer.toString(-angle % 360) + "°");
     }
 
     public void updateRelativePosition(){
