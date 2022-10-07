@@ -59,5 +59,7 @@ public class LSystemModel extends AppModel {
     @Override
     public void changeImage(String url){
         turtleStamp = url;
+        for (Integer i: currTurtleIdxs)
+            turtles.get(i).changeStamp(turtleStamp);
     }
 }
