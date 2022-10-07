@@ -44,7 +44,7 @@ public class LogoParser extends Parser {
                 continue;
             }
             switch (prefix) {
-                case "fd":
+                case "fd": case "forward":
                     c = new CommandForward();
                     if (scan.hasNextInt())
                         c.setParam(scan.nextInt());
@@ -54,7 +54,7 @@ public class LogoParser extends Parser {
                         return new ArrayList<>();
                     }
                     break;
-                case "bk":
+                case "bk": case "back":
                     c = new CommandBackward();
                     if (scan.hasNextInt())
                         c.setParam(scan.nextInt());
@@ -64,7 +64,7 @@ public class LogoParser extends Parser {
                         return new ArrayList<>();
                     }
                     break;
-                case "lt":
+                case "lt": case "left":
                     c = new CommandLeft();
                     if (scan.hasNextInt())
                         c.setParam(scan.nextInt());
@@ -74,7 +74,7 @@ public class LogoParser extends Parser {
                         return new ArrayList<>();
                     }
                     break;
-                case "rt":
+                case "rt": case "right":
                     c = new CommandRight();
                     if (scan.hasNextInt())
                         c.setParam(scan.nextInt());
@@ -84,16 +84,16 @@ public class LogoParser extends Parser {
                         return new ArrayList<>();
                     }
                     break;
-                case "pd":
+                case "pd": case "pendown":
                     c = new CommandPenDown();
                     break;
-                case "pu":
+                case "pu": case "penup":
                     c = new CommandPenUp();
                     break;
-                case "st":
+                case "st": case "show": case "showt":
                     c = new CommandShowTurtle();
                     break;
-                case "ht":
+                case "ht": case "hide": case "hidet":
                     c = new CommandHideTurtle();
                     break;
                 case "home":

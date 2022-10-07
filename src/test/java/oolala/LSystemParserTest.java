@@ -36,7 +36,8 @@ class LSystemParserTest {
   @ParameterizedTest
   @CsvSource({
       "START A SET A \"pd fd LENGTH\", pd fd 10 ",
-      "start T rule T F-G-G set G \"pd fd LENGTH\", pd fd 10 lt 30 pd fd 10 lt 30 pd fd 10 "
+      "start T rule T F-G-G set G \"pd fd LENGTH\", pd fd 10 lt 30 pd fd 10 lt 30 pd fd 10 ",
+      "start X, stamp"
   })
   void testSetCommand(String program, String commandString){
     lparser.setLevel(1);
