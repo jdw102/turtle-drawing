@@ -1,5 +1,6 @@
 package oolala.Views;
 
+import java.util.Objects;
 import javafx.animation.*;
 import javafx.scene.Node;
 import javafx.scene.control.Tooltip;
@@ -44,7 +45,8 @@ public class TurtleView {
   }
   public void move(double dist, CanvasScreen canvas, SequentialTransition animation){
     Line path = model.createTurtlePath(dist, canvas);
-    path.setId("Line" + Integer.toString(canvas.getLines().size() + 1));
+    path.setId(this.getIcon().getId());
+    System.out.println(this.getIcon().getId());
     canvas.addLine(path);
     animation.getChildren().add(createPathAnimation(path, canvas));
   }
@@ -54,6 +56,14 @@ public class TurtleView {
     model.rotate(newAngle);
     animation.getChildren().add(rotate);
   }
+
+  public void turnTurtle(int newAngle, SequentialTransition animation){
+    RotateTransition rotate = new RotateTransition(Duration.seconds(0.5), icon);
+    rotate.setByAngle(newAngle - model.getAngle());
+    model.rotate(newAngle - model.getAngle());
+    animation.getChildren().add(rotate);
+  }
+
   public void showTurtle(SequentialTransition animation){
     FadeTransition fade = new FadeTransition(Duration.seconds(0.25), icon);
     fade.setFromValue(icon.getOpacity());
@@ -68,6 +78,25 @@ public class TurtleView {
     fade.setOnFinished(event -> icon.toBack());
     animation.getChildren().add(fade);
   }
+
+  // TODO: Refactor to look better, unify with home method
+  public void goTo(int posX, int posY, SequentialTransition animation){
+    FadeTransition fadeOut = new FadeTransition(Duration.seconds(0.25), icon);
+    fadeOut.setFromValue(icon.getOpacity());
+    fadeOut.setToValue(0.0);
+    model.setPosition(posX + homeX, homeY - posY);
+    fadeOut.setOnFinished(event -> {
+      System.out.println("test");
+      moveIcon(posX + homeX, homeY - posY);
+      model.updateRelativePosition(icon, position);
+    } );
+    FadeTransition fadeIn = new FadeTransition(Duration.seconds(0.25), icon);
+    fadeIn.setFromValue(0.0);
+    fadeIn.setToValue(icon.getOpacity());
+    animation.getChildren().add(fadeOut);
+    animation.getChildren().add(fadeIn);
+  }
+
   public void home(SequentialTransition animation){
     FadeTransition fadeOut = new FadeTransition(Duration.seconds(0.25), icon);
     fadeOut.setFromValue(icon.getOpacity());
@@ -83,6 +112,17 @@ public class TurtleView {
     fadeIn.setToValue(icon.getOpacity());
     animation.getChildren().add(fadeOut);
     animation.getChildren().add(fadeIn);
+  }
+
+  /**
+   *
+   * @param canvas
+   * @param animation
+   */
+  public void clear(CanvasScreen canvas, SequentialTransition animation){
+    canvas.getLines().removeIf(i -> this.getIcon().getId().equals(i.getId())); // TODO: Fix this
+    canvas.getShapes().getChildren().removeIf(i -> this.getIcon().getId().equals(i.getId()));
+    this.home(animation);
   }
   public void stamp(CanvasScreen canvas, SequentialTransition animation){
     ImageView s = createIcon(model.getPosX(), model.getPosY(), iconSize, stampUrl);
@@ -109,7 +149,7 @@ public class TurtleView {
     i.setFitWidth(size);
     i.setX(x- size / 2);
     i.setY(y- size / 2);
-    i.setRotate(-model.geAngle());
+    i.setRotate(-model.getAngle());
     i.toFront();
     return i;
   }

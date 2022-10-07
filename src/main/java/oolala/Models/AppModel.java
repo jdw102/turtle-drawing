@@ -56,6 +56,7 @@ public abstract class AppModel {
         myCanvas.clear();
         currTurtleIdxs.clear();
         turtles.put(1, new TurtleView(homeX, homeY, myCanvas, this));
+        turtles.get(1).getIcon().setId("Turtle" + Integer.toString(1));
         myCanvas.getShapes().getChildren().add(turtles.get(1).getIcon()); // TODO: We should probably refactor this for scalability
         currTurtleIdxs.add(1);
         running = false;

@@ -17,7 +17,8 @@ public class Command {
   public enum CmdName {
     FORWARD, BACK, LEFT, RIGHT,
     PENDOWN, PENUP, SHOWT, HIDET,
-    HOME, STAMP, TELL
+    HOME, STAMP, TELL, CLEAR,
+    TOWARDS, GOTO
   }
 
   public void setParam(int param) {

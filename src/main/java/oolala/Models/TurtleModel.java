@@ -74,6 +74,7 @@ public class TurtleModel {
     public void rotate(double newAngle){
         angle -= newAngle;
     }
+    public void turn(double newAngle) { angle = (int) newAngle; }
     public void putPenDown(){
         penDown = true;
     }
@@ -107,7 +108,7 @@ public class TurtleModel {
     public double getPosY(){
         return posY;
     }
-    public double geAngle(){
+    public double getAngle(){
         return angle;
     }
     public double getXMin(){

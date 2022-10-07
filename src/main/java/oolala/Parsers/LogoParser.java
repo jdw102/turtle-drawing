@@ -96,11 +96,38 @@ public class LogoParser extends Parser {
                 case "ht": case "hide": case "hidet":
                     c = new CommandHideTurtle();
                     break;
+                case "clearscreen": case "cs":
+                    c = new CommandClear();
+                    break;
                 case "home":
                     c = new CommandHome();
                     break;
                 case "stamp":
                     c = new CommandStamp();
+                    break;
+                case "towards":
+                    c = new CommandTowards();
+                    for(int i = 0; i < 2; i++) {
+                        if (scan.hasNextInt())
+                            ((CommandTowards) c).getParams().add(scan.nextInt());
+                        else {
+                            // TODO: Handle
+                            System.err.println("Missing parameters for TOWARDS command!");
+                            return new ArrayList<>();
+                        }
+                    }
+                    break;
+                case "goto": case "setxy":
+                    c = new CommandGoto();
+                    for(int i = 0; i < 2; i++) {
+                        if (scan.hasNextInt())
+                            ((CommandGoto) c).getParams().add(scan.nextInt());
+                        else {
+                            // TODO: Handle
+                            System.err.println("Missing parameters for GOTO/SETXY command!");
+                            return new ArrayList<>();
+                        }
+                    }
                     break;
                 case "tell":
                     c = new CommandTell();
