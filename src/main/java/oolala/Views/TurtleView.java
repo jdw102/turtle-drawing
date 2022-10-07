@@ -57,10 +57,13 @@ public class TurtleView {
     animation.getChildren().add(rotate);
   }
 
-  public void turnTurtle(int newAngle, SequentialTransition animation){
+  public void turnTurtle(int x, int y, SequentialTransition animation){
     RotateTransition rotate = new RotateTransition(Duration.seconds(0.5), icon);
-    rotate.setByAngle(newAngle - model.getAngle());
-    model.rotate(newAngle - model.getAngle());
+    double angle = Math.atan2(y + homeY - this.getModel().getPosY(),
+                            x + homeX - this.getModel().getPosX()) / Math.PI * 180;
+    System.out.println(angle + model.getAngle());
+    rotate.setByAngle(angle + model.getAngle());
+    model.rotate(angle + model.getAngle());
     animation.getChildren().add(rotate);
   }
 
