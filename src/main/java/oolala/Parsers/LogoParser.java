@@ -1,7 +1,9 @@
 package oolala.Parsers;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Scanner;
 
@@ -16,10 +18,11 @@ import oolala.Parsers.Parser;
  */
 public class LogoParser extends Parser {
     ResourceBundle myResources;
-
+    Map<String, Integer> variables;
 
     public LogoParser(ResourceBundle resourceBundle) {
         myResources = resourceBundle;
+        variables = new HashMap<>();
     }
 
     /**
@@ -37,7 +40,7 @@ public class LogoParser extends Parser {
         Command c = new Command();
         Scanner scan = new Scanner(inputText);
         while (scan.hasNext()) {
-//      Command c = new Command();
+            String tkn = "";
             String prefix = scan.next();
             if (prefix.charAt(0) == '#') {
                 scan.nextLine();
@@ -48,41 +51,29 @@ public class LogoParser extends Parser {
                     c = new CommandForward();
                     if (scan.hasNextInt())
                         c.setParam(scan.nextInt());
-                    else {
-                        // TODO: Handle
-                        System.err.println("Missing parameters for FD command!");
-                        return new ArrayList<>();
-                    }
+                    else
+                        return errorAndExit("Missing parameters for FD command!");
                     break;
                 case "bk": case "back":
                     c = new CommandBackward();
                     if (scan.hasNextInt())
                         c.setParam(scan.nextInt());
-                    else {
-                        // TODO: Handle
-                        System.err.println("Missing parameters for BK command!");
-                        return new ArrayList<>();
-                    }
+                    else
+                        return errorAndExit("Missing parameters for BK command!");
                     break;
                 case "lt": case "left":
                     c = new CommandLeft();
                     if (scan.hasNextInt())
                         c.setParam(scan.nextInt());
-                    else {
-                        // TODO: Handle
-                        System.err.println("Missing parameters for LT command!");
-                        return new ArrayList<>();
-                    }
+                    else
+                        return errorAndExit("Missing parameters for LT command!");
                     break;
                 case "rt": case "right":
                     c = new CommandRight();
                     if (scan.hasNextInt())
                         c.setParam(scan.nextInt());
-                    else {
-                        // TODO: Handle
-                        System.err.println("Missing parameters for RT command!");
-                        return new ArrayList<>();
-                    }
+                    else
+                        return errorAndExit("Missing parameters for RT command!");
                     break;
                 case "pd": case "pendown":
                     c = new CommandPenDown();
@@ -110,11 +101,8 @@ public class LogoParser extends Parser {
                     for(int i = 0; i < 2; i++) {
                         if (scan.hasNextInt())
                             ((CommandTowards) c).getParams().add(scan.nextInt());
-                        else {
-                            // TODO: Handle
-                            System.err.println("Missing parameters for TOWARDS command!");
-                            return new ArrayList<>();
-                        }
+                        else
+                            return errorAndExit("Missing parameters for TOWARDS command!");
                     }
                     break;
                 case "goto": case "setxy":
@@ -122,33 +110,43 @@ public class LogoParser extends Parser {
                     for(int i = 0; i < 2; i++) {
                         if (scan.hasNextInt())
                             ((CommandGoto) c).getParams().add(scan.nextInt());
-                        else {
-                            // TODO: Handle
-                            System.err.println("Missing parameters for GOTO/SETXY command!");
-                            return new ArrayList<>();
-                        }
+                        else
+                            return errorAndExit("Missing parameters for GOTO/SETXY command!");
                     }
+                    break;
+                case "make": case "set":
+                    // Get name
+                    tkn = scan.next();
+                    if(tkn.charAt(0) != ':')
+                        return errorAndExit("Incorrect variable name for make command!");
+                    if(scan.hasNextInt())
+                        variables.put(tkn.substring(1), scan.nextInt());
+                    else
+                        return errorAndExit("Incorrect variable value for make command!");
                     break;
                 case "tell":
                     c = new CommandTell();
-                    if (!scan.hasNextInt()) {
-                        // TODO: Handle
-                        System.err.println("Missing parameters for TELL command!");
-                        return new ArrayList<>();
-                    }
+                    if (!scan.hasNextInt())
+                        return errorAndExit("Missing parameters for TELL command!");
                     while (scan.hasNextInt())
                         ((CommandTell) c).getParams().add(scan.nextInt());
                     break;
                 default:
                     // TODO: Handle bad input
-                    Alert alert = new Alert(Alert.AlertType.ERROR, myResources.getString("CommandError"));
-                    alert.showAndWait();
-                    return new ArrayList<>();
+                    return errorAndExit("Bad prefix: " + prefix);
             }
             program.add(c);
         }
         return program;
     }
+
+    private List<Command> errorAndExit(String message){
+        System.err.println(message);
+        Alert alert = new Alert(Alert.AlertType.ERROR, myResources.getString("CommandError"));
+        alert.showAndWait();
+        return new ArrayList<>();
+    }
+
     @Override
     public List<String> getRecentCommandStrings(){
         List<String> recent = new ArrayList<>();
