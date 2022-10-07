@@ -55,9 +55,6 @@ public class LSystemModel extends AppModel {
             }
             itCmd.remove();
         }
-        animation.play();
-        if (animation.getChildren().size() == 0) running = false;
-        animation.getChildren().removeAll(animation.getChildren());
     }
     @Override
     public void changeImage(String url){
