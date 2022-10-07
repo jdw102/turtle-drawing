@@ -1,13 +1,9 @@
 package oolala.Models;
 
 import javafx.animation.SequentialTransition;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.image.ImageView;
 import oolala.Views.ViewComponents.CanvasScreen;
 import oolala.Command.Command;
 import oolala.Parsers.Parser;
-import oolala.Views.AppView;
 import oolala.Views.TurtleView;
 
 import java.util.*;
@@ -19,8 +15,8 @@ public abstract class AppModel {
     public SequentialTransition animation;
     public ResourceBundle myResources;
     public Parser parser;
-    public double homeX;
-    public double homeY;
+    protected double homeX;
+    protected double homeY;
     public String turtleIcon;
     public String turtleStamp;
     protected RunningStatus runningStatus;
@@ -40,8 +36,8 @@ public abstract class AppModel {
         turtlesInBound = true;
     }
 
-    public TurtleView addNewTurtle(){
-        TurtleView turtleView =  new TurtleView(homeX, homeY, myCanvas, turtleStamp, turtleIcon, runningStatus, animation, this);
+    public TurtleView addNewTurtle() {
+        TurtleView turtleView = new TurtleView(homeX, homeY, myCanvas, turtleStamp, turtleIcon, runningStatus, animation, this);
         return turtleView;
     }
 
@@ -49,8 +45,12 @@ public abstract class AppModel {
         runningStatus.setRunningStatus(true);
     }
 
-    public void setRunning(boolean isRunning){
+    public void setRunningStatus(boolean isRunning) {
         runningStatus.setRunningStatus(isRunning);
+    }
+
+    public RunningStatus getRunningStatus() {
+        return runningStatus;
     }
 
 
@@ -80,6 +80,14 @@ public abstract class AppModel {
     public void setHome(double x, double y) {
         homeX = x;
         homeY = y;
+    }
+
+    public double getHomeX() {
+        return homeX;
+    }
+
+    public double getHomeY() {
+        return homeY;
     }
 
     public Parser getParser() {

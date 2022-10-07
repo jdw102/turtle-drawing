@@ -7,7 +7,7 @@ import oolala.Views.TurtleView;
 public class CommandPenDown extends Command {
 
     public CommandPenDown(){
-        prefix =CmdName.PENDOWN;
+        prefix =CommandName.PENDOWN;
     }
     public void runCommand(TurtleView turtle) {
         turtle.putPenDown();

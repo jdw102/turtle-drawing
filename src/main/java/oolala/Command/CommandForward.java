@@ -7,7 +7,7 @@ import oolala.Views.TurtleView;
 
 public class CommandForward extends Command {
     public CommandForward(){
-        prefix =CmdName.FORWARD;
+        prefix =CommandName.FORWARD;
     }
 
     public void runCommand(TurtleView turtle) {

@@ -7,7 +7,7 @@ import oolala.Views.TurtleView;
 public class CommandRight extends Command {
 
     public CommandRight(){
-        prefix =CmdName.RIGHT;
+        prefix =CommandName.RIGHT;
     }
     public void runCommand(TurtleView turtle) {
         turtle.rotateTurtle(param);

@@ -22,11 +22,13 @@ public class TurtleModel {
     private double relX;
     private double relY;
     private boolean inBounds;
+    private boolean isShown;
 
     public TurtleModel(double posX, double posY, Rectangle border, double iconSize) {
         this.posX = posX + border.getX() + border.getWidth() / 2;
         this.posY = posY + border.getY() + border.getHeight() / 2;
         this.angle = DEFAULT_ANGLE;
+        this.isShown = true;
         this.penDown = true;
         this.inBounds = true;
         calcBounds(border, iconSize);
@@ -38,7 +40,7 @@ public class TurtleModel {
      * @param iconSize - The size of the image view icon.
      * @author Jerry Worthy
      */
-    private void calcBounds(Rectangle r, double iconSize) {
+    public void calcBounds(Rectangle r, double iconSize) {
         xMin = r.getX() + iconSize / 2;
         xMax = r.getX() + r.getWidth() - iconSize / 2;
         yMin = r.getY() + iconSize / 2;
@@ -90,6 +92,7 @@ public class TurtleModel {
     public void setPosition(double x, double y) {
         posX = x;
         posY = y;
+        updateRelativePosition();
     }
 
     public void rotate(double newAngle) {
@@ -103,6 +106,15 @@ public class TurtleModel {
     public void putPenUp() {
         penDown = false;
     }
+
+    public void setShown(boolean shown){
+        isShown = shown;
+    }
+
+    public boolean isShown() {
+        return isShown;
+    }
+
     /**
      * A method to update the tooltip text to reflect the new relative positions and bearing. It is called by the view class.
      *

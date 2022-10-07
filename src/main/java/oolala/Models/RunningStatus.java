@@ -1,7 +1,7 @@
 package oolala.Models;
 
 public class RunningStatus {
-    boolean isRunning = false;
+    private boolean isRunning = false;
 
     public RunningStatus() {
     }
@@ -10,7 +10,7 @@ public class RunningStatus {
         this.isRunning = isRunning;
     }
 
-    public boolean getRunningStatus() {
+    public boolean isRunning() {
         return isRunning;
     }
 }

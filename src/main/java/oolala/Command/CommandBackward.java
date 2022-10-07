@@ -7,7 +7,7 @@ import oolala.Views.TurtleView;
 public class CommandBackward extends Command {
 
     public CommandBackward(){
-        prefix =CmdName.BACK;
+        prefix =CommandName.BACK;
     }
 
     public void runCommand(TurtleView turtle) {

@@ -2,6 +2,7 @@ package oolala.Models;
 
 import javafx.animation.Animation;
 import javafx.animation.SequentialTransition;
+import oolala.Command.CommandName;
 import oolala.Views.ViewComponents.CanvasScreen;
 import oolala.Command.Command;
 import oolala.Parsers.LogoParser;
@@ -13,7 +14,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import static oolala.Command.Command.CmdName.TELL;
 
 public class LogoModel extends AppModel {
 
@@ -35,10 +35,10 @@ public class LogoModel extends AppModel {
         while (itCmd.hasNext() && turtlesInBound) {
             Command instruction = itCmd.next();
             //TODO: Handle tell command
-            if (instruction.prefix == TELL) {
+            if (instruction.prefix == CommandName.TELL) {
                 currTurtleIdxs.clear();
-                currTurtleIdxs.addAll(instruction.params);
-                for (Integer param : instruction.params) {
+                currTurtleIdxs.addAll(instruction.getParams());
+                for (Integer param : instruction.getParams()) {
                     if (!turtles.containsKey(param)) {
                         System.out.println("Creating new turtle");
                         turtles.put(param, addNewTurtle());
@@ -49,7 +49,7 @@ public class LogoModel extends AppModel {
             }
             for (Integer idx : currTurtleIdxs) {
                 instruction.runCommand(turtles.get(idx));
-                if (!turtles.get(idx).getModel().inBounds()){
+                if (!turtles.get(idx).getModel().inBounds()) {
                     turtlesInBound = false;
                     break;
                 }
@@ -62,7 +62,7 @@ public class LogoModel extends AppModel {
     public void changeImage(String url) {
         turtleIcon = url;
         turtleStamp = url;
-        for (Integer i: currTurtleIdxs){
+        for (Integer i : currTurtleIdxs) {
             turtles.get(i).changeIcon(url, this);
             turtles.get(i).changeStamp(url);
         }

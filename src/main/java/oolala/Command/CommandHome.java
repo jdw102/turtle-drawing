@@ -6,7 +6,7 @@ import oolala.Views.TurtleView;
 
 public class CommandHome extends Command {
     public CommandHome(){
-        prefix =CmdName.HOME;
+        prefix =CommandName.HOME;
     }
 
     public void runCommand(TurtleView turtle) {
