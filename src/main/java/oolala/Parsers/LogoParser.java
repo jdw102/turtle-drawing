@@ -32,104 +32,70 @@ public class LogoParser extends Parser {
      * @return An ArrayList of the parsed commands
      * @author Aditya Paul
      */
-    public List<Command> parse(String inputText) {
+    public List<Command> parse(String inputText) throws IllegalStateException {
         program = new ArrayList<>();
         Command c;
         Scanner scan = new Scanner(inputText);
         while (scan.hasNext()) {
-//      Command c = new Command();
             String prefix = scan.next();
             if (prefix.charAt(0) == '#') {
                 scan.nextLine();
                 continue;
             }
-            switch (prefix) {
-                case "fd":
-                    c = new CommandForward();
-                    if (scan.hasNextInt())
-                        c.setParam(scan.nextInt());
-                    else {
-                        // TODO: Handle
-                        System.err.println("Missing parameters for FD command!");
-                        return new ArrayList<>();
-                    }
-                    break;
-                case "bk":
-                    c = new CommandBackward();
-                    if (scan.hasNextInt())
-                        c.setParam(scan.nextInt());
-                    else {
-                        // TODO: Handle
-                        System.err.println("Missing parameters for BK command!");
-                        return new ArrayList<>();
-                    }
-                    break;
-                case "lt":
-                    c = new CommandLeft();
-                    if (scan.hasNextInt())
-                        c.setParam(scan.nextInt());
-                    else {
-                        // TODO: Handle
-                        System.err.println("Missing parameters for LT command!");
-                        return new ArrayList<>();
-                    }
-                    break;
-                case "rt":
-                    c = new CommandRight();
-                    if (scan.hasNextInt())
-                        c.setParam(scan.nextInt());
-                    else {
-                        // TODO: Handle
-                        System.err.println("Missing parameters for RT command!");
-                        return new ArrayList<>();
-                    }
-                    break;
-                case "pd":
-                    c = new CommandPenDown();
-                    break;
-                case "pu":
-                    c = new CommandPenUp();
-                    break;
-                case "st":
-                    c = new CommandShowTurtle();
-                    break;
-                case "ht":
-                    c = new CommandHideTurtle();
-                    break;
-                case "home":
-                    c = new CommandHome();
-                    break;
-                case "stamp":
-                    c = new CommandStamp();
-                    break;
-                case "tell":
-                    c = new CommandTell();
-                    if (!scan.hasNextInt()) {
-                        // TODO: Handle
-                        System.err.println("Missing parameters for TELL command!");
-                        return new ArrayList<>();
-                    }
-                    while (scan.hasNextInt())
-                        ((CommandTell) c).getParams().add(scan.nextInt());
-                    break;
-                default:
-                    // TODO: Handle bad input
-                    Alert alert = new Alert(Alert.AlertType.ERROR, myResources.getString("CommandError"));
-                    alert.showAndWait();
-                    return new ArrayList<>();
-            }
+            c = switch (prefix) {
+                case "fd", "bk", "rt", "lt" -> parseCommandWithParameter(scan, prefix);
+                case "tell" -> parseTell(scan);
+                case "pd" -> new CommandPenDown();
+                case "pu" -> new CommandPenUp();
+                case "st" -> new CommandShowTurtle();
+                case "ht" -> new CommandHideTurtle();
+                case "home" -> new CommandHome();
+                case "stamp" -> new CommandStamp();
+                default -> throw new IllegalStateException(myResources.getString("InvalidCommand"));
+            };
             program.add(c);
         }
         return program;
     }
+
+    private Command parseTell(Scanner scan) throws IllegalStateException {
+        Command c;
+        c = new CommandTell();
+        try {
+            c.getParams().add(scan.nextInt());
+        } catch (Exception e) {
+            throw new IllegalStateException(String.format(myResources.getString("MissingParameter"), "Tell"));
+        }
+        return c;
+    }
+
+    private Command parseCommandWithParameter(Scanner scan, String prefix) throws IllegalStateException {
+        Command c;
+        int param;
+        if (scan.hasNextInt())
+            param = scan.nextInt();
+        else
+            throw new IllegalStateException(String.format(myResources.getString("MissingParameter"), prefix));
+        switch (prefix) {
+            case "fd" -> c = new CommandForward();
+            case "bk" -> c = new CommandBackward();
+            case "lt" -> c = new CommandLeft();
+            case "rt" -> c = new CommandRight();
+            default -> throw new IllegalStateException(myResources.getString("InvalidCommand"));
+        }
+        c.setParam(param);
+        return c;
+    }
+
     @Override
-    public List<String> getRecentCommandStrings(){
+    public List<String> getRecentCommandStrings() {
         List<String> recent = new ArrayList<>();
-        for (Command c: program){
+        for (Command c : program) {
             recent.add(c.toString());
         }
         return recent;
     }
+
     public void setLanguage(ResourceBundle resources) {
         myResources = resources;
     }

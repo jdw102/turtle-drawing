@@ -15,7 +15,7 @@ import static oolala.Main.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class TurtleViewTest extends DukeApplicationTest {
-    private final int SIZE_WIDTH = 800;
+    private final int SIZE_WIDTH = 840;
     private final int SIZE_HEIGHT = 650;
     private final String TITLE = "Oolala";
     private final String STYLESHEET = "default.css";

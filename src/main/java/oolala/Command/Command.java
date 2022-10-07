@@ -13,7 +13,7 @@ import java.util.ArrayList;
  *
  * @author Aditya Paul
  */
-public class Command {
+public abstract class Command {
     public CommandName prefix;
 
     public void setParam(int param) {
