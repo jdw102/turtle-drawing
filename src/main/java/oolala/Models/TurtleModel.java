@@ -1,10 +1,8 @@
 package oolala.Models;
 
-import javafx.geometry.Pos;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.ImageView;
 import javafx.scene.shape.Rectangle;
-import oolala.Views.ViewComponents.CanvasScreen;
 
 public class TurtleModel {
     public static final int DEFAULT_ANGLE = 0;
@@ -58,6 +56,7 @@ public class TurtleModel {
             x = this.posX + distY / Math.tan(Math.toRadians(this.angle + 90));
         }
         setPosition(x, y);
+        updateRelativePosition();
         return new Position(x, y);
     }
 
@@ -78,12 +77,15 @@ public class TurtleModel {
         penDown = false;
     }
 
-    public void updateRelativePosition(ImageView i, Tooltip tooltip) {
+    public void setTooltipRelativePosition(ImageView i, Tooltip tooltip) {
+        tooltip.setText("x: " + Double.toString(Math.round(relX)) + " y: " + Double.toString(Math.round(relY)));
+    }
+
+    public void updateRelativePosition(){
         double width = xMax - xMin;
         double height = yMax - yMin;
-        relX = i.getX() - xMin - width / 2 + i.getFitWidth() / 2;
-        relY = -(i.getY() - yMin - height / 2 + i.getFitWidth() / 2);
-        tooltip.setText("x: " + Double.toString(Math.round(relX)) + " y: " + Double.toString(Math.round(relY)));
+        relX = posX- xMin - width / 2;
+        relY = - posY + yMin + height / 2;
     }
 
     public boolean isPenDown() {
@@ -115,11 +117,7 @@ public class TurtleModel {
         return yMax;
     }
 
-    public double getRelX() {
-        return relX;
-    }
-
-    public double getRelY() {
-        return relY;
+    public Position getRelPos(){
+        return new Position(relX, relY);
     }
 }

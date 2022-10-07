@@ -31,7 +31,7 @@ public class TurtleView {
     public ImageView icon;
     public ArrayList<ImageView> stamps;
     private double iconSize;
-    private Tooltip position;
+    private Tooltip tooltip;
     private final double TURTLE_SPEED = 100;
     private Group shapes;
     private RunningStatus runningStatus;
@@ -41,15 +41,15 @@ public class TurtleView {
         this.runningStatus = runningStatus;
         canvasScreen = screen;
         this.animation = animation;
-        this.shapes = screen.getShapes();
-        this.iconSize = DEFAULT_ICON_SIZE;
-        this.model = new TurtleModel(posX, posY, screen.getBorderRectangle(), iconSize);
+        shapes = canvasScreen.getShapes();
+        iconSize = DEFAULT_ICON_SIZE;
+        model = new TurtleModel(posX, posY, screen.getBorderRectangle(), iconSize);
         this.stampUrl = stampUrl;
-        this.homeX = model.getPos().PosX;
-        this.homeY = model.getPos().PosY;
-        this.position = new Tooltip();
+        homeX = model.getPos().PosX;
+        homeY = model.getPos().PosY;
+        tooltip = new Tooltip();
         this.icon = createIcon(model.getPos().PosX, model.getPos().PosY, iconSize, turtleIconUrl);
-        installPositionLabel(icon, position);
+        installPositionLabel(icon, tooltip);
         this.stamps = new ArrayList<>();
     }
 
@@ -103,7 +103,7 @@ public class TurtleView {
         fadeOut.setOnFinished(event -> {
             System.out.println("test");
             moveIcon(homeX, homeY);
-            model.updateRelativePosition(icon, position);
+            model.setTooltipRelativePosition(icon, tooltip);
         });
         FadeTransition fadeIn = new FadeTransition(Duration.seconds(0.25), icon);
         fadeIn.setFromValue(0.0);
@@ -132,7 +132,7 @@ public class TurtleView {
         this.icon.setX(x - iconSize / 2);
         this.icon.setY(y - iconSize / 2);
         this.icon.toFront();
-        model.updateRelativePosition(icon, position);
+        model.setTooltipRelativePosition(icon, tooltip);
     }
 
     private ImageView createIcon(double x, double y, double size, String url) {
@@ -150,7 +150,7 @@ public class TurtleView {
         i.setOnMouseEntered(event -> onHover());
         i.setOnMouseExited(event -> offHover());
         i.setOnMouseDragged(event -> onDrag(event, runningStatus));
-        model.updateRelativePosition(i, tooltip);
+        model.setTooltipRelativePosition(i, tooltip);
         Tooltip.install(i, tooltip);
     }
 
@@ -205,12 +205,16 @@ public class TurtleView {
     public void changeIcon(String s) {
         shapes.getChildren().remove(icon);
         icon = createIcon(model.getPos().PosX, model.getPos().PosY, iconSize, s);
-        installPositionLabel(icon, position);
+        installPositionLabel(icon, tooltip);
         shapes.getChildren().add(icon);
     }
 
     public void changeStamp(String s) {
         stampUrl = s;
+    }
+
+    public TurtleModel getModel() {
+        return model;
     }
 }
 

@@ -41,7 +41,7 @@ public abstract class AppModel {
     }
 
     public TurtleView addNewTurtle(){
-        TurtleView turtleView =  new  TurtleView(homeX, homeY, myCanvas, turtleStamp, turtleIcon, runningStatus, animation);
+        TurtleView turtleView =  new TurtleView(homeX, homeY, myCanvas, turtleStamp, turtleIcon, runningStatus, animation);
         return turtleView;
     }
 
@@ -90,14 +90,6 @@ public abstract class AppModel {
 
     public Parser getParser() {
         return parser;
-    }
-
-    public String getTurtleIconUrl() {
-        return turtleIcon;
-    }
-
-    public String getStampIconUrl() {
-        return turtleStamp;
     }
 
     public void changeImage(String url) {}
