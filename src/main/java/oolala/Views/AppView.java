@@ -68,6 +68,7 @@ public abstract class AppView {
         animation.setRate(3);
         animation.setOnFinished(event -> {
             enableInputs();
+            currentAppModel.setRunning(false);
         });
     }
 
@@ -95,16 +96,16 @@ public abstract class AppView {
         root.setPadding(new Insets(10, 10, 10, 10));
         return root;
     }
-
+    private void stopAnimation(){
+        animation.stop();
+        animation.getChildren().removeAll(animation.getChildren());
+    }
     public HBox makeLeftToolbarHBox() {
-        EventHandler<ActionEvent> passCommands = makePassCommandEventEventHandler();
-        EventHandler<ActionEvent> clearText = event -> terminal.getTextArea().clear();
-        runButton = makeButton("RunButton", passCommands);
-        Button clearTextButton = makeButton("ClearTextButton", clearText);
+        runButton = makeButton("RunButton", event  -> runModel());
+        Button clearTextButton = makeButton("ClearTextButton", event -> terminal.getTextArea().clear());
         Button fileOpenButton = makeButton("ImportButton", openFileChooserEventHandler());
         Button saveButton = makeButton("SaveButton", makeSaveFileEventHandler());
         HBox hBox = new HBox();
-
         saveButton.getStyleClass().add("left-hbox-button");
         runButton.getStyleClass().add("left-hbox-button");
         clearTextButton.getStyleClass().add("left-hbox-button");
@@ -116,16 +117,12 @@ public abstract class AppView {
     }
 
     public HBox makeRightToolbarHBox() {
-        EventHandler<ActionEvent> clearCommand = makeClearCommandEventEventHandler();
-        EventHandler<ActionEvent> resetCommand = event -> currentAppModel.reset(true);
-        EventHandler<ActionEvent> saveCommand = makeSaveFileImgEventHandler();
-        EventHandler<ActionEvent> thicknessCommand = event -> canvasScreen.setThickness(thicknessTextField.getText());
-        Button clearButton = makeButton("ClearCanvasButton", clearCommand);
-        Button resetButton = makeButton("ResetTurtleButton", resetCommand);
-        Button saveButton = makeButton("SaveButton", saveCommand);
+        Button clearButton = makeButton("ClearCanvasButton", event -> resetModel(false));
+        Button resetButton = makeButton("ResetTurtleButton", event -> resetModel(true));
+        Button saveButton = makeButton("SaveButton", makeSaveFileImgEventHandler());
         EventHandler<ActionEvent> setBrushColor = event -> canvasScreen.setBrushColor(colorPicker.getValue());
         EventHandler<ActionEvent> setColorBackGround = event -> canvasScreen.getBorderRectangle().setFill(colorPickerBackGround.getValue());
-        thicknessTextField = makeTextField("ThicknessTextField", "3", thicknessCommand);
+        thicknessTextField = makeTextField("ThicknessTextField", "3", event -> canvasScreen.setThickness(thicknessTextField.getText()));
         thicknessTextField.setTooltip(new Tooltip(myResources.getString("ThicknessTextField")));
         colorPicker = makeColorPicker(setBrushColor, Color.BLACK, "BrushColorPicker");
         colorPickerBackGround = makeColorPicker(setColorBackGround, Color.AZURE, "CanvasColorPicker");
@@ -134,36 +131,31 @@ public abstract class AppView {
         hBox.getStyleClass().add("right-hbox");
         return hBox;
     }
-
-    private EventHandler<ActionEvent> makeClearCommandEventEventHandler() {
-        EventHandler<ActionEvent> clearCommand = event -> {
-            currentAppModel.reset(false);
-            enableInputs();
-        };
-        return clearCommand;
+    private void resetModel(boolean resetHome){
+        stopAnimation();
+        currentAppModel.reset(resetHome);
+        enableInputs();
     }
 
     public void setUpTextAreaKeyCombination() {
         KeyCombination keyCombination = new KeyCodeCombination(KeyCode.ENTER, KeyCombination.ALT_DOWN);
-        EventHandler<KeyEvent> runKeyCombinationEventHandler = event -> {
-            if (keyCombination.match(event)) {
-                List<Command> commands = currentAppModel.getParser().parse(terminal.getTextArea().getText().toLowerCase());
-                terminal.updateRecentlyUsed(commands, terminal.getRecentlyUsed());
-                currentAppModel.runApp(commands, this);
-                disableInputs();
-            }
-        };
-        terminal.getTextArea().setOnKeyPressed(runKeyCombinationEventHandler);
+        terminal.getTextArea().setOnKeyPressed(event -> {
+            if (keyCombination.match(event)) runModel();
+        });
     }
-
-    private EventHandler<ActionEvent> makePassCommandEventEventHandler() {
-        EventHandler<ActionEvent> passCommand = event -> {
-            List<Command> commands = currentAppModel.getParser().parse(terminal.getTextArea().getText().toLowerCase());
-            System.out.println(terminal.getTextArea().getText());
-            terminal.updateRecentlyUsed(commands, terminal.getRecentlyUsed());
-            currentAppModel.runApp(commands, this);
-        };
-        return passCommand;
+    private void runModel(){
+        List<Command> commands = currentAppModel.getParser().parse(terminal.getTextArea().getText().toLowerCase());
+        terminal.updateRecentlyUsed(currentAppModel.getParser().getRecentCommandStrings());
+        currentAppModel.runApp(commands, this, animation);
+        disableInputs();
+        if (animation.getChildren().size() == 0) {
+            currentAppModel.setRunning(false);
+            enableInputs();
+        }
+        else{
+            animation.play();
+            animation.getChildren().removeAll(animation.getChildren());
+        }
     }
 
     public EventHandler<ActionEvent> openFileChooserEventHandler() {

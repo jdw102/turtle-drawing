@@ -1,5 +1,6 @@
 package oolala.Models;
 
+import javafx.animation.PathTransition;
 import javafx.animation.SequentialTransition;
 import oolala.Views.ViewComponents.CanvasScreen;
 import oolala.Command.Command;
@@ -13,35 +14,29 @@ public abstract class AppModel {
     public CanvasScreen myCanvas;
     public Map<Integer, TurtleView> turtles;
     public List<Integer> currTurtleIdxs;
-    public SequentialTransition animation;
     public ResourceBundle myResources;
     public Parser parser;
     public double homeX;
     public double homeY;
-    public boolean running = false;
+    public boolean running;
     public String turtleIcon;
     public String turtleStamp;
     public boolean turtlesInBound;
 
     //TODO: Can we create polymorphism for parser?
 
-    public AppModel(CanvasScreen canvas, ResourceBundle resources, String imageUrl, AppView display, SequentialTransition animation) {
-        this.animation = animation;
+    public AppModel(CanvasScreen canvas, ResourceBundle resources, String imageUrl, AppView display) {
+        running = false;
         myCanvas = canvas;
         myResources = resources;
         turtles = new HashMap<>();
         currTurtleIdxs = new ArrayList<>();
         homeX = 0;
         homeY = 0;
-        animation.setOnFinished(event ->{
-            display.enableInputs();
-        });
         turtlesInBound = true;
     }
 
-    public void runApp(List<Command> commands, AppView display) {
-        running = true;
-        display.disableInputs();
+    public void runApp(List<Command> commands, AppView display, SequentialTransition animation) {
     }
 
     public List<Integer> getCurrTurtleIdxs() {
@@ -63,14 +58,15 @@ public abstract class AppModel {
         turtles.put(1, new TurtleView(homeX, homeY, myCanvas, this));
         myCanvas.getShapes().getChildren().add(turtles.get(1).getIcon()); // TODO: We should probably refactor this for scalability
         currTurtleIdxs.add(1);
-        animation.stop();
         running = false;
-        animation.getChildren().removeAll(animation.getChildren());
         turtlesInBound = true;
     }
 
     public boolean isRunning() {
         return running;
+    }
+    public void setRunning(boolean b){
+        running = b;
     }
 
     public void setHome(double x, double y) {

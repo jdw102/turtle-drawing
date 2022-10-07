@@ -1,5 +1,6 @@
 package oolala.Models;
 
+import javafx.animation.Animation;
 import javafx.animation.SequentialTransition;
 import oolala.Views.ViewComponents.CanvasScreen;
 import oolala.Command.Command;
@@ -15,8 +16,8 @@ import java.util.ResourceBundle;
 import static oolala.Command.Command.CmdName.TELL;
 
 public class LogoModel extends AppModel {
-    public LogoModel(CanvasScreen canvas, ResourceBundle myResources, String iconUrl, AppView display, SequentialTransition animation) {
-        super(canvas, myResources, iconUrl, display, animation);
+    public LogoModel(CanvasScreen canvas, ResourceBundle myResources, String iconUrl, AppView display) {
+        super(canvas, myResources, iconUrl, display);
         turtleStamp = myResources.getString(iconUrl);
         turtleIcon = myResources.getString(iconUrl);
         parser = new LogoParser(myResources);
@@ -27,8 +28,9 @@ public class LogoModel extends AppModel {
     }
 
     @Override
-    public void runApp(List<Command> commands, AppView display) {
-        super.runApp(commands, display);
+    public void runApp(List<Command> commands, AppView display, SequentialTransition animation) {
+        running = true;
+        super.runApp(commands, display, animation);
         Iterator<Command> itCmd = commands.iterator();
         while (itCmd.hasNext() && turtlesInBound) {
             Command instruction = itCmd.next();
@@ -54,8 +56,6 @@ public class LogoModel extends AppModel {
             }
             itCmd.remove();
         }
-        animation.play();
-        animation.getChildren().removeAll(animation.getChildren());
     }
     @Override
     public void changeImage(String url){

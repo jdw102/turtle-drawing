@@ -45,11 +45,9 @@ public abstract class Terminal {
         return listView;
     }
 
-    public void updateRecentlyUsed(List<Command> commands, ListView recentlyUsed) {
+    public void updateRecentlyUsed(List<String> commands) {
         Set<String> commandSet = new HashSet<>();
-        for (Command c : commands) {
-            commandSet.add(c.toString());
-        }
+        commandSet.addAll(commands);
         ObservableList<String> displayedLines = FXCollections.observableArrayList(recentlyUsed.getItems());
         List<String> commandList = new ArrayList<>();
         for (String s : commandSet) {
