@@ -3,6 +3,7 @@ package oolala.Models;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.ImageView;
 import javafx.scene.shape.Rectangle;
+
 /**
  * A model class to hold information about the turtles position, bounds, and bearing and
  * communicate with the turtle view and adjust according to commands.
@@ -33,10 +34,11 @@ public class TurtleModel {
         this.inBounds = true;
         calcBounds(border, iconSize);
     }
+
     /**
      * A method to calculate the maximum and minimum x and y coordinates that the turtle view is allowed to move to.
      *
-     * @param r - The rectangle that defines the boundaries.
+     * @param r        - The rectangle that defines the boundaries.
      * @param iconSize - The size of the image view icon.
      * @author Jerry Worthy
      */
@@ -46,6 +48,7 @@ public class TurtleModel {
         yMin = r.getY() + iconSize / 2;
         yMax = r.getY() + r.getHeight() - iconSize / 2;
     }
+
     /**
      * A method to calculate the new coordinates after traveling a distance in the direction
      * of the model's current angle value. It adjusts the new x and y positions accordingly if
@@ -60,22 +63,22 @@ public class TurtleModel {
         double x = this.posX + dist * Math.cos(Math.toRadians(this.angle + 90));
         double y = this.posY - dist * Math.sin(Math.toRadians(this.angle + 90));
         inBounds = !(x > xMax || x < xMin || y > yMax || y < yMin);
-        if (x > xMax){
+        if (x > xMax) {
             double distX = xMax - this.posX;
             x = xMax;
             y = this.posY - distX * Math.tan(Math.toRadians(this.angle + 90));
         }
-        if (x < xMin){
+        if (x < xMin) {
             double distX = xMin - this.posX;
             x = xMin;
             y = this.posY - distX * Math.tan(Math.toRadians(this.angle + 90));
         }
-        if (y > yMax){
+        if (y > yMax) {
             double distY = this.posY - yMax;
             y = yMax;
             x = this.posX + distY / Math.tan(Math.toRadians(this.angle + 90));
         }
-        if (y < yMin){
+        if (y < yMin) {
             double distY = this.posY - yMin;
             y = yMin;
             x = this.posX + distY / Math.tan(Math.toRadians(this.angle + 90));
@@ -85,7 +88,7 @@ public class TurtleModel {
         return new Position(x, y);
     }
 
-    public boolean inBounds(){
+    public boolean inBounds() {
         return inBounds;
     }
 
@@ -107,7 +110,7 @@ public class TurtleModel {
         penDown = false;
     }
 
-    public void setShown(boolean shown){
+    public void setShown(boolean shown) {
         isShown = shown;
     }
 
@@ -123,18 +126,20 @@ public class TurtleModel {
     public void setTooltipRelativePosition(ImageView i, Tooltip tooltip) {
         tooltip.setText("x: " + Double.toString(Math.round(relX)) + " y: " + Double.toString(Math.round(relY)) + ", " + Integer.toString(-angle % 360) + "°");
     }
+
     /**
      * A method to update the position of the model relative to the center of the border rectangle. It is called whenever the actual
      * position is changed. These relative x and y coordinates are to be displayed by the icon tooltip.
      *
      * @author Jerry Worthy
      */
-    public void updateRelativePosition(){
+    public void updateRelativePosition() {
         double width = xMax - xMin;
         double height = yMax - yMin;
-        relX = posX- xMin - width / 2;
-        relY = - posY + yMin + height / 2;
+        relX = posX - xMin - width / 2;
+        relY = -posY + yMin + height / 2;
     }
+
     public boolean isPenDown() {
         return penDown;
     }
@@ -142,6 +147,7 @@ public class TurtleModel {
     public Position getPos() {
         return new Position(posX, posY);
     }
+
     public double getAngle() {
         return angle;
     }
@@ -162,7 +168,7 @@ public class TurtleModel {
         return yMax;
     }
 
-    public Position getRelPos(){
+    public Position getRelPos() {
         return new Position(relX, relY);
     }
 }

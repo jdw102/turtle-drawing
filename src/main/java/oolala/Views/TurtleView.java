@@ -15,7 +15,6 @@ import oolala.Models.RunningStatus;
 import oolala.Views.ViewComponents.CanvasScreen;
 import oolala.Models.TurtleModel;
 
-import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -28,8 +27,8 @@ public class TurtleView {
     private double homeX;
     private double homeY;
     private TurtleModel model;
-    private String stampUrl;
-    private String iconUrl;
+    private String stampPath;
+    private String iconPath;
     public static final double DEFAULT_ICON_SIZE = 30;
     public ImageView icon;
     private double iconSize;
@@ -40,18 +39,18 @@ public class TurtleView {
     private SequentialTransition animation;
     private CanvasScreen canvasScreen;
 
-    public TurtleView(double posX, double posY, CanvasScreen screen, String stampUrl, String turtleIconUrl, RunningStatus runningStatus, SequentialTransition animation, AppModel app) {
+    public TurtleView(double posX, double posY, CanvasScreen screen, String stampPath, String turtleIconPath, RunningStatus runningStatus, SequentialTransition animation, AppModel app) {
         this.runningStatus = runningStatus;
         canvasScreen = screen;
         this.animation = animation;
         shapes = canvasScreen.getShapes();
         iconSize = DEFAULT_ICON_SIZE;
         model = new TurtleModel(posX, posY, screen.getBorderRectangle(), iconSize);
-        this.stampUrl = stampUrl;
+        this.stampPath = stampPath;
         homeX = model.getPos().posX;
         homeY = model.getPos().posY;
         tooltip = new Tooltip();
-        this.icon = createIcon(model.getPos().posX, model.getPos().posY, iconSize, turtleIconUrl);
+        this.icon = createIcon(model.getPos().posX, model.getPos().posY, iconSize, turtleIconPath);
         installPositionLabel(icon, tooltip, app);
     }
     /**
@@ -158,7 +157,7 @@ public class TurtleView {
      * @author Jerry Worthy
      */
     public void stamp() {
-        ImageView s = createIcon(model.getPos().posX, model.getPos().posY, iconSize, stampUrl);
+        ImageView s = createIcon(model.getPos().posX, model.getPos().posY, iconSize, stampPath);
         s.toFront();
         s.setOpacity(0.0);
         canvasScreen.getShapes().getChildren().add(s);
@@ -192,11 +191,11 @@ public class TurtleView {
      * @param x - The x coordinate.
      * @param y - The y coordinate.
      * @param size - The size of the image view.
-     * @param url - The url for the image.
+     * @param path - The path for the image.
      * @author Jerry Worthy
      */
-    private ImageView createIcon(double x, double y, double size, String url) {
-        ImageView i = new ImageView(new Image(url));
+    private ImageView createIcon(double x, double y, double size, String path) {
+        ImageView i = new ImageView(new Image(path));
         i.setFitHeight(size);
         i.setFitWidth(size);
         i.setX(x - size / 2);
@@ -292,28 +291,28 @@ public class TurtleView {
     /**
      * A method to change the turtle icon by removing the old one and creating the new one with the new image.
      *
-     * @param s - The new image url.
+     * @param path - The new image path.
      * @param app - The app model.
      * @author Jerry Worthy
      */
-    public void changeIcon(String s, AppModel app) {
-        iconUrl = s;
+    public void changeIcon(String path, AppModel app) {
+        iconPath = path;
         shapes.getChildren().remove(icon);
-        icon = createIcon(model.getPos().posX, model.getPos().posY, iconSize, iconUrl);
+        icon = createIcon(model.getPos().posX, model.getPos().posY, iconSize, iconPath);
         installPositionLabel(icon, tooltip, app);
         shapes.getChildren().add(icon);
     }
 
     public void changeStamp(String s) {
-        stampUrl = s;
+        stampPath = s;
     }
 
-    public String getStampUrl() {
-        return stampUrl;
+    public String getStampPath() {
+        return stampPath;
     }
 
-    public String getIconUrl() {
-        return iconUrl;
+    public String getIconPath() {
+        return iconPath;
     }
 
     public TurtleModel getModel() {

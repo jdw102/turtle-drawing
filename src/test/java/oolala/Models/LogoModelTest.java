@@ -114,19 +114,19 @@ public class LogoModelTest extends DukeApplicationTest {
         commands.add(command);
         logoModel.runApp(commands);
         logoModel.reset(false);
-        assertEquals(100, logoModel.getHomeX());
-        assertEquals(150, logoModel.getHomeY());
+        assertEquals(100, logoModel.getHomePos().posX);
+        assertEquals(150, logoModel.getHomePos().posY);
         logoModel.reset(true);
-        assertEquals(0, logoModel.getHomeX());
-        assertEquals(0, logoModel.getHomeY());
+        assertEquals(0, logoModel.getHomePos().posX);
+        assertEquals(0, logoModel.getHomePos().posY);
     }
 
     @Test
     void testChangeImage(){
-        String stampUrl = myResources.getString("TriangleArrowIcon");
-        String iconUrl = myResources.getString("TriangleArrowIcon");
-        logoModel.changeImage(stampUrl);
-        assertEquals(stampUrl, logoModel.getTurtles().get(1).getStampUrl());
-        assertEquals(stampUrl, logoModel.getTurtles().get(1).getIconUrl());
+        String stampPath = myResources.getString("TriangleArrowIcon");
+        String iconPath = myResources.getString("TriangleArrowIcon");
+        logoModel.changeImage(stampPath);
+        assertEquals(stampPath, logoModel.getTurtles().get(1).getStampPath());
+        assertEquals(iconPath, logoModel.getTurtles().get(1).getIconPath());
     }
 }

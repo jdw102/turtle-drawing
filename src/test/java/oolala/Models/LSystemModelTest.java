@@ -124,17 +124,17 @@ public class LSystemModelTest extends DukeApplicationTest {
         commands.add(command);
         lSystemModel.runApp(commands);
         lSystemModel.reset(false);
-        assertEquals(100, lSystemModel.getHomeX());
-        assertEquals(150, lSystemModel.getHomeY());
+        assertEquals(100, lSystemModel.getHomePos().posX);
+        assertEquals(150, lSystemModel.getHomePos().posY);
         lSystemModel.reset(true);
-        assertEquals(0, lSystemModel.getHomeX());
-        assertEquals(0, lSystemModel.getHomeY());
+        assertEquals(0, lSystemModel.getHomePos().posX);
+        assertEquals(0, lSystemModel.getHomePos().posY);
     }
 
     @Test
     void testChangeImage(){
-        String stampUrl = myResources.getString("OakLeafStamp");
-        lSystemModel.changeImage(stampUrl);
-        assertEquals(stampUrl, lSystemModel.getTurtles().get(1).getStampUrl());
+        String stampPath = myResources.getString("OakLeafStamp");
+        lSystemModel.changeImage(stampPath);
+        assertEquals(stampPath, lSystemModel.getTurtles().get(1).getStampPath());
     }
 }
