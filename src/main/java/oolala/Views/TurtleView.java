@@ -17,7 +17,6 @@ import oolala.Models.TurtleModel;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 /**
  * A turtle/cursor to draw things with.
@@ -47,10 +46,10 @@ public class TurtleView {
         iconSize = DEFAULT_ICON_SIZE;
         model = new TurtleModel(posX, posY, screen.getBorderRectangle(), iconSize);
         this.stampUrl = stampUrl;
-        homeX = model.getPos().getPosX();
-        homeY = model.getPos().getPosY();
+        homeX = model.getPos().getX();
+        homeY = model.getPos().getY();
         tooltip = new Tooltip();
-        this.icon = createIcon(model.getPos().getPosX(), model.getPos().getPosY(), iconSize, turtleIconUrl);
+        this.icon = createIcon(model.getPos().getX(), model.getPos().getY(), iconSize, turtleIconUrl);
         installPositionLabel(icon, tooltip, app);
     }
 
@@ -69,7 +68,7 @@ public class TurtleView {
     public void move(double dist) {
         Position oldPos = model.getPos();
         Position newPos = model.calculateMove(dist);
-        Line path = createLine(oldPos.getPosX(), oldPos.getPosY(), newPos.getPosX(), newPos.getPosY());
+        Line path = createLine(oldPos.getX(), oldPos.getY(), newPos.getX(), newPos.getY());
         path.setId("Line" + Integer.toString(canvasScreen.getLines().size() + 1));
         canvasScreen.addLine(path);
         animation.getChildren().add(createPathAnimation(path));
@@ -117,7 +116,7 @@ public class TurtleView {
     }
 
     public void stamp() {
-        ImageView s = createIcon(model.getPos().getPosX(), model.getPos().getPosY(), iconSize, stampUrl);
+        ImageView s = createIcon(model.getPos().getX(), model.getPos().getY(), iconSize, stampUrl);
         s.toFront();
         s.setOpacity(0.0);
         canvasScreen.getShapes().getChildren().add(s);
@@ -161,13 +160,15 @@ public class TurtleView {
     private void onDrag(MouseEvent e, RunningStatus runningStatus, AppModel app) {
         double x = e.getX();
         double y = e.getY();
-        if (!runningStatus.getRunningStatus() && x < model.getXMax() && x > model.getXMin() && y > model.getYMin() && y < model.getYMax()) changeHome(x, y, app);
+        if (!runningStatus.getRunningStatus() && app.getMyCanvas().isClear() && x < model.getXMax() && x > model.getXMin() && y > model.getYMin() && y < model.getYMax()) {
+            changeHome(x, y, app);
+        }
     }
 
     public void changeHome(double x, double y, AppModel app) {
         moveIcon(x, y);
         model.setPosition(x, y);
-        app.setHome(model.getRelPos().getPosX(), -model.getRelPos().getPosY());
+        app.setHome(model.getRelPos().getX(), -model.getRelPos().getY());
         //TODO: Restore sethome functionality
         homeX = x;
         homeY = y;
@@ -208,7 +209,7 @@ public class TurtleView {
 
     public void changeIcon(String s, AppModel app) {
         shapes.getChildren().remove(icon);
-        icon = createIcon(model.getPos().getPosX(), model.getPos().getPosY(), iconSize, s);
+        icon = createIcon(model.getPos().getX(), model.getPos().getY(), iconSize, s);
         installPositionLabel(icon, tooltip, app);
         shapes.getChildren().add(icon);
     }

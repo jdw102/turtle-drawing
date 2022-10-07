@@ -45,7 +45,6 @@ public class TurtleCommandAppModelTest extends DukeApplicationTest {
         turtleStamp = myResources.getString("SimpleLeafStamp");
         canvasScreen = new CanvasScreen(myResources);
         runningStatus = new RunningStatus();
-        turtleView = new TurtleView(homeX, homeY, canvasScreen, turtleStamp, turtleIcon, runningStatus, animation);
         turtleModel = turtleView.getModel();
     }
 
@@ -55,8 +54,8 @@ public class TurtleCommandAppModelTest extends DukeApplicationTest {
         command = new CommandForward();
         command.setParam(50);
         command.runCommand(turtleView);
-        assertEquals(0, turtleModel.getRelPos().PosX);
-        assertEquals(50, turtleModel.getRelPos().PosY);
+        assertEquals(0, turtleModel.getRelPos().getX());
+        assertEquals(50, turtleModel.getRelPos().getY());
     }
 
     @Test

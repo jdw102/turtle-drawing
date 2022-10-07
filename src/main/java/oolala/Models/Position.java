@@ -7,10 +7,10 @@ public class Position {
         posX = x;
         posY = y;
     }
-    public double getPosX(){
+    public double getX(){
         return posX;
     }
-    public double getPosY(){
+    public double getY(){
         return posY;
     }
 }
