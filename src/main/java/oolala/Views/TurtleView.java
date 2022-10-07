@@ -1,5 +1,6 @@
 package oolala.Views;
 
+import java.sql.SQLOutput;
 import java.util.Objects;
 import javafx.animation.*;
 import javafx.scene.Node;
@@ -59,9 +60,8 @@ public class TurtleView {
 
   public void turnTurtle(int x, int y, SequentialTransition animation){
     RotateTransition rotate = new RotateTransition(Duration.seconds(0.5), icon);
-    double angle = Math.atan2(y + homeY - this.getModel().getPosY(),
-                            x + homeX - this.getModel().getPosX()) / Math.PI * 180;
-    System.out.println(angle + model.getAngle());
+    double angle = -1 * Math.atan2(homeY - y - this.getModel().getPosY(),
+                                    x + homeX - this.getModel().getPosX()) / Math.PI * 180;
     rotate.setByAngle(angle + model.getAngle());
     model.rotate(angle + model.getAngle());
     animation.getChildren().add(rotate);
