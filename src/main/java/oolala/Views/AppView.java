@@ -5,6 +5,7 @@ import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
@@ -37,14 +38,13 @@ import static oolala.Views.ViewComponents.ViewUtils.*;
  * The origin is at the center of the screen.
  */
 public abstract class AppView {
-    public BorderPane root;
-    public Terminal terminal;
-    public static ResourceBundle myResources;
+    private final BorderPane root;
+    protected Terminal terminal;
+    protected ResourceBundle myResources;
     private static final String DEFAULT_RESOURCE_PACKAGE = "Properties.";
-    private FileChooser fileChooser;
-    private Stage stage;
-    public CanvasScreen canvasScreen;
-    public HBox rightToolBarHBox;
+    private final FileChooser fileChooser;
+    private final Stage stage;
+    protected CanvasScreen canvasScreen;
     private TextField thicknessTextField;
     private ColorPicker colorPickerBackGround;
     private ColorPicker colorPicker;
@@ -55,8 +55,14 @@ public abstract class AppView {
     protected VBox leftVBox;
     private Button runButton;
     protected SequentialTransition animation;
+    private final String STYLESHEET;
+    private final String DARK_MODE_STYLESHEET;
+    private final String DEFAULT_RESOURCE_FOLDER;
 
-    public AppView(Stage stage, String language) {
+    public AppView(Stage stage, String language, String defaultResourceFolder, String styleSheet, String darkModeStyleSheet) {
+        STYLESHEET = styleSheet;
+        DARK_MODE_STYLESHEET = darkModeStyleSheet;
+        DEFAULT_RESOURCE_FOLDER = defaultResourceFolder;
         myResources = ResourceBundle.getBundle(DEFAULT_RESOURCE_PACKAGE + language);
         viewUtils = new ViewUtils(myResources);
         this.stage = stage;
@@ -85,7 +91,7 @@ public abstract class AppView {
     public BorderPane setUpRootBorderPane() {
         setUpTextAreaKeyCombination();
         leftToolBarHBox = makeLeftToolbarHBox();
-        rightToolBarHBox = makeRightToolbarHBox();
+        HBox rightToolBarHBox = makeRightToolbarHBox();
         rightToolBarHBox.getChildren().add(1, imageSelector);
         leftVBox = terminal.getBox();
         leftVBox.getChildren().add(0, leftToolBarHBox);
@@ -96,12 +102,8 @@ public abstract class AppView {
         root.setPadding(new Insets(10, 10, 10, 10));
         return root;
     }
-    private void stopAnimation(){
-        animation.stop();
-        animation.getChildren().removeAll(animation.getChildren());
-    }
     public HBox makeLeftToolbarHBox() {
-        runButton = makeButton("RunButton", event  -> runModel());
+        runButton = makeButton("RunButton", event -> runModel());
         Button clearTextButton = makeButton("ClearTextButton", event -> terminal.getTextArea().clear());
         Button fileOpenButton = makeButton("ImportButton", openFileChooserEventHandler());
         Button saveButton = makeButton("SaveButton", makeSaveFileEventHandler());
@@ -131,8 +133,10 @@ public abstract class AppView {
         hBox.getStyleClass().add("right-hbox");
         return hBox;
     }
+
     private void resetModel(boolean resetHome){
-        stopAnimation();
+        animation.stop();
+        animation.getChildren().removeAll(animation.getChildren());
         currentAppModel.reset(resetHome);
         enableInputs();
     }
@@ -143,16 +147,16 @@ public abstract class AppView {
             if (keyCombination.match(event)) runModel();
         });
     }
-    private void runModel(){
+
+    private void runModel() {
         List<Command> commands = currentAppModel.getParser().parse(terminal.getTextArea().getText().toLowerCase());
         terminal.updateRecentlyUsed(currentAppModel.getParser().getRecentCommandStrings());
-        currentAppModel.runApp(commands, this, animation);
+        currentAppModel.runApp(commands);
         disableInputs();
         if (animation.getChildren().size() == 0) {
             currentAppModel.setRunning(false);
             enableInputs();
-        }
-        else{
+        } else {
             animation.play();
             animation.getChildren().removeAll(animation.getChildren());
         }
@@ -238,7 +242,7 @@ public abstract class AppView {
         colorPicker.setValue(Color.WHITE);
         canvasScreen.getBorderRectangle().setFill(Color.BLACK);
         canvasScreen.setBrushColor(Color.WHITE);
-        root.getStylesheets().add(getClass().getResource(DEFAULT_RESOURCE_FOLDER + DARKMODE_STYLESHEET).toExternalForm());
+        root.getStylesheets().add(getClass().getResource(DEFAULT_RESOURCE_FOLDER + DARK_MODE_STYLESHEET).toExternalForm());
     }
 
     private void setLightMode(Label label) {

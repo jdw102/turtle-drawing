@@ -17,7 +17,7 @@ public class CommandTell extends Command {
         return params;
     }
 
-    public void runCommand(TurtleView turtle, CanvasScreen canvas, SequentialTransition animation) {
+    public void runCommand(TurtleView turtle) {
 
     }
 }
