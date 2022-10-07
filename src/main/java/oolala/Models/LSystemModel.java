@@ -34,7 +34,6 @@ public class LSystemModel extends AppModel {
         Iterator<Command> itCmd = commands.iterator();
         while (itCmd.hasNext() && turtlesInBound) {
             Command instruction = itCmd.next();
-            //TODO: Handle tell command
             if (instruction.prefix == TELL) {
                 currTurtleIdxs.clear();
                 currTurtleIdxs.addAll(instruction.params);

@@ -13,6 +13,7 @@ public class LSystemParser extends Parser {
     public static final int DEFAULT_DIST = 10;
     public static final int DEFAULT_ANGLE = 30;
     public static final int DEFAULT_LEVEL = 3;
+    public static final int DEFAULT_LSF = 1;
     public static final String LENGTH_MARKER = "length";
     public static final String ANGLE_MARKER = "angle";
     public static final String QUOTE_REGEX = "([\"'])(?:(?=(\\\\?))\\2.)*?\\1";
@@ -26,6 +27,7 @@ public class LSystemParser extends Parser {
     private int dist = DEFAULT_DIST;
     private int ang = DEFAULT_ANGLE;
     private int level = DEFAULT_LEVEL;
+    private int lsf = DEFAULT_LSF;
     private Map<Character, String> alphabet;
     private Map<Character, String> rules;
     private String start;
@@ -62,7 +64,7 @@ public class LSystemParser extends Parser {
             for (int j = 0; j < expanded.length(); j++) {
                 if (rules.containsKey(expanded.charAt(j))) {
                     nextLevel = nextLevel.concat(rules.get(expanded.charAt(j)));
-                }  else {
+                } else {
                     nextLevel = nextLevel.concat(Character.toString(expanded.charAt(j)));
                 }
             }
@@ -73,18 +75,28 @@ public class LSystemParser extends Parser {
 
     public String getCommandString(String expansion) {
         String commandString = "";
+        int lsfPowers = 0;
         for (int i = 0; i < expansion.length(); i++) {
             char currChar = expansion.charAt(i);
             if (alphabet.containsKey(currChar)) {
                 seenCommands.add(Character.toString(currChar).toUpperCase());
                 String cmd = alphabet.get(currChar);
                 if (usingRandomDist)
-                    dist = (int) Math.round(Math.random() * (distMax - distMin) + distMin);
+                    dist = (int) Math.round(Math.random() * (distMax - distMin) + distMin) * (int) Math.pow(lsf, lsfPowers);
                 if (usingRandomAngle)
-                    dist = (int) Math.round(Math.random() * (angMax - angMin) + angMin);
-                cmd = cmd.replace(LENGTH_MARKER, Integer.toString(this.getDist()));
+                    dist = (int) Math.round(Math.random() * (angMax - angMin) + angMin) * (int) Math.pow(lsf, lsfPowers);
+                cmd = cmd.replace(LENGTH_MARKER, Integer.toString(this.getDist() * (int) Math.pow(lsf, lsfPowers)));
                 cmd = cmd.replace(ANGLE_MARKER, Integer.toString(this.getAng()));
                 commandString = commandString.concat(cmd).concat(" ");
+            } else {
+                switch (currChar) {
+                    case '<' -> {
+                        lsfPowers++;
+                    }
+                    case '>' -> {
+                        lsfPowers--;
+                    }
+                }
             }
         }
         return commandString;
@@ -170,10 +182,17 @@ public class LSystemParser extends Parser {
     public List<Command> parse(String input) {
         reset();
         parseConfig(input);
-        System.out.println(getCommandString(applyRules()));
         return logoParser.parse(getCommandString(applyRules()));
     }
     public List<String> getRecentCommandStrings(){
         return seenCommands;
+    }
+
+    public int getLsf() {
+        return lsf;
+    }
+
+    public void setLsf(int lsf) {
+        this.lsf = lsf;
     }
 }

@@ -100,27 +100,16 @@ public class TurtleView {
     animation.getChildren().add(fadeIn);
   }
 
+  @Deprecated // Use this.goTo(0, 0, animation) instead
   public void home(SequentialTransition animation){
-    FadeTransition fadeOut = new FadeTransition(Duration.seconds(0.25), icon);
-    fadeOut.setFromValue(icon.getOpacity());
-    fadeOut.setToValue(0.0);
-    model.setPosition(homeX, homeY);
-    fadeOut.setOnFinished(event -> {
-      System.out.println("test");
-      moveIcon(homeX, homeY);
-      model.updateRelativePosition(icon, position);
-    } );
-    FadeTransition fadeIn = new FadeTransition(Duration.seconds(0.25), icon);
-    fadeIn.setFromValue(0.0);
-    fadeIn.setToValue(icon.getOpacity());
-    animation.getChildren().add(fadeOut);
-    animation.getChildren().add(fadeIn);
+    this.goTo(0, 0, animation);
   }
 
   /**
+   * Clears all lines drawn by the current turtle. Still under development.
    *
-   * @param canvas
-   * @param animation
+   * @param canvas The current screen object being drawn
+   * @param animation The transitions for the current object
    */
   public void clear(CanvasScreen canvas, SequentialTransition animation){
     canvas.getLines().removeIf(i -> this.getIcon().getId().equals(i.getId())); // TODO: Fix this
