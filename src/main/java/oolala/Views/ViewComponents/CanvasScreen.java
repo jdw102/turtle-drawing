@@ -32,8 +32,8 @@ public class CanvasScreen {
     private Color backgroundColor = Color.WHITE;
     private Double thickness = 3.0;
     private final int START_X = 320;
-    private final int START_Y = 55;
-    private final int WIDTH = 500;
+    private final int START_Y = 56;
+    private final int WIDTH = 510;
     private final int HEIGHT = 556;
     private List<Line> lines;
 
@@ -46,6 +46,8 @@ public class CanvasScreen {
         borderRectangle.setId("BorderRectangle");
         shapes.getChildren().add(borderRectangle);
         borderRectangle.setFill(backgroundColor);
+        borderRectangle.setArcHeight(10);
+        borderRectangle.setArcWidth(10);
         lines = new ArrayList<>();
     }
 

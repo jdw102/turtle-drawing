@@ -99,6 +99,7 @@ public abstract class AppView {
         root.setPadding(new Insets(10, 10, 10, 10));
         return root;
     }
+
     public HBox makeLeftToolbarHBox() {
         runButton = makeButton("RunButton", event -> runModel());
         Button clearTextButton = makeButton("ClearTextButton", event -> terminal.getTextArea().clear());
@@ -131,7 +132,7 @@ public abstract class AppView {
         return hBox;
     }
 
-    private void resetModel(boolean resetHome){
+    private void resetModel(boolean resetHome) {
         animation.stop();
         animation.getChildren().removeAll(animation.getChildren());
         currentAppModel.reset(resetHome);
@@ -146,17 +147,28 @@ public abstract class AppView {
     }
 
     private void runModel() {
-        List<Command> commands = currentAppModel.getParser().parse(terminal.getTextArea().getText().toLowerCase());
-        terminal.updateRecentlyUsed(currentAppModel.getParser().getRecentCommandStrings());
-        currentAppModel.runApp(commands);
-        disableInputs();
-        if (animation.getChildren().size() == 0) {
-            currentAppModel.setRunningStatus(false);
-            enableInputs();
-        } else {
-            animation.play();
-            animation.getChildren().removeAll(animation.getChildren());
+        try {
+            List<Command> commands = currentAppModel.getParser().parse(terminal.getTextArea().getText().toLowerCase());
+            terminal.updateRecentlyUsed(currentAppModel.getParser().getRecentCommandStrings());
+            currentAppModel.runApp(commands);
+            disableInputs();
+            if (animation.getChildren().size() == 0) {
+                currentAppModel.setRunningStatus(false);
+                enableInputs();
+            } else {
+                animation.play();
+                animation.getChildren().removeAll(animation.getChildren());
+            }
+        } catch (Exception e) {
+            showError(e.getMessage());
         }
+    }
+
+    private void showError(String message) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("ERROR");
+        alert.setContentText(message);
+        alert.showAndWait();
     }
 
     public EventHandler<ActionEvent> openFileChooserEventHandler() {

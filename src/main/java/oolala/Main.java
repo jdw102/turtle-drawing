@@ -19,7 +19,7 @@ import oolala.Views.StartingView;
  * Feel free to completely change this code or delete it entirely.
  */
 public class Main extends Application {
-    private final int SIZE_WIDTH = 800;
+    private final int SIZE_WIDTH = 840;
     private final int SIZE_HEIGHT = 650;
     private final int START_WIDTH = 400;
     private final int START_HEIGHT = 500;
