@@ -16,12 +16,14 @@ public class TurtleModel {
     private double yMin;
     private double relX;
     private double relY;
+    private boolean inBounds;
 
     public TurtleModel(double posX, double posY, Rectangle border, double iconSize) {
         this.posX = posX + border.getX() + border.getWidth() / 2;
         this.posY = posY + border.getY() + border.getHeight() / 2;
         this.angle = DEFAULT_ANGLE;
         this.penDown = true;
+        this.inBounds = true;
         calcBounds(border, iconSize);
     }
 
@@ -35,22 +37,23 @@ public class TurtleModel {
     public Position calculateMove(double dist) {
         double x = this.posX + dist * Math.cos(Math.toRadians(this.angle + 90));
         double y = this.posY - dist * Math.sin(Math.toRadians(this.angle + 90));
-        if (x > xMax) {
+        inBounds = !(x > xMax || x < xMin || y > yMax || y < yMin);
+        if (x > xMax){
             double distX = xMax - this.posX;
             x = xMax;
             y = this.posY - distX * Math.tan(Math.toRadians(this.angle + 90));
         }
-        if (x < xMin) {
+        if (x < xMin){
             double distX = xMin - this.posX;
             x = xMin;
             y = this.posY - distX * Math.tan(Math.toRadians(this.angle + 90));
         }
-        if (y > yMax) {
+        if (y > yMax){
             double distY = this.posY - yMax;
             y = yMax;
             x = this.posX + distY / Math.tan(Math.toRadians(this.angle + 90));
         }
-        if (y < yMin) {
+        if (y < yMin){
             double distY = this.posY - yMin;
             y = yMin;
             x = this.posX + distY / Math.tan(Math.toRadians(this.angle + 90));
@@ -58,6 +61,10 @@ public class TurtleModel {
         setPosition(x, y);
         updateRelativePosition();
         return new Position(x, y);
+    }
+
+    public boolean inBounds(){
+        return inBounds;
     }
 
     public void setPosition(double x, double y) {

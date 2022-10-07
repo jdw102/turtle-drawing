@@ -2,11 +2,7 @@ package oolala.Views.ViewComponents;
 
 import javafx.event.EventHandler;
 import javafx.scene.input.MouseEvent;
-import oolala.Models.AppModel;
 import oolala.Parsers.LSystemParser;
-import oolala.Parsers.Parser;
-import oolala.Views.AppView;
-import oolala.Views.ViewUtils;
 
 import java.util.ResourceBundle;
 
@@ -32,8 +28,9 @@ public class LSystemTerminal extends Terminal {
         lengthSlider.setHandler(lengthChange);
         angleSlider.setHandler(angleChange);
         levelSlider.setHandler(levelChange);
-        box.getChildren().add(2, lengthSlider.getSliderBox());
-        box.getChildren().add(2, angleSlider.getSliderBox());
-        box.getChildren().add(2, levelSlider.getSliderBox());
+        box.getChildren().add(1, lengthSlider.getSliderBox());
+        box.getChildren().add(1, angleSlider.getSliderBox());
+        box.getChildren().add(1, levelSlider.getSliderBox());
     }
+    
 }

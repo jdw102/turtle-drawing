@@ -5,6 +5,7 @@ import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
@@ -20,13 +21,16 @@ import oolala.Models.AppModel;
 import oolala.Views.ViewComponents.CanvasScreen;
 import oolala.Command.Command;
 import oolala.Views.ViewComponents.Terminal;
-import oolala.Views.ViewComponents.ToolBar;
+import oolala.Views.ViewComponents.ViewUtils;
 
 import javax.imageio.ImageIO;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
+
+import static oolala.Main.*;
+import static oolala.Views.ViewComponents.ViewUtils.*;
 
 /**
  * @Author Luyao Wang
@@ -46,7 +50,7 @@ public abstract class AppView {
     private ColorPicker colorPicker;
     protected AppModel currentAppModel;
     protected ComboBox<ImageView> imageSelector;
-    protected ToolBar toolBar;
+    protected ViewUtils viewUtils;
     protected HBox leftToolBarHBox;
     protected VBox leftVBox;
     private Button runButton;
@@ -60,17 +64,18 @@ public abstract class AppView {
         DARK_MODE_STYLESHEET = darkModeStyleSheet;
         DEFAULT_RESOURCE_FOLDER = defaultResourceFolder;
         myResources = ResourceBundle.getBundle(DEFAULT_RESOURCE_PACKAGE + language);
+        viewUtils = new ViewUtils(myResources);
         this.stage = stage;
         fileChooser = new FileChooser();
         root = new BorderPane();
         root.getStyleClass().add("border-pane");
         canvasScreen = new CanvasScreen(myResources);
-        toolBar = new ToolBar(myResources);
-
         animation = new SequentialTransition();
         animation.setRate(3);
         animation.setOnFinished(event -> {
-            currentAppModel.enableInputs(imageSelector, runButton);
+            enableInputs();
+            currentAppModel.setRunning(false);
+            //            currentAppModel.enableInputs(imageSelector, runButton);
         });
     }
 
@@ -88,16 +93,16 @@ public abstract class AppView {
         root.setPadding(new Insets(10, 10, 10, 10));
         return root;
     }
-
+    private void stopAnimation(){
+        animation.stop();
+        animation.getChildren().removeAll(animation.getChildren());
+    }
     public HBox makeLeftToolbarHBox() {
-        EventHandler<ActionEvent> passCommands = makePassCommandEventEventHandler();
-        EventHandler<ActionEvent> clearText = event -> terminal.getTextArea().clear();
-        runButton = toolBar.makeButton("RunButton", passCommands);
-        Button clearTextButton = toolBar.makeButton("ClearTextButton", clearText);
-        Button fileOpenButton = toolBar.makeButton("ImportButton", openFileChooserEventHandler());
-        Button saveButton = toolBar.makeButton("SaveButton", makeSaveFileEventHandler());
+        runButton = makeButton("RunButton", event  -> runModel());
+        Button clearTextButton = makeButton("ClearTextButton", event -> terminal.getTextArea().clear());
+        Button fileOpenButton = makeButton("ImportButton", openFileChooserEventHandler());
+        Button saveButton = makeButton("SaveButton", makeSaveFileEventHandler());
         HBox hBox = new HBox();
-
         saveButton.getStyleClass().add("left-hbox-button");
         runButton.getStyleClass().add("left-hbox-button");
         clearTextButton.getStyleClass().add("left-hbox-button");
@@ -109,54 +114,45 @@ public abstract class AppView {
     }
 
     public HBox makeRightToolbarHBox() {
-        EventHandler<ActionEvent> clearCommand = makeClearCommandEventEventHandler();
-        EventHandler<ActionEvent> resetCommand = event -> currentAppModel.reset(true);
-        EventHandler<ActionEvent> saveCommand = makeSaveFileImgEventHandler();
-        EventHandler<ActionEvent> thicknessCommand = event -> canvasScreen.setThickness(thicknessTextField.getText());
-        Button clearButton = toolBar.makeButton("ClearCanvasButton", clearCommand);
-        Button resetButton = toolBar.makeButton("ResetTurtleButton", resetCommand);
-        Button saveButton = toolBar.makeButton("SaveButton", saveCommand);
+        Button clearButton = makeButton("ClearCanvasButton", event -> resetModel(false));
+        Button resetButton = makeButton("ResetTurtleButton", event -> resetModel(true));
+        Button saveButton = makeButton("SaveButton", makeSaveFileImgEventHandler());
         EventHandler<ActionEvent> setBrushColor = event -> canvasScreen.setBrushColor(colorPicker.getValue());
         EventHandler<ActionEvent> setColorBackGround = event -> canvasScreen.getBorderRectangle().setFill(colorPickerBackGround.getValue());
-        thicknessTextField = toolBar.makeTextField("Thickness", "3", thicknessCommand);
+        thicknessTextField = makeTextField("ThicknessTextField", "3", event -> canvasScreen.setThickness(thicknessTextField.getText()));
         thicknessTextField.setTooltip(new Tooltip(myResources.getString("ThicknessTextField")));
-        colorPicker = toolBar.makeColorPicker(setBrushColor, Color.BLACK, "BrushColorPicker");
-        colorPickerBackGround = toolBar.makeColorPicker(setColorBackGround, Color.AZURE, "CanvasColorPicker");
+        colorPicker = makeColorPicker(setBrushColor, Color.BLACK, "BrushColorPicker");
+        colorPickerBackGround = makeColorPicker(setColorBackGround, Color.AZURE, "CanvasColorPicker");
         HBox modeSlider = makeDisplayModeSwitcher();
         HBox hBox = new HBox(modeSlider, colorPickerBackGround, colorPicker, thicknessTextField, clearButton, resetButton, saveButton);
         hBox.getStyleClass().add("right-hbox");
         return hBox;
     }
-
-    private EventHandler<ActionEvent> makeClearCommandEventEventHandler() {
-        EventHandler<ActionEvent> clearCommand = event -> {
-            currentAppModel.reset(false);
-            currentAppModel.enableInputs(imageSelector, runButton);
-        };
-        return clearCommand;
+    private void resetModel(boolean resetHome){
+        stopAnimation();
+        currentAppModel.reset(resetHome);
+        enableInputs();
     }
 
     public void setUpTextAreaKeyCombination() {
         KeyCombination keyCombination = new KeyCodeCombination(KeyCode.ENTER, KeyCombination.ALT_DOWN);
-        EventHandler<KeyEvent> runKeyCombinationEventHandler = event -> {
-            if (keyCombination.match(event)) {
-                ArrayList<Command> commands = currentAppModel.getParser().parse(terminal.getTextArea().getText().toLowerCase());
-                terminal.updateRecentlyUsed(commands, terminal.getRecentlyUsed());
-                currentAppModel.runApp(commands);
-                currentAppModel.disableInputs(imageSelector, runButton);
-            }
-        };
-        terminal.getTextArea().setOnKeyPressed(runKeyCombinationEventHandler);
+        terminal.getTextArea().setOnKeyPressed(event -> {
+            if (keyCombination.match(event)) runModel();
+        });
     }
-
-    private EventHandler<ActionEvent> makePassCommandEventEventHandler() {
-        EventHandler<ActionEvent> passCommand = event -> {
-            ArrayList<Command> commands = currentAppModel.getParser().parse(terminal.getTextArea().getText().toLowerCase());
-            terminal.updateRecentlyUsed(commands, terminal.getRecentlyUsed());
-            currentAppModel.runApp(commands);
-            currentAppModel.disableInputs(imageSelector, runButton);
-        };
-        return passCommand;
+    private void runModel(){
+        List<Command> commands = currentAppModel.getParser().parse(terminal.getTextArea().getText().toLowerCase());
+        terminal.updateRecentlyUsed(currentAppModel.getParser().getRecentCommandStrings());
+        currentAppModel.runApp(commands, this, animation);
+        disableInputs();
+        if (animation.getChildren().size() == 0) {
+            currentAppModel.setRunning(false);
+            enableInputs();
+        }
+        else{
+            animation.play();
+            animation.getChildren().removeAll(animation.getChildren());
+        }
     }
 
     public EventHandler<ActionEvent> openFileChooserEventHandler() {
@@ -212,8 +208,8 @@ public abstract class AppView {
         return saveFile;
     }
 
-    public ComboBox<ImageView> makeImageSelector(String type, List<String> images) {
-        ComboBox<ImageView> imageSelector = toolBar.makeImageSelector(images, type);
+    public ComboBox<ImageView> makeAppViewImageSelector(String type, List<String> images) {
+        ComboBox<ImageView> imageSelector = makeImageSelector(images, type);
         imageSelector.setOnAction(event -> {
             currentAppModel.changeImage(imageSelector.getValue().getImage().getUrl());
         });
@@ -221,7 +217,7 @@ public abstract class AppView {
     }
 
     public HBox makeDisplayModeSwitcher() {
-        Slider modeSwitcher = toolBar.makeToggleBar(0, 1, 0, 50);
+        Slider modeSwitcher = makeToggleBar(0, 1, 0, 50, "ModeSwitcher");
         Label label = new Label(myResources.getString("LightMode"));
         modeSwitcher.valueProperty().addListener((obs, oldVal, newVal) -> {
             modeSwitcher.setValue(newVal.intValue());

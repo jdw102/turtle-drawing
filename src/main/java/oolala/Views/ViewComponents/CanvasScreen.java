@@ -11,6 +11,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
+import oolala.Views.TurtleView;
 
 import javax.imageio.ImageIO;
 import java.io.File;
@@ -29,14 +30,18 @@ public class CanvasScreen {
     private final int START_Y = 55;
     private final int WIDTH = 500;
     private final int HEIGHT = 556;
+    private List<Line> lines;
 
 
     public CanvasScreen(ResourceBundle myResources) {
         this.myResources = myResources;
         shapes = new Group();
+        shapes.setId("CanvasShapes");
         borderRectangle = new Rectangle(START_X, START_Y, WIDTH, HEIGHT);
+        borderRectangle.setId("BorderRectangle");
         shapes.getChildren().add(borderRectangle);
         borderRectangle.setFill(backgroundColor);
+        lines = new ArrayList<>();
     }
 
     public void setBrushColor(Color color) {
@@ -61,7 +66,8 @@ public class CanvasScreen {
     }
 
     public void clear() {
-        shapes.getChildren().removeIf(i -> !(i instanceof Rectangle));
+        shapes.getChildren().removeIf(i -> i instanceof ImageView);
+        shapes.getChildren().removeAll(lines);
     }
 
     public Group getShapes() {
@@ -79,8 +85,13 @@ public class CanvasScreen {
     public Color getBrushColor() {
         return brushColor;
     }
-
-    public boolean isClear() {
-        return shapes.getChildren().size() <= 2;
+    public boolean isClear(){
+        return !(shapes.getChildren().size() > 2);
+    }
+    public void addLine(Line line){
+        lines.add(line);
+    }
+    public List<Line> getLines(){
+        return lines;
     }
 }

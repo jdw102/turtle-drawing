@@ -1,9 +1,6 @@
 package oolala.Models;
 
 import javafx.animation.SequentialTransition;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.image.ImageView;
 import oolala.Views.ViewComponents.CanvasScreen;
 import oolala.Command.Command;
 import oolala.Parsers.Parser;
@@ -16,8 +13,8 @@ import java.util.ResourceBundle;
 
 public abstract class AppModel {
     public CanvasScreen myCanvas;
-    public HashMap<Integer, TurtleView> turtles;
-    public ArrayList<Integer> currTurtleIdxs;
+    public Map<Integer, TurtleView> turtles;
+    public List<Integer> currTurtleIdxs;
     public SequentialTransition animation;
     public ResourceBundle myResources;
     public Parser parser;
@@ -26,6 +23,7 @@ public abstract class AppModel {
     public String turtleIcon;
     public String turtleStamp;
     private RunningStatus runningStatus;
+    public boolean turtlesInBound;
 
     //TODO: Can we create polymorphism for parser?
 
@@ -38,6 +36,7 @@ public abstract class AppModel {
         currTurtleIdxs = new ArrayList<>();
         homeX = 0;
         homeY = 0;
+        turtlesInBound = true;
     }
 
     public TurtleView addNewTurtle(){
@@ -55,15 +54,15 @@ public abstract class AppModel {
         runButton.setDisable(true);
     }
 
-    public void runApp(ArrayList<Command> commands) {
+    public void runApp(List<Command> commands) {
         runningStatus.setRunningStatus(true);
     }
 
-    public ArrayList<Integer> getCurrTurtleIdxs() {
+    public List<Integer> getCurrTurtleIdxs() {
         return currTurtleIdxs;
     }
 
-    public HashMap<Integer, TurtleView> getTurtles() {
+    public Map<Integer, TurtleView> getTurtles() {
         return turtles;
     }
 
@@ -92,5 +91,19 @@ public abstract class AppModel {
         return parser;
     }
 
-    public void changeImage(String url) {}
+    public String getTurtleIconUrl() {
+        return turtleIcon;
+    }
+
+    public String getStampIconUrl() {
+        return turtleStamp;
+    }
+
+    public CanvasScreen getMyCanvas() {
+        return myCanvas;
+    }
+
+    public void changeImage(String url) {
+
+    }
 }

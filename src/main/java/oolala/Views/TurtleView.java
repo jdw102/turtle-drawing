@@ -16,6 +16,7 @@ import oolala.Models.TurtleModel;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * A turtle/cursor to draw things with.
@@ -29,7 +30,6 @@ public class TurtleView {
     private String stampUrl;
     public static final double DEFAULT_ICON_SIZE = 30;
     public ImageView icon;
-    public ArrayList<ImageView> stamps;
     private double iconSize;
     private Tooltip tooltip;
     private final double TURTLE_SPEED = 100;
@@ -37,6 +37,7 @@ public class TurtleView {
     private RunningStatus runningStatus;
     private SequentialTransition animation;
     private CanvasScreen canvasScreen;
+
     public TurtleView(double posX, double posY, CanvasScreen screen, String stampUrl, String turtleIconUrl, RunningStatus runningStatus, SequentialTransition animation) {
         this.runningStatus = runningStatus;
         canvasScreen = screen;
@@ -50,7 +51,6 @@ public class TurtleView {
         tooltip = new Tooltip();
         this.icon = createIcon(model.getPos().PosX, model.getPos().PosY, iconSize, turtleIconUrl);
         installPositionLabel(icon, tooltip);
-        this.stamps = new ArrayList<>();
     }
 
     private Line createLine(double xStart, double yStart, double xEnd, double yEnd) {
@@ -67,8 +67,9 @@ public class TurtleView {
 
     public void move(double dist) {
         Position oldPos = model.getPos();
-        Position newPos =  model.calculateMove(dist);
-        Line line = createLine(oldPos.PosX, oldPos.PosY, newPos.PosX, newPos.PosY);
+        Position newPos = model.calculateMove(dist);
+        Line path = createLine(oldPos.PosX, oldPos.PosY, newPos.PosX, newPos.PosY);
+        path.setId("Line" + Integer.toString(canvas.getLines().size() + 1));
         animation.getChildren().add(createPathAnimation(line));
     }
 
@@ -104,6 +105,7 @@ public class TurtleView {
             System.out.println("test");
             moveIcon(homeX, homeY);
             model.setTooltipRelativePosition(icon, tooltip);
+            model.updateRelativePosition(icon, position);
         });
         FadeTransition fadeIn = new FadeTransition(Duration.seconds(0.25), icon);
         fadeIn.setFromValue(0.0);
@@ -132,6 +134,7 @@ public class TurtleView {
         this.icon.setX(x - iconSize / 2);
         this.icon.setY(y - iconSize / 2);
         this.icon.toFront();
+        model.updateRelativePosition(icon, position);
         model.setTooltipRelativePosition(icon, tooltip);
     }
 
@@ -169,6 +172,8 @@ public class TurtleView {
         homeY = y;
     }
 
+}
+
     private void onHover() {
         icon.setScaleX(1.1);
         icon.setScaleY(1.1);
@@ -187,34 +192,30 @@ public class TurtleView {
         model.putPenDown();
     }
 
-    private PathTransition createPathAnimation(Line line) {
+    private PathTransition createPathAnimation(Line line, CanvasScreen canvas) {
         double distance = Math.sqrt(Math.pow((line.getEndX() - line.getStartX()), 2) + Math.pow((line.getEndY() - line.getStartY()), 2));
-        Circle pen = new Circle(canvasScreen.getThickness() / 2);
-        pen.setFill(canvasScreen.getBrushColor());
+        Circle pen = new Circle(canvas.getThickness() / 2);
+        pen.setFill(canvas.getBrushColor());
         Collection<Circle> penPoints = new ArrayList<>();
         boolean show = model.isPenDown();
         pen.translateXProperty().addListener((ov, t, t1) -> moveIcon(pen.getTranslateX(), pen.getTranslateY()));
         pen.translateYProperty().addListener((ov, t, t1) -> moveIcon(pen.getTranslateX(), pen.getTranslateY()));
         PathTransition pathTransition = new PathTransition(Duration.seconds(distance / TURTLE_SPEED), line, pen);
         pathTransition.setOnFinished(event -> {
-            if (show) canvasScreen.getShapes().getChildren().add(1, line);
+            if (show) canvas.getShapes().getChildren().add(1, line);
         });
         return pathTransition;
     }
 
-    public void changeIcon(String s) {
-        shapes.getChildren().remove(icon);
-        icon = createIcon(model.getPos().PosX, model.getPos().PosY, iconSize, s);
-        installPositionLabel(icon, tooltip);
-        shapes.getChildren().add(icon);
+    public void changeIcon(String s, AppModel app) {
+        app.getMyCanvas().getShapes().getChildren().remove(icon);
+        icon = createIcon(model.getPosX(), model.getPosY(), iconSize, s);
+        installPositionLabel(icon, position, app);
+        app.getMyCanvas().getShapes().getChildren().add(icon);
     }
 
     public void changeStamp(String s) {
         stampUrl = s;
-    }
-
-    public TurtleModel getModel() {
-        return model;
     }
 }
 
