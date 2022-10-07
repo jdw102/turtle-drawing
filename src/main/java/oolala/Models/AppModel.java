@@ -73,9 +73,8 @@ public abstract class AppModel {
         turtles.put(1, addNewTurtle());
         myCanvas.getShapes().getChildren().add(turtles.get(1).getIcon()); // TODO: We should probably refactor this for scalability
         currTurtleIdxs.add(1);
-        animation.stop();
         runningStatus.setRunningStatus(false);
-        animation.getChildren().removeAll(animation.getChildren());
+        turtlesInBound = true;
     }
 
     public void setHome(double x, double y) {

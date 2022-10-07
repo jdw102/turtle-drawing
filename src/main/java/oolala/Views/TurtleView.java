@@ -70,6 +70,7 @@ public class TurtleView {
         Position newPos = model.calculateMove(dist);
         Line path = createLine(oldPos.PosX, oldPos.PosY, newPos.PosX, newPos.PosY);
         path.setId("Line" + Integer.toString(canvasScreen.getLines().size() + 1));
+        canvasScreen.addLine(path);
         animation.getChildren().add(createPathAnimation(path));
     }
 

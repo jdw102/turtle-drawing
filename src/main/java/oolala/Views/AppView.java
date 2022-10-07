@@ -140,7 +140,7 @@ public abstract class AppView {
         return hBox;
     }
 
-    private void resetModel(boolean resetHome) {
+    private void resetModel(boolean resetHome){
         stopAnimation();
         currentAppModel.reset(resetHome);
         enableInputs();
