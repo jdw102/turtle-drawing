@@ -147,24 +147,24 @@ public class LSystemParser extends Parser {
         return dist;
     }
 
-    public void setDist(int dist) {
-        this.dist = dist;
+    public void setDist(double dist) {
+        this.dist = (int) dist;
     }
 
     public int getAng() {
         return ang;
     }
 
-    public void setAng(int ang) {
-        this.ang = ang;
+    public void setAng(double ang) {
+        this.ang =  (int) ang;
     }
 
     public int getLevel() {
         return level;
     }
 
-    public void setLevel(int level) {
-        this.level = level;
+    public void setLevel(double level) {
+        this.level =  (int) level;
     }
 
     public List<Command> parse(String input) {

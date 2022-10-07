@@ -1,4 +1,4 @@
-package oolala;
+package oolala.Views;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -28,6 +28,12 @@ import static oolala.Main.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class LogoViewTest extends DukeApplicationTest {
+    private final int SIZE_WIDTH = 800;
+    private final int SIZE_HEIGHT = 650;
+    private final String TITLE = "Oolala";
+    private final String STYLESHEET = "default.css";
+    private final String DARK_MODE_STYLESHEET = "darkmode.css";
+    private final String DEFAULT_RESOURCE_FOLDER = "/Properties/";
     private LogoAppView logoView;
     // keep GUI components used in multiple tests
     private Button runButton;
@@ -40,11 +46,13 @@ public class LogoViewTest extends DukeApplicationTest {
     private ComboBox<ImageView> iconChangeBox;
     private TextArea terminalText;
     private Group canvasShapes;
+    private Slider modeSwitch;
+    private Rectangle borderRectangle;
 
 
     @Override
     public void start (Stage stage) {
-        logoView = new LogoAppView(stage, "English");;
+        logoView = new LogoAppView(stage, "English", DEFAULT_RESOURCE_FOLDER, STYLESHEET, DARK_MODE_STYLESHEET);
         Scene startScene = new Scene(logoView.setUpRootBorderPane(), SIZE_WIDTH, SIZE_HEIGHT);
         startScene.getStylesheets().add(getClass().getResource(DEFAULT_RESOURCE_FOLDER + STYLESHEET).toExternalForm());
         stage.setTitle(TITLE);
@@ -61,6 +69,8 @@ public class LogoViewTest extends DukeApplicationTest {
         thicknessTextField = lookup("#ThicknessTextField").query();
         iconChangeBox = lookup("#IconChange").query();
         canvasShapes = lookup("#CanvasShapes").query();
+        modeSwitch = lookup("#ModeSwitcher").query();
+        borderRectangle = lookup("#BorderRectangle").query();
 
     }
 
@@ -107,5 +117,17 @@ public class LogoViewTest extends DukeApplicationTest {
         sleep(1000);
         Line line = lookup("#Line1").query();
         assertEquals(expected, line.getStrokeWidth());
+    }
+    @Test
+    void testModeSwitch() {
+        clickOn(modeSwitch);
+        clickOn(terminalText).write("fd 100").write(KeyCode.ENTER.getChar());
+        clickOn(runButton);
+        sleep(1000);
+        Color canvasExpected = Color.BLACK;
+        Color lineExpected = Color.WHITE;
+        Line line = lookup("#Line1").query();
+        assertEquals(canvasExpected, borderRectangle.getFill());
+        assertEquals(lineExpected, line.getStroke());
     }
 }

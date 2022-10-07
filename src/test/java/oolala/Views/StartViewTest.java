@@ -1,4 +1,4 @@
-package oolala;
+package oolala.Views;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -17,7 +17,15 @@ import static oolala.Main.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class StartViewTest extends DukeApplicationTest {
+    private final int SIZE_WIDTH = 800;
+    private final int SIZE_HEIGHT = 650;
+    private final int START_WIDTH = 400;
+    private final int START_HEIGHT = 500;
     private StartingView startingView;
+    private final String TITLE = "Oolala";
+    private final String STYLESHEET = "default.css";
+    private final String DARK_MODE_STYLESHEET = "darkmode.css";
+    private final String DEFAULT_RESOURCE_FOLDER = "/Properties/";
 
     @Override
     public void start (Stage stage) {
@@ -27,8 +35,8 @@ public class StartViewTest extends DukeApplicationTest {
 
             TabPane tabPane = new TabPane();
             Scene scene = new Scene(tabPane, SIZE_WIDTH, SIZE_HEIGHT);
-            AppView view1 = new LogoAppView(stage, language);
-            AppView view2 = new LSystemAppView(stage, language);
+            AppView view1 = new LogoAppView(stage, language, DEFAULT_RESOURCE_FOLDER, STYLESHEET, DARK_MODE_STYLESHEET);
+            AppView view2 = new LSystemAppView(stage, language, DEFAULT_RESOURCE_FOLDER, STYLESHEET, DARK_MODE_STYLESHEET);
             Tab tab1 = new Tab("Logo", view1.setUpRootBorderPane());
             Tab tab2 = new Tab("L-System", view2.setUpRootBorderPane());
             tabPane.getTabs().add(tab1);
@@ -55,8 +63,7 @@ public class StartViewTest extends DukeApplicationTest {
             "English",
             "日本語",
             "简体中文",
-            "繁體中文",
-            "WHAT"
+            "繁體中文"
     })
     void testLanguageSelector (String language) {
 
