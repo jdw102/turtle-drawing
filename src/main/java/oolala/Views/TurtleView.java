@@ -21,7 +21,7 @@ import java.util.Collection;
 /**
  * A view class to display the turtle, communicate with the turtle model, and adjust according to commands.
  *
- * @author Aditya Paul
+ * @author Jerry Worthy
  */
 public class TurtleView {
     private double homeX;
@@ -74,7 +74,7 @@ public class TurtleView {
         return line;
     }
     /**
-     * A method to be called to move the turtle icon a certain distance, positive or negative, update the model,
+     * A method to be called to move the turtle icon a certain distance using a path transition, positive or negative, update the model,
      * and add the line to the canvas screen.
      *
      * @param dist - The distance to travel.
@@ -101,7 +101,11 @@ public class TurtleView {
         model.setTooltipRelativePosition(icon, tooltip);
         animation.getChildren().add(rotate);
     }
-
+    /**
+     * A method to create a fade transition that fades the turtle in.
+     *
+     * @author Jerry Worthy
+     */
     public void showTurtle() {
         FadeTransition fade = new FadeTransition(Duration.seconds(0.25), icon);
         fade.setFromValue(icon.getOpacity());
@@ -109,7 +113,11 @@ public class TurtleView {
         fade.setOnFinished(event -> icon.toFront());
         animation.getChildren().add(fade);
     }
-
+    /**
+     * A method to create a fade transition that fades the turtle out.
+     *
+     * @author Jerry Worthy
+     */
     public void hideTurtle() {
         FadeTransition fade = new FadeTransition(Duration.seconds(0.25), icon);
         fade.setFromValue(icon.getOpacity());
@@ -117,7 +125,12 @@ public class TurtleView {
         fade.setOnFinished(event -> icon.toBack());
         animation.getChildren().add(fade);
     }
-
+    /**
+     * A method to move the turtle icon back to the home position and reset the model location to the home location,
+     * it creates a fade out and fade in transition.
+     *
+     * @author Jerry Worthy
+     */
     public void home() {
         FadeTransition fadeOut = new FadeTransition(Duration.seconds(0.25), icon);
         fadeOut.setFromValue(icon.getOpacity());
@@ -135,7 +148,11 @@ public class TurtleView {
         animation.getChildren().add(fadeOut);
         animation.getChildren().add(fadeIn);
     }
-
+    /**
+     * A method to add a copy of the icon to the canvas and to fade it in.
+     *
+     * @author Jerry Worthy
+     */
     public void stamp() {
         ImageView s = createIcon(model.getPos().getX(), model.getPos().getY(), iconSize, stampUrl);
         s.toFront();
@@ -150,7 +167,14 @@ public class TurtleView {
     public Node getIcon() {
         return icon;
     }
-
+    /**
+     * A method to move the icon to a set location, and to update the relative position in the model and update
+     * the position displayed by the tooltip.
+     *
+     * @param x - The x coordinate.
+     * @param y - The y coordinate.
+     * @author Jerry Worthy
+     */
     private void moveIcon(double x, double y) {
         this.icon.setX(x - iconSize / 2);
         this.icon.setY(y - iconSize / 2);
@@ -158,7 +182,15 @@ public class TurtleView {
         model.updateRelativePosition();
         model.setTooltipRelativePosition(icon, tooltip);
     }
-
+    /**
+     * A method to create the image view that will act as the turtle icon.
+     *
+     * @param x - The x coordinate.
+     * @param y - The y coordinate.
+     * @param size - The size of the image view.
+     * @param url - The url for the image.
+     * @author Jerry Worthy
+     */
     private ImageView createIcon(double x, double y, double size, String url) {
         ImageView i = new ImageView(new Image(url));
         i.setFitHeight(size);
@@ -169,7 +201,15 @@ public class TurtleView {
         i.toFront();
         return i;
     }
-
+    /**
+     * A method to assign the image view the events that allow it to be more interactive by installing the
+     * tooltip, making it larger on hover, and allowing the icon to be dragged to a new home location.
+     *
+     * @param i - The image view to be changed.
+     * @param tooltip - The tooltip to attach to the image view.
+     * @param app - The app model to be changed by the on drag event (changing its home x and home y).
+     * @author Jerry Worthy
+     */
     public void installPositionLabel(ImageView i, Tooltip tooltip, AppModel app) {
         i.setOnMouseEntered(event -> onHover());
         i.setOnMouseExited(event -> offHover());
@@ -177,7 +217,14 @@ public class TurtleView {
         model.setTooltipRelativePosition(i, tooltip);
         Tooltip.install(i, tooltip);
     }
-
+    /**
+     * A method to move the icon and change the home location when the icon is dragged.
+     *
+     * @param e - The mouse event.
+     * @param runningStatus - The running status of the app.
+     * @param app - The app model.
+     * @author Jerry Worthy
+     */
     private void onDrag(MouseEvent e, RunningStatus runningStatus, AppModel app) {
         double x = e.getX();
         double y = e.getY();
@@ -185,12 +232,19 @@ public class TurtleView {
             changeHome(x, y, app);
         }
     }
-
+    /**
+     * A method to change the home location of the app model, the view, and update the icon and model location appropriately.
+     * It is called by the onDrag event of the icon.
+     *
+     * @param x - The x coordinate to be set as home x.
+     * @param y - The y coordinate to be set as home y.
+     * @param app - The app to edit.
+     * @author Jerry Worthy
+     */
     public void changeHome(double x, double y, AppModel app) {
         moveIcon(x, y);
         model.setPosition(x, y);
         app.setHome(model.getRelPos().getX(), -model.getRelPos().getY());
-        //TODO: Restore sethome functionality
         homeX = x;
         homeY = y;
     }
@@ -212,7 +266,12 @@ public class TurtleView {
     public void putPenDown() {
         model.putPenDown();
     }
-
+    /**
+     * A method to move create a path transition that moves the icon along the generated line.
+     *
+     * @param line - The line to follow during the path transition.
+     * @author Jerry Worthy
+     */
     private PathTransition createPathAnimation(Line line) {
         double distance = Math.sqrt(Math.pow((line.getEndX() - line.getStartX()), 2) + Math.pow((line.getEndY() - line.getStartY()), 2));
         Circle pen = new Circle(canvasScreen.getThickness() / 2);
@@ -227,7 +286,13 @@ public class TurtleView {
         });
         return pathTransition;
     }
-
+    /**
+     * A method to change the turtle icon by removing the old one and creating the new one with the new image.
+     *
+     * @param s - The new image url.
+     * @param app - The app model.
+     * @author Jerry Worthy
+     */
     public void changeIcon(String s, AppModel app) {
         shapes.getChildren().remove(icon);
         icon = createIcon(model.getPos().getX(), model.getPos().getY(), iconSize, s);

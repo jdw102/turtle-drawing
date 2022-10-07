@@ -17,7 +17,11 @@ import java.util.ResourceBundle;
 
 import static oolala.Views.ViewComponents.ViewUtils.makeButton;
 
-
+/**
+ * A view class to select the language and start the apps.
+ *
+ * @author Jerry Worthy
+ */
 public class StartingView {
     private BorderPane root;
     private ComboBox<String> languageSelector;
@@ -44,6 +48,14 @@ public class StartingView {
         Scene scene = new Scene(root, sizeWidth, sizeHeight);
         return scene;
     }
+    /**
+     * A method to create the language selection combobox using the language options list.
+     * It makes the id the String name.
+     *
+     * @param name - The id of the combo box.
+     * @return The combo box of language strings.
+     * @author Jerry Worthy
+     */
     private ComboBox<String> makeLanguageSelector(String name){
         ComboBox<String> c = new ComboBox<>(languageOptions);
         c.setValue(languageOptions.get(0));
