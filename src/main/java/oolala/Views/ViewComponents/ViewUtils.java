@@ -15,7 +15,12 @@ import javafx.scene.paint.Color;
 import java.util.List;
 import java.util.ResourceBundle;
 
-
+/**
+ * A class that contains static methods for creating ui inputs such as buttons,
+ * text fields, combo boxes, color pickers, and sliders across different view classes.
+ *
+ * @author Aditya Paul
+ */
 public class ViewUtils {
     static ResourceBundle myResources;
 
@@ -25,9 +30,9 @@ public class ViewUtils {
 
 
     /**
-     * @param property
-     * @param handler
-     * @return
+     * @param property - The id of the button, used to get label.
+     * @param handler - The action on click.
+     * @return Created button.
      */
     public static Button makeButton(String property, EventHandler<ActionEvent> handler) {
         Button result = new Button();
@@ -39,10 +44,10 @@ public class ViewUtils {
     }
 
     /**
-     * @param property
-     * @param defaultValue
-     * @param handler
-     * @return
+     * @param property - The id of the text field.
+     * @param defaultValue - The default text.
+     * @param handler - The action on enter.
+     * @return Created text field.
      */
     public static TextField makeTextField(String property, String defaultValue, EventHandler<ActionEvent> handler) {
         TextField textField = new TextField(property);
@@ -51,7 +56,11 @@ public class ViewUtils {
         textField.setId(property);
         return textField;
     }
-
+    /**
+     * @param labels - The image urls used to create ImageView choices.
+     * @param title - The id of the selector and used to get tooltip label.
+     * @return Combobox of ImageViews that acts as image selector.
+     */
     public static ComboBox<ImageView> makeImageSelector(List<String> labels, String title) {
         ComboBox<ImageView> c = new ComboBox<>();
         c.setButtonCell(new ListCell<ImageView>() {
@@ -83,10 +92,10 @@ public class ViewUtils {
     }
 
     /**
-     * @param handler
-     * @param defaultColor
-     * @param tooltip
-     * @return
+     * @param handler - Event handler on color selection.
+     * @param defaultColor - Default chosen color.
+     * @param tooltip - The tooltip to install to color picker.
+     * @return Created color picker.
      */
     public static ColorPicker makeColorPicker(EventHandler<ActionEvent> handler, Color defaultColor, String tooltip) {
         ColorPicker colorPicker = new ColorPicker();
@@ -96,9 +105,14 @@ public class ViewUtils {
         colorPicker.setId(tooltip);
         return colorPicker;
     }
-
-    public static Slider makeToggleBar(double min, double max, double value, int maxWidth, String name) {
-        Slider slider = new Slider(min, max, value);
+    /**
+     * @param value - The default value of the slider.
+     * @param maxWidth - The maximum width of the slider.
+     * @param name - The id of the slider.
+     * @return Created binary slider.
+     */
+    public static Slider makeToggleBar(double value, int maxWidth, String name) {
+        Slider slider = new Slider(0, 1, value);
         slider.setMaxWidth(maxWidth);
         slider.setOnMousePressed(event -> {
             if (slider.getValue() == 0) {
