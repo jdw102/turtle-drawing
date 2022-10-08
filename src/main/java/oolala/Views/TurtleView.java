@@ -1,5 +1,6 @@
 package oolala.Views;
 
+import java.util.Stack;
 import javafx.animation.FadeTransition;
 import javafx.animation.RotateTransition;
 import javafx.animation.SequentialTransition;
@@ -43,8 +44,9 @@ public class TurtleView {
     private SequentialTransition animation;
     private CanvasScreen canvasScreen;
     private List<String> lineIDs;
+    private Stack<TurtleModel> turtleStack;
 
-    public TurtleView(double relPosX, double relPosY, CanvasScreen screen, String stampPath, String turtleIconPath, RunningStatus runningStatus, SequentialTransition animation, AppModel app) {
+    public TurtleView(double relPosX, double relPosY, CanvasScreen screen, String stampPath, String turtleIconPath, RunningStatus runningStatus, SequentialTransition animation, AppModel app, Stack<TurtleModel> turtleStack) {
         this.runningStatus = runningStatus;
         lineIDs = new ArrayList<>();
         canvasScreen = screen;
@@ -56,6 +58,7 @@ public class TurtleView {
         model.setHomePos(relPosX, relPosY);
         tooltip = new Tooltip();
         this.icon = createIcon(model.getAbsPos().posX, model.getAbsPos().posY, iconSize, turtleIconPath);
+        this.turtleStack = turtleStack;
         installPositionLabel(icon, tooltip, app);
     }
 
@@ -94,8 +97,31 @@ public class TurtleView {
 
     }
 
+    /**
+     * Push the turtle state onto the stack.
+     *
+     * @author Aditya Paul
+     */
+    public void pushTurtle() {
+        turtleStack.push(this.getModel());
+    }
 
-    //relative position
+    /**
+     * Pop a turtle state from the stack, and update current turtle state.
+     *
+     * @author Aditya Paul
+     */
+    public void popTurtle() {
+        TurtleModel popState = turtleStack.pop();
+        this.goTo(popState.getRelPos().posX, popState.getRelPos().posY);
+        this.rotateTurtle((int) (popState.getAngle() + model.getAngle()));
+    }
+
+    /**
+     * Go to specific position on canvas.
+     * @param relX - Desired turtle X position relative to center
+     * @param relY - Desired turtle Y position relative to center
+     */
     public void goTo(double relX, double relY) {
         Position oldAbsPos = model.getAbsPos();
         Position newAbsPos = model.relToAbs(relX, relY);
@@ -153,6 +179,12 @@ public class TurtleView {
         animation.getChildren().add(fade);
     }
 
+    /**
+     * Turn turtle to a specific heading.
+     *
+     * @param relX - The x-value of the point to turn the turtle toward
+     * @param relY - the y-value of the point to turn the turtle toward
+     */
     public void turnTurtle(double relX, double relY) {
         RotateTransition rotate = new RotateTransition(Duration.seconds(0.5), icon);
         double angle = -1 * Math.atan2(relY - this.getModel().getRelPos().posY,
