@@ -50,9 +50,10 @@ import static oolala.Views.ViewComponents.ViewUtils.makeTextField;
 import static oolala.Views.ViewComponents.ViewUtils.makeToggleBar;
 
 /**
- * @Author Luyao Wang
- * Setting up of the UI.
- * The origin is at the center of the screen.
+ * An abstract view class that contains all basic components of the view besides the terminal and image selector
+ * which will vary between the Logo view and LSystem view.
+ *
+ * @author Luyao Wang
  */
 public abstract class AppView {
     private final BorderPane root;
@@ -88,7 +89,13 @@ public abstract class AppView {
             currentAppModel.setRunningStatus(false);
         });
     }
-
+    /**
+     * A method to disable th
+     *
+     * @param name - The id of the combo box.
+     * @return The combo box of language strings.
+     * @author Jerry Worthy
+     */
     public void enableInputs() {
         imageSelector.setDisable(false);
         runButton.setDisable(false);
