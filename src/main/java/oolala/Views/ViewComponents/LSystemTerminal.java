@@ -30,22 +30,22 @@ public class LSystemTerminal extends Terminal {
     lengthSlider.getSlider().valueProperty().addListener((obs, oldval, newVal) -> {
           lengthSlider.getSlider().setValue(newVal.intValue());
           lengthSlider.getLabel().setText(Integer.toString((int) lengthSlider.getSlider().getValue()));
-          lSystemParser.setDist((int) lengthSlider.getSlider().getValue());
+          lSystemParser.setDist(lengthSlider.getSlider().getValue());
       });
       angleSlider.getSlider().valueProperty().addListener((obs, oldval, newVal) -> {
           angleSlider.getSlider().setValue(newVal.intValue());
           angleSlider.getLabel().setText(Integer.toString((int) angleSlider.getSlider().getValue()));
-          lSystemParser.setAng((int) angleSlider.getSlider().getValue());
+          lSystemParser.setAng(angleSlider.getSlider().getValue());
       });
       levelSlider.getSlider().valueProperty().addListener((obs, oldval, newVal) -> {
           levelSlider.getSlider().setValue(newVal.intValue());
           levelSlider.getLabel().setText(Integer.toString((int) levelSlider.getSlider().getValue()));
-          lSystemParser.setLevel((int) levelSlider.getSlider().getValue());
+          lSystemParser.setLevel(levelSlider.getSlider().getValue());
       });
       LSFSlider.getSlider().valueProperty().addListener((obs, oldval, newVal) -> {
-        levelSlider.getSlider().setValue(newVal.intValue());
-        levelSlider.getLabel().setText(Integer.toString((int) LSFSlider.getSlider().getValue()));
-        lSystemParser.setLevel((int) LSFSlider.getSlider().getValue());
+        LSFSlider.getSlider().setValue(newVal.intValue());
+        LSFSlider.getLabel().setText(Integer.toString((int) LSFSlider.getSlider().getValue()));
+        lSystemParser.setLsf((int) LSFSlider.getSlider().getValue());
       });
       box.getChildren().add(1, lengthSlider.getSliderBox());
       box.getChildren().add(1, angleSlider.getSliderBox());

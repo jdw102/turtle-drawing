@@ -18,6 +18,7 @@ import javafx.util.Duration;
 import oolala.Models.AppModel;
 import oolala.Models.Position;
 import oolala.Models.RunningStatus;
+import oolala.Models.State;
 import oolala.Views.ViewComponents.CanvasScreen;
 import oolala.Models.TurtleModel;
 
@@ -44,9 +45,9 @@ public class TurtleView {
     private SequentialTransition animation;
     private CanvasScreen canvasScreen;
     private List<String> lineIDs;
-    private Stack<TurtleModel> turtleStack;
+    private Stack<State> turtleStack;
 
-    public TurtleView(double relPosX, double relPosY, CanvasScreen screen, String stampPath, String turtleIconPath, RunningStatus runningStatus, SequentialTransition animation, AppModel app, Stack<TurtleModel> turtleStack) {
+    public TurtleView(double relPosX, double relPosY, CanvasScreen screen, String stampPath, String turtleIconPath, RunningStatus runningStatus, SequentialTransition animation, AppModel app, Stack<State> turtleStack) {
         this.runningStatus = runningStatus;
         lineIDs = new ArrayList<>();
         canvasScreen = screen;
@@ -103,7 +104,8 @@ public class TurtleView {
      * @author Aditya Paul
      */
     public void pushTurtle() {
-        turtleStack.push(this.getModel());
+        State savePos = new State(this.getModel());
+        turtleStack.push(savePos);
     }
 
     /**
@@ -112,9 +114,9 @@ public class TurtleView {
      * @author Aditya Paul
      */
     public void popTurtle() {
-        TurtleModel popState = turtleStack.pop();
-        this.goTo(popState.getRelPos().posX, popState.getRelPos().posY);
-        this.rotateTurtle((int) (popState.getAngle() + model.getAngle()));
+        State popState = turtleStack.pop();
+        this.goTo(popState.posX, popState.posY);
+        this.rotateTurtle((int) (popState.angle + model.getAngle()));
     }
 
     /**

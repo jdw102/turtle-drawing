@@ -71,18 +71,23 @@ public class TurtleModel {
     public Position calculateMove(double dist) {
         double x = relX + dist * Math.cos(Math.toRadians(this.angle + 90));
         double y = relY + dist * Math.sin(Math.toRadians(this.angle + 90));
-        inBounds = !(relX > width || relX < 0 || relY > height || relY < 0);
+
+        inBounds = !(relX > width/2 || relX < -width/2 || relY > height/2 || relY < -height/2);
         if (x > width/2) {
             x = width/2;
+            y = relY;
         }
         if (x < -width/2) {
             x = -width/2;
+            y = relY;
         }
         if (y > height/2) {
             y = height/2;
+            x = relX;
         }
         if (y < -height/2) {
             y = -height/2;
+            x = relX;
         }
         return new Position(x, y);
     }
@@ -94,7 +99,6 @@ public class TurtleModel {
     public void rotate(double newAngle) {
         angle -= newAngle;
     }
-    public void turn(double newAngle) { angle = (int) newAngle; }
     public void putPenDown(){
         penDown = true;
     }

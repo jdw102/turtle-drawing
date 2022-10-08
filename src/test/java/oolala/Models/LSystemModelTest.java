@@ -44,7 +44,7 @@ public class LSystemModelTest extends DukeApplicationTest {
         animation = new SequentialTransition();
         animation.setRate(3);
         lSystemModel = new LSystemModel(canvasScreen, myResources, "SimpleLeafStamp", animation);
-        turtleView = new TurtleView(0, 0, canvasScreen, turtleStamp, turtleIcon, lSystemModel.getRunningStatus(), animation, lSystemModel);
+        turtleView = new TurtleView(0, 0, canvasScreen, turtleStamp, turtleIcon, lSystemModel.getRunningStatus(), animation, lSystemModel, lSystemModel.turtleStack);
         turtles = new HashMap<>();
         currTurtleIdxs = new ArrayList<>();
 
