@@ -13,10 +13,6 @@ public class CommandTell extends Command {
         params = new ArrayList<Integer>();
     }
 
-    public ArrayList<Integer> getParams(){
-        return params;
-    }
-
     public void runCommand(TurtleView turtle) {
 
     }

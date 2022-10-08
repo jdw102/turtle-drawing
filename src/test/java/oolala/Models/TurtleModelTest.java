@@ -72,13 +72,13 @@ public class TurtleModelTest extends DukeApplicationTest {
     @Test
     void testCalculateMove() {
         turtleModel.calculateMove(1000);
-        assertEquals((turtleModel.getXMin() + turtleModel.getXMax()) / 2, turtleModel.getPos().posX);
-        assertEquals(turtleModel.getYMin(), turtleModel.getPos().posY);
+        assertEquals((turtleModel.getXMin() + turtleModel.getXMax()) / 2, turtleModel.getAbsPos().posX);
+        assertEquals(turtleModel.getYMin(), turtleModel.getAbsPos().posY);
     }
 
     @Test
     void testRelativePosition() {
-        turtleModel.setPosition(650,500);
+        turtleModel.setRelativePosition(650,500);
         assertEquals(80, turtleModel.getRelPos().posX);
         assertEquals(-167, turtleModel.getRelPos().posY);
     }
