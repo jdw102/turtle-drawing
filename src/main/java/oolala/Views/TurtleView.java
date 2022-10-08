@@ -94,7 +94,13 @@ public class TurtleView {
 
     }
 
-
+    /**
+     * A method to move the turtle to a specific location on the canvas.
+     *
+     * @param relX - The x coordinate of the location.
+     * @param relY - The y coordinate of the location.
+     * @author Jerry Worthy
+     */
     //relative position
     public void goTo(double relX, double relY) {
         Position oldAbsPos = model.getAbsPos();
@@ -117,7 +123,7 @@ public class TurtleView {
      * @param newAngle - The angle by which to rotate the icon/update the model.
      * @author Jerry Worthy
      */
-    public void rotateTurtle(int newAngle) {
+    public void rotateTurtle(double newAngle) {
         RotateTransition rotate = new RotateTransition(Duration.seconds(0.5), icon);
         rotate.setByAngle(newAngle);
         model.rotate(newAngle);
@@ -152,14 +158,22 @@ public class TurtleView {
         fade.setOnFinished(event -> icon.toBack());
         animation.getChildren().add(fade);
     }
-
+    /**
+     * A method to create a rotation animation of the icon based on an angle that
+     * is calculated from a point the turtle will point to.
+     *
+     * @param relX - The x coordinate of the point.
+     * @param relY - The y coordinate of the point.
+     * @author Jerry Worthy
+     */
     public void turnTurtle(double relX, double relY) {
-        RotateTransition rotate = new RotateTransition(Duration.seconds(0.5), icon);
         double angle = -1 * Math.atan2(relY - this.getModel().getRelPos().posY,
                 relX - this.getModel().getRelPos().posX) / Math.PI * 180 + 90;
-        rotate.setByAngle(angle + model.getAngle());
-        model.rotate(angle + model.getAngle());
-        animation.getChildren().add(rotate);
+        rotateTurtle(angle + model.getAngle());
+//        RotateTransition rotate = new RotateTransition(Duration.seconds(0.5), icon);
+//        rotate.setByAngle(angle + model.getAngle());
+//        model.rotate(angle + model.getAngle());
+//        animation.getChildren().add(rotate);
     }
 
     /**

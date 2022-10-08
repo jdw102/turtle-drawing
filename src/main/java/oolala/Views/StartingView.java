@@ -25,7 +25,6 @@ import static oolala.Views.ViewComponents.ViewUtils.makeButton;
 public class StartingView {
     private ViewUtils viewUtils;
     private BorderPane root;
-    private ViewUtils viewUtils;
     private ComboBox<String> languageSelector;
     public static ResourceBundle myResources;
     private final String DEFAULT_RESOURCE_PACKAGE = "Properties.";
