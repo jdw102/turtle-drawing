@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 
+import java.util.Stack;
 import javafx.animation.SequentialTransition;
 import oolala.Views.ViewComponents.CanvasScreen;
 import oolala.Command.Command;
@@ -31,8 +32,7 @@ public abstract class AppModel {
     public String turtleStamp;
     protected RunningStatus runningStatus;
     public boolean turtlesInBound;
-
-    //TODO: Can we create polymorphism for parser?
+    public Stack<State> turtleStack;
 
     public AppModel(CanvasScreen canvas, ResourceBundle resources, SequentialTransition animation) {
         runningStatus = new RunningStatus();
@@ -44,6 +44,7 @@ public abstract class AppModel {
         homeX = 0;
         homeY = 0;
         turtlesInBound = true;
+        turtleStack = new Stack<>();
     }
 
 
@@ -54,7 +55,7 @@ public abstract class AppModel {
      * @author Luyao Wang
      */
     public TurtleView addNewTurtle() {
-        TurtleView turtleView = new TurtleView(homeX, homeY, myCanvas, turtleStamp, turtleIcon, runningStatus, animation, this);
+        TurtleView turtleView = new TurtleView(homeX, homeY, myCanvas, turtleStamp, turtleIcon, runningStatus, animation, this, turtleStack);
         return turtleView;
     }
 

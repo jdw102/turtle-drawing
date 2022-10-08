@@ -18,7 +18,6 @@ public class LogoParser extends Parser {
     ResourceBundle myResources;
     Map<String, Integer> variables;
 
-
     public LogoParser(ResourceBundle resourceBundle) {
         myResources = resourceBundle;
         variables = new HashMap<>();
@@ -57,6 +56,8 @@ public class LogoParser extends Parser {
                 case "home" -> new CommandHome();
                 case "stamp" -> new CommandStamp();
                 case "make", "set" -> parseMake(scan, prefix);
+                case "push" -> new CommandPush();
+                case "pop" -> new CommandPop();
                 default -> throw new IllegalStateException(myResources.getString("InvalidCommand"));
             };
             program.add(c);
@@ -125,7 +126,6 @@ public class LogoParser extends Parser {
     private Command parseCommandWithOneParameter(Scanner scan, String prefix) throws IllegalStateException {
         Command c;
         int param;
-
         switch (prefix) {
             case "fd", "forward" -> c = new CommandForward();
             case "bk", "backward" -> c = new CommandBackward();

@@ -15,4 +15,9 @@ public class Position {
         posX = x;
         posY = y;
     }
+
+    public Position(Position p){
+        posX = p.posX;
+        posY = p.posY;
+    }
 }

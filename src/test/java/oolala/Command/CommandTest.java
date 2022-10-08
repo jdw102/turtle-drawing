@@ -44,7 +44,7 @@ public class CommandTest extends DukeApplicationTest {
         animation = new SequentialTransition();
         animation.setRate(3);
         logoModel = new LogoModel(canvasScreen, myResources, "CursorIcon", animation);
-        turtleView = new TurtleView(0, 0, canvasScreen, turtleStamp, turtleIcon, logoModel.getRunningStatus(), animation, logoModel);
+        turtleView = new TurtleView(0, 0, canvasScreen, turtleStamp, turtleIcon, logoModel.getRunningStatus(), animation, logoModel, logoModel.turtleStack);
         turtles = new HashMap<>();
         currTurtleIdxs = new ArrayList<>();
 

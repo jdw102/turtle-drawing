@@ -1,5 +1,6 @@
 package oolala.Views;
 
+import java.util.Stack;
 import javafx.animation.FadeTransition;
 import javafx.animation.RotateTransition;
 import javafx.animation.SequentialTransition;
@@ -17,6 +18,7 @@ import javafx.util.Duration;
 import oolala.Models.AppModel;
 import oolala.Models.Position;
 import oolala.Models.RunningStatus;
+import oolala.Models.State;
 import oolala.Views.ViewComponents.CanvasScreen;
 import oolala.Models.TurtleModel;
 
@@ -43,8 +45,9 @@ public class TurtleView {
     private SequentialTransition animation;
     private CanvasScreen canvasScreen;
     private List<String> lineIDs;
+    private Stack<State> turtleStack;
 
-    public TurtleView(double relPosX, double relPosY, CanvasScreen screen, String stampPath, String turtleIconPath, RunningStatus runningStatus, SequentialTransition animation, AppModel app) {
+    public TurtleView(double relPosX, double relPosY, CanvasScreen screen, String stampPath, String turtleIconPath, RunningStatus runningStatus, SequentialTransition animation, AppModel app, Stack<State> turtleStack) {
         this.runningStatus = runningStatus;
         lineIDs = new ArrayList<>();
         canvasScreen = screen;
@@ -56,6 +59,7 @@ public class TurtleView {
         model.setHomePos(relPosX, relPosY);
         tooltip = new Tooltip();
         this.icon = createIcon(model.getAbsPos().posX, model.getAbsPos().posY, iconSize, turtleIconPath);
+        this.turtleStack = turtleStack;
         installPositionLabel(icon, tooltip, app);
     }
 
@@ -95,13 +99,31 @@ public class TurtleView {
     }
 
     /**
-     * A method to move the turtle to a specific location on the canvas.
+     * Push the turtle state onto the stack.
      *
-     * @param relX - The x coordinate of the location.
-     * @param relY - The y coordinate of the location.
-     * @author Jerry Worthy
+     * @author Aditya Paul
      */
-    //relative position
+    public void pushTurtle() {
+        State savePos = new State(this.getModel());
+        turtleStack.push(savePos);
+    }
+
+    /**
+     * Pop a turtle state from the stack, and update current turtle state.
+     *
+     * @author Aditya Paul
+     */
+    public void popTurtle() {
+        State popState = turtleStack.pop();
+        this.goTo(popState.posX, popState.posY);
+        this.rotateTurtle((int) (popState.angle + model.getAngle()));
+    }
+
+    /**
+     * Go to specific position on canvas.
+     * @param relX - Desired turtle X position relative to center
+     * @param relY - Desired turtle Y position relative to center
+     */
     public void goTo(double relX, double relY) {
         Position oldAbsPos = model.getAbsPos();
         Position newAbsPos = model.relToAbs(relX, relY);
@@ -158,6 +180,7 @@ public class TurtleView {
         fade.setOnFinished(event -> icon.toBack());
         animation.getChildren().add(fade);
     }
+
     /**
      * A method to create a rotation animation of the icon based on an angle that
      * is calculated from a point the turtle will point to.

@@ -6,9 +6,9 @@ import oolala.Command.Command;
 
 public class LSystemParser extends Parser {
 
-    public static final char[] ALPHA_SYM = {'f', 'g', 'a', 'b', '+', '-', 'x'};
+    public static final char[] ALPHA_SYM = {'f', 'g', 'a', 'b', '+', '-', 'x', '[', ']'};
     public final String[] ALPHA_COMM = {"pd fd length", "pu fd length", "pu bk length", "pd bk length",
-            "rt angle", "lt angle", "stamp"};
+            "rt angle", "lt angle", "stamp", "push", "pop"};
     public static final int DEFAULT_DIST = 10;
     public static final int DEFAULT_ANGLE = 30;
     public static final int DEFAULT_LEVEL = 3;
@@ -191,9 +191,7 @@ public class LSystemParser extends Parser {
         return dist;
     }
 
-    public void setDist(double dist) {
-        this.dist = (int) dist;
-    }
+    public void setDist(double dist) { this.dist = (int) dist; }
 
     public int getAng() {
         return ang;
