@@ -3,14 +3,10 @@ package oolala;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.ResourceBundle;
-import javafx.util.StringConverter;
+
 import oolala.Parsers.LSystemParser;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.converter.ConvertWith;
 import org.junit.jupiter.params.provider.CsvSource;
-import org.junit.jupiter.params.provider.MethodSource;
-import org.junit.jupiter.params.provider.ValueSource;
 
 class LSystemParserTest {
   public static final String DEFAULT_RESOURCE_PACKAGE = "Properties.";
@@ -28,7 +24,7 @@ class LSystemParserTest {
           + "+F-F++F-F-F-F++F-F-F-F++F-F-F-F++F-F++F-F++F-F-F-F++F-F"
   })
   void testApplyRules(int level, String expansion) {
-    lparser.parseConfig("START F RULE F F-F++F-F");
+    lparser.parseConfiguration("START F RULE F F-F++F-F");
     lparser.setLevel(level);
     assertEquals(expansion.toLowerCase(), lparser.applyRules());
   }
@@ -41,7 +37,7 @@ class LSystemParserTest {
   })
   void testSetCommand(String program, String commandString){
     lparser.setLevel(1);
-    lparser.parseConfig(program);
+    lparser.parseConfiguration(program);
     assertEquals(commandString.toLowerCase(), lparser.getCommandString(lparser.applyRules()).trim());
   }
 
@@ -56,7 +52,7 @@ class LSystemParserTest {
           + "30 rt 30 pd fd 10 lt 30 pd fd 10 "
   })
   void testGetCommandString(int level, String commandString) {
-    lparser.parseConfig("START F RULE F F-F++F-F");
+    lparser.parseConfiguration("START F RULE F F-F++F-F");
     lparser.setLevel(level);
     assertEquals(commandString.toLowerCase(), lparser.getCommandString(lparser.applyRules()).trim());
   }
