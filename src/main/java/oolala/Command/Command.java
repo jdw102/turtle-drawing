@@ -18,7 +18,7 @@ public class Command {
     FORWARD, BACK, LEFT, RIGHT,
     PENDOWN, PENUP, SHOWT, HIDET,
     HOME, STAMP, TELL, CLEAR,
-    TOWARDS, GOTO
+    TOWARDS, GOTO, MAKE
   }
 
   public void setParam(int param) {
@@ -46,6 +46,9 @@ public class Command {
       case HOME -> s = "home";
       case STAMP -> s = "stamp";
       case TELL -> s = "tell";
+      case GOTO -> s = "goto";
+      case TOWARDS -> s = "towards";
+      case MAKE -> s = "make";
     }
     if (this.params != null){
       for (Integer i: this.params){
