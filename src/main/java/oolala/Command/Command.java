@@ -1,65 +1,65 @@
 package oolala.Command;
 
 import javafx.animation.SequentialTransition;
+import oolala.Models.TurtleModel;
 import oolala.Views.ViewComponents.CanvasScreen;
 import oolala.Views.TurtleView;
 
 import java.util.ArrayList;
 
 /**
- *  A single class containing the information of each command.
- *  Might refactor later into separate classes for each command.
+ * A single class containing the information of each command.
+ * Might refactor later into separate classes for each command.
  *
  * @author Aditya Paul
  */
-public class Command {
-  public CmdName prefix;
-  public enum CmdName {
-    FORWARD, BACK, LEFT, RIGHT,
-    PENDOWN, PENUP, SHOWT, HIDET,
-    HOME, STAMP, TELL, CLEAR,
-    TOWARDS, GOTO, MAKE
-  }
+public abstract class Command {
+    public CommandName prefix;
 
-  public void setParam(int param) {
-    this.param = param;
-  }
-
-  public int param;
-  public ArrayList<Integer> params;
-
-  public void runCommand(TurtleView turtle, CanvasScreen canvas, SequentialTransition animation){
-
-  }
-  @Override
-  public String toString(){
-    String s = "";
-    switch (this.prefix){
-      case FORWARD -> s ="fd";
-      case BACK -> s = "bk";
-      case LEFT -> s = "lt";
-      case RIGHT -> s = "rt";
-      case PENDOWN -> s = "pd";
-      case PENUP -> s = "pu";
-      case SHOWT -> s = "st";
-      case HIDET -> s = "ht";
-      case HOME -> s = "home";
-      case STAMP -> s = "stamp";
-      case TELL -> s = "tell";
-      case GOTO -> s = "goto";
-      case TOWARDS -> s = "towards";
-      case MAKE -> s = "make";
+    public void setParam(int param) {
+        this.param = param;
     }
-    if (this.params != null){
-      for (Integer i: this.params){
-        s += " ";
-        s += Integer.toString(i);
-      }
+
+    public int param;
+    protected ArrayList<Integer> params;
+
+    public int getParam() {
+        return param;
     }
-    else if (this.param != 0){
-      s += " ";
-      s += Integer.toString(this.param);
+
+    public ArrayList<Integer> getParams() {
+        return params;
     }
-    return s;
-  }
+
+    public void runCommand(TurtleView turtle) {
+
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder s = new StringBuilder();
+        switch (this.prefix) {
+            case FORWARD -> s = new StringBuilder("fd");
+            case BACK -> s = new StringBuilder("bk");
+            case LEFT -> s = new StringBuilder("lt");
+            case RIGHT -> s = new StringBuilder("rt");
+            case PENDOWN -> s = new StringBuilder("pd");
+            case PENUP -> s = new StringBuilder("pu");
+            case SHOWT -> s = new StringBuilder("st");
+            case HIDET -> s = new StringBuilder("ht");
+            case HOME -> s = new StringBuilder("home");
+            case STAMP -> s = new StringBuilder("stamp");
+            case TELL -> s = new StringBuilder("tell");
+        }
+        if (this.params != null) {
+            for (Integer i : this.params) {
+                s.append(" ");
+                s.append(Integer.toString(i));
+            }
+        } else if (this.param != 0) {
+            s.append(" ");
+            s.append(Integer.toString(this.param));
+        }
+        return s.toString();
+    }
 }

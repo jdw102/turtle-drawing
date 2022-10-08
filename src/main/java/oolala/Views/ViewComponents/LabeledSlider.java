@@ -1,26 +1,28 @@
 package oolala.Views.ViewComponents;
 
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
-
+/**
+ * A labeled slider for the LSystem terminal
+ *
+ * @author Jerry Worthy
+ */
 public class LabeledSlider {
     private Slider slider;
     private Label label;
     private HBox box;
     private Label name;
 
-    public LabeledSlider(int min, int max, int curr, String title){
+
+    public LabeledSlider(int min, int max, int curr, String title, String id){
         slider = new Slider(min, max, curr);
-        slider.valueProperty().addListener((obs, oldval, newVal) -> {
-                    slider.setValue(newVal.intValue());
-                    label.setText(Integer.toString((int) slider.getValue()));
-        });
         slider.setShowTickMarks(true);
-        slider.setId(title + "Slider");
+        slider.setId(id);
         name = new Label(title);
         label = new Label(Integer.toString((int) slider.getValue()));
         box = new HBox(name, slider, label);
@@ -35,8 +37,5 @@ public class LabeledSlider {
     }
     public Label getLabel(){
         return label;
-    }
-    public void setHandler(EventHandler<MouseEvent> handler){
-        slider.setOnMouseReleased(handler);
     }
 }

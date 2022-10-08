@@ -6,37 +6,51 @@ import oolala.Parsers.LSystemParser;
 
 import java.util.ResourceBundle;
 
+/**
+ * A terminal for the LSystem app. It adds the length, angle, and level slider inputs to the terminal.
+ *
+ * @author Jerry Worthy
+ */
 public class LSystemTerminal extends Terminal {
     public LSystemTerminal(ResourceBundle myResources, LSystemParser lSystemParser) {
         super(myResources);
         makeSliders(lSystemParser);
     }
+    /**
+     * A method to create the sliders that control parser settings.
+     *
+     * @param lSystemParser - The parser that will have its settings changed by the sliders.
+     * @author Jerry Worthy
+     */
     public void makeSliders(LSystemParser lSystemParser){
-        LabeledSlider lengthSlider = new LabeledSlider(1, 100, 10, myResources.getString("LengthSlider"));
-        LabeledSlider angleSlider = new LabeledSlider(1, 180, 30, myResources.getString("AngleSlider"));
-        LabeledSlider levelSlider = new LabeledSlider(0, 5, 3, myResources.getString("LevelSlider"));
-        LabeledSlider LSFSlider = new LabeledSlider(1, 10, 1, myResources.getString("LSFSlider"));
-        EventHandler<MouseEvent> lengthChange = event -> {
-            System.out.println("test");
-            lSystemParser.setDist((int) lengthSlider.getSlider().getValue());
-        };
-        EventHandler<MouseEvent> angleChange = event -> {
-            lSystemParser.setAng((int) angleSlider.getSlider().getValue());
-        };
-        EventHandler<MouseEvent> levelChange = event -> {
-            lSystemParser.setLevel((int) levelSlider.getSlider().getValue());
-        };
-        EventHandler<MouseEvent> LSFChange = event -> {
-            lSystemParser.setLsf((int) LSFSlider.getSlider().getValue());
-        };
-        lengthSlider.setHandler(lengthChange);
-        angleSlider.setHandler(angleChange);
-        levelSlider.setHandler(levelChange);
-        LSFSlider.setHandler(LSFChange);
-        box.getChildren().add(1, lengthSlider.getSliderBox());
-        box.getChildren().add(1, angleSlider.getSliderBox());
-        box.getChildren().add(1, levelSlider.getSliderBox());
-        box.getChildren().add(1, LSFSlider.getSliderBox());
+    LabeledSlider lengthSlider = new LabeledSlider(1, 100, 10, myResources.getString("LengthSlider"), "LengthSlider");
+    LabeledSlider angleSlider = new LabeledSlider(1, 180, 30, myResources.getString("AngleSlider"),  "AngleSlider");
+    LabeledSlider levelSlider = new LabeledSlider(0, 5, 3, myResources.getString("LevelSlider"), "LevelSlider");
+    LabeledSlider LSFSlider = new LabeledSlider(0, 5, 3, myResources.getString("LSFSlider"), "LSFSlider");
+    lengthSlider.getSlider().valueProperty().addListener((obs, oldval, newVal) -> {
+          lengthSlider.getSlider().setValue(newVal.intValue());
+          lengthSlider.getLabel().setText(Integer.toString((int) lengthSlider.getSlider().getValue()));
+          lSystemParser.setDist((int) lengthSlider.getSlider().getValue());
+      });
+      angleSlider.getSlider().valueProperty().addListener((obs, oldval, newVal) -> {
+          angleSlider.getSlider().setValue(newVal.intValue());
+          angleSlider.getLabel().setText(Integer.toString((int) angleSlider.getSlider().getValue()));
+          lSystemParser.setAng((int) angleSlider.getSlider().getValue());
+      });
+      levelSlider.getSlider().valueProperty().addListener((obs, oldval, newVal) -> {
+          levelSlider.getSlider().setValue(newVal.intValue());
+          levelSlider.getLabel().setText(Integer.toString((int) levelSlider.getSlider().getValue()));
+          lSystemParser.setLevel((int) levelSlider.getSlider().getValue());
+      });
+      LSFSlider.getSlider().valueProperty().addListener((obs, oldval, newVal) -> {
+        levelSlider.getSlider().setValue(newVal.intValue());
+        levelSlider.getLabel().setText(Integer.toString((int) LSFSlider.getSlider().getValue()));
+        lSystemParser.setLevel((int) LSFSlider.getSlider().getValue());
+      });
+      box.getChildren().add(1, lengthSlider.getSliderBox());
+      box.getChildren().add(1, angleSlider.getSliderBox());
+      box.getChildren().add(1, levelSlider.getSliderBox());
+      box.getChildren().add(1, LSFSlider.getSliderBox());
     }
     
 }

@@ -2,7 +2,13 @@ package oolala.Views.ViewComponents;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Slider;
+import javafx.scene.control.ColorPicker;
+import javafx.scene.control.Tooltip;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.ListCell;
+import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 
@@ -16,7 +22,6 @@ public class ViewUtils {
     public ViewUtils(ResourceBundle resources) {
         this.myResources = resources;
     }
-
 
 
     /**
@@ -46,6 +51,7 @@ public class ViewUtils {
         textField.setId(property);
         return textField;
     }
+
     public static ComboBox<ImageView> makeImageSelector(List<String> labels, String title) {
         ComboBox<ImageView> c = new ComboBox<>();
         c.setButtonCell(new ListCell<ImageView>() {

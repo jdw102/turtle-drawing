@@ -6,10 +6,10 @@ import oolala.Views.TurtleView;
 
 public class CommandHome extends Command {
     public CommandHome(){
-        prefix =CmdName.HOME;
+        prefix =CommandName.HOME;
     }
 
-    public void runCommand(TurtleView turtle, CanvasScreen canvas, SequentialTransition animation) {
-        turtle.home(animation);
+    public void runCommand(TurtleView turtle) {
+        turtle.home();
     }
 }

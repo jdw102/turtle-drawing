@@ -6,10 +6,10 @@ import oolala.Views.TurtleView;
 
 public class CommandPenUp extends Command {
     public CommandPenUp(){
-        prefix =CmdName.PENUP;
+        prefix =CommandName.PENUP;
     }
 
-    public void runCommand(TurtleView turtle, CanvasScreen canvas, SequentialTransition animation) {
+    public void runCommand(TurtleView turtle) {
         turtle.putPenUp();
     }
 }

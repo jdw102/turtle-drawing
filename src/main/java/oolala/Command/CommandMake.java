@@ -9,7 +9,7 @@ public class CommandMake extends Command {
   private String var;
 
   public CommandMake(){
-    prefix =CmdName.MAKE;
+    prefix =CommandName.MAKE;
     var = "";
   }
 

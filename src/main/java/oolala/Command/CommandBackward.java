@@ -7,10 +7,10 @@ import oolala.Views.TurtleView;
 public class CommandBackward extends Command {
 
     public CommandBackward(){
-        prefix =CmdName.BACK;
+        prefix =CommandName.BACK;
     }
 
-    public void runCommand(TurtleView turtle, CanvasScreen canvas, SequentialTransition animation) {
-        turtle.move(-param, canvas, animation);
+    public void runCommand(TurtleView turtle) {
+        turtle.move(-param);
     }
 }

@@ -13,7 +13,7 @@ public class LogoAppView extends AppView {
 
     public LogoAppView(Stage stage, String language) {
         super(stage, language);
-        currentAppModel = new LogoModel(canvasScreen, myResources, "TurtleIcon", this);
+        currentAppModel = new LogoModel(canvasScreen, myResources, "TurtleIcon", animation);
         terminal = new LogoTerminal(myResources);
         imageSelector = makeAppViewImageSelector("IconChange", iconLabels);
     }

@@ -1,4 +1,4 @@
-package oolala;
+package oolala.Views;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -17,7 +17,12 @@ import static oolala.Main.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class StartViewTest extends DukeApplicationTest {
+    private final int SIZE_WIDTH = 840;
+    private final int SIZE_HEIGHT = 650;
+    private final int START_WIDTH = 400;
+    private final int START_HEIGHT = 500;
     private StartingView startingView;
+    private final String TITLE = "Oolala";
 
     @Override
     public void start (Stage stage) {
@@ -55,8 +60,7 @@ public class StartViewTest extends DukeApplicationTest {
             "English",
             "日本語",
             "简体中文",
-            "繁體中文",
-            "WHAT"
+            "繁體中文"
     })
     void testLanguageSelector (String language) {
 

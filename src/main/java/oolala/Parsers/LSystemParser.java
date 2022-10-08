@@ -10,7 +10,7 @@ import oolala.Models.TurtleModel;
 public class LSystemParser extends Parser {
 
     public static final char[] ALPHA_SYM = {'f', 'g', 'a', 'b', '+', '-', 'x'};
-    public static final String[] ALPHA_COMM = {"pd fd length", "pu fd length", "pu bk length", "pd bk length",
+    public final String[] ALPHA_COMM = {"pd fd length", "pu fd length", "pu bk length", "pd bk length",
             "rt angle", "lt angle", "stamp"};
     public static final int DEFAULT_DIST = 10;
     public static final int DEFAULT_ANGLE = 30;
@@ -56,6 +56,8 @@ public class LSystemParser extends Parser {
         turtles.add(1);
     }
     private void reset(){
+        usingRandomAngle = false;
+        usingRandomDist = false;
         alphabet.clear();
         for (int i = 0; i < ALPHA_COMM.length; i++) {
             alphabet.put(ALPHA_SYM[i], ALPHA_COMM[i]);
@@ -196,24 +198,24 @@ public class LSystemParser extends Parser {
         return dist;
     }
 
-    public void setDist(int dist) {
-        this.dist = dist;
+    public void setDist(double dist) {
+        this.dist = (int) dist;
     }
 
     public int getAng() {
         return ang;
     }
 
-    public void setAng(int ang) {
-        this.ang = ang;
+    public void setAng(double ang) {
+        this.ang =  (int) ang;
     }
 
     public int getLevel() {
         return level;
     }
 
-    public void setLevel(int level) {
-        this.level = level;
+    public void setLevel(double level) {
+        this.level =  (int) level;
     }
 
     public List<Command> parse(String input) {

@@ -6,10 +6,11 @@ import oolala.Views.TurtleView;
 
 public class CommandShowTurtle extends Command {
 
-    public CommandShowTurtle(){
-        prefix =CmdName.SHOWT;
+    public CommandShowTurtle() {
+        prefix = CommandName.SHOWT;
     }
-    public void runCommand(TurtleView turtle, CanvasScreen canvas, SequentialTransition animation) {
-        turtle.showTurtle(animation);
+
+    public void runCommand(TurtleView turtle) {
+        turtle.showTurtle();
     }
 }

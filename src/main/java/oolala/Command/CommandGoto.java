@@ -6,14 +6,12 @@ import oolala.Views.TurtleView;
 import oolala.Views.ViewComponents.CanvasScreen;
 
 public class CommandGoto extends Command {
-  public CommandGoto(){
-    prefix = CmdName.GOTO;
-    params = new ArrayList<Integer>();
-  }
+    public CommandGoto(){
+        prefix = CommandName.GOTO;
+        params = new ArrayList<Integer>();
+    }
 
-  public ArrayList<Integer> getParams() { return params; }
-
-  public void runCommand(TurtleView turtle, CanvasScreen canvas, SequentialTransition animation) {
-    turtle.goTo(params.get(0), params.get(1), animation);
-  }
+    public void runCommand(TurtleView turtle) {
+        turtle.goTo(params.get(0), params.get(1));
+    }
 }

@@ -16,7 +16,7 @@ public class LSystemAppView extends AppView {
 
     public LSystemAppView(Stage stage, String language) {
         super(stage, language);
-        currentAppModel = new LSystemModel(canvasScreen, myResources, "SimpleLeafStamp", this);
+        currentAppModel = new LSystemModel(canvasScreen, myResources, "SimpleLeafStamp", animation);
         terminal = new LSystemTerminal(myResources, (LSystemParser) currentAppModel.getParser());
         imageSelector = makeAppViewImageSelector("StampChange", stampLabels);
     }
