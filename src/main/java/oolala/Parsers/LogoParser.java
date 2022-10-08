@@ -53,7 +53,7 @@ public class LogoParser extends Parser {
                 case "ht", "hide", "hidet" -> new CommandHideTurtle();
                 case "home" -> new CommandHome();
                 case "stamp" -> new CommandStamp();
-                case "make", "set" -> parseMake(scan);
+                case "make", "set" -> parseMake(scan, prefix);
                 default -> throw new IllegalStateException(myResources.getString("InvalidCommand"));
             };
             program.add(c);
@@ -61,12 +61,11 @@ public class LogoParser extends Parser {
         return program;
     }
 
-    private Command parseMake(Scanner scan) throws IllegalStateException {
+    private Command parseMake(Scanner scan, String prefix) throws IllegalStateException {
         CommandMake c = new CommandMake();
         token = scan.next();
         if (token.charAt(0) != ':') {
-            throw new IllegalStateException("Incorrect variable name for make command!");
-            //System.out.println("Got token " + token);
+            throw new IllegalStateException(String.format(myResources.getString("InvalidVariableMake"), prefix));
         }
         if (scan.hasNextInt()) {
             variables.put(token.substring(1), scan.nextInt());
@@ -75,7 +74,7 @@ public class LogoParser extends Parser {
             if (variables.containsKey(token))
                 variables.put(token.substring(1), variables.get(token));
             else
-                throw new IllegalStateException("Incorrect variable name for make command!");
+                throw new IllegalStateException(String.format(myResources.getString("InvalidVariableMake"), prefix));
         }
         c.setVar(token.substring(1));
         c.setParam(variables.get(token.substring(1)));
@@ -83,43 +82,48 @@ public class LogoParser extends Parser {
         return c;
     }
 
+
     private Command parseCommandTell(Scanner scan) throws IllegalStateException {
-        Command c = new CommandTell();
-        int param;
-        if (!scan.hasNextInt()) {
+        CommandTell c = new CommandTell();
+        int param = 0;
+
+        if (!(scan.hasNextInt() || hasNextVariable(scan)))
             throw new IllegalStateException(String.format(myResources.getString("MissingParameter"), "Tell"));
-        }
-        while (scan.hasNextInt()) {
-            param = scan.nextInt();
+        while (scan.hasNextInt() || hasNextVariable(scan)) {
+            if (scan.hasNextInt())
+                param = scan.nextInt();
+            else if (hasNextVariable(scan))
+                param = variables.get(scan.next());
+
             if (param > 0)
                 c.getParams().add(param);
             else
                 throw new IllegalStateException(myResources.getString("InvalidNegativeParameter"));
         }
-
         return c;
     }
 
     private Command parseCommandNParameters(Scanner scan, String prefix, int numOfParams) throws IllegalStateException {
         Command c;
+        int paramCount = 0;
+        int param = 0;
         switch (prefix) {
             case "goto", "setxy" -> c = new CommandGoto();
             case "towards" -> c = new CommandTowards();
             default -> throw new IllegalStateException(myResources.getString("InvalidCommand"));
         }
-
-        for (int i = 0; i < numOfParams; i++) {
+        if (!(scan.hasNextInt() || hasNextVariable(scan)))
+            throw new IllegalStateException(String.format(myResources.getString("MissingParameter"), prefix));
+        while (scan.hasNextInt() || hasNextVariable(scan)) {
+            paramCount++;
             if (scan.hasNextInt())
-                c.getParams().add(scan.nextInt());
-            else {
-                token = scan.next();
-                if (variables.containsKey(token))
-                    c.getParams().add(variables.get(token));
-                else
-                    throw new IllegalStateException(String.format(myResources.getString("MissingParameter"), prefix));
-            }
-        }
-
+                param = scan.nextInt();
+            else if (hasNextVariable(scan))
+                param = variables.get(scan.next());
+            c.getParams().add(param);
+       }
+        if (paramCount != numOfParams)
+            throw new IllegalStateException(String.format(myResources.getString("InvalidNumberOfParameters"), numOfParams, prefix));
         return c;
     }
 
@@ -155,7 +159,11 @@ public class LogoParser extends Parser {
         return recent;
     }
 
-    public void setLanguage(ResourceBundle resources) {
-        myResources = resources;
+    private boolean hasNextVariable(Scanner scan) {
+        boolean isValid = false;
+        for (String var : variables.keySet()) {
+            isValid |= scan.hasNext(var);
+        }
+        return isValid;
     }
 }
