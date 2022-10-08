@@ -12,12 +12,16 @@ public class Parser {
         return program;
     }
 
-    public void setLevel(int level) {}
+    public void setLevel(int level) {
+    }
 
-    public void setDist(int dist) {}
+    public void setDist(int dist) {
+    }
 
-    public void setAng(int ang) {}
-    public List<String> getRecentCommandStrings(){
+    public void setAng(int ang) {
+    }
+
+    public List<String> getRecentCommandStrings() {
         return new ArrayList<>();
     }
 }
