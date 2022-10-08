@@ -50,15 +50,18 @@ public abstract class Command {
             case HOME -> s = new StringBuilder("home");
             case STAMP -> s = new StringBuilder("stamp");
             case TELL -> s = new StringBuilder("tell");
+            case GOTO -> s = new StringBuilder("goto");
+            case TOWARDS -> s = new StringBuilder("towards");
+            case MAKE -> s = new StringBuilder("make");
         }
         if (this.params != null) {
             for (Integer i : this.params) {
                 s.append(" ");
-                s.append(Integer.toString(i));
+                s.append(i);
             }
         } else if (this.param != 0) {
             s.append(" ");
-            s.append(Integer.toString(this.param));
+            s.append(this.param);
         }
         return s.toString();
     }
