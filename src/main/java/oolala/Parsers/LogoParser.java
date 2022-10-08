@@ -162,8 +162,8 @@ public class LogoParser extends Parser {
                         else
                             return errorAndExit("Incorrect variable value for make command!");
                     }
-                    System.out.println("Got variable " + variables.get(tkn.substring(1)));
-                    System.out.println(variables.toString());
+                    ((CommandMake) c).setVar(tkn.substring(1));
+                    c.setParam(variables.get(tkn));
                     break;
                 case "tell":
                     c = new CommandTell();
