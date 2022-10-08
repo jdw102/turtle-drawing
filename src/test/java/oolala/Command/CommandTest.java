@@ -117,7 +117,7 @@ public class CommandTest extends DukeApplicationTest {
 
     @Test
     void testHome() {
-        turtleModel.setPosition(500, 500);
+        turtleModel.setRelativePosition(500, 500);
         //assertEquals(0, turtleModel.getRelPos().posX);
         //assertEquals(0, turtleModel.getRelPos().posY);
         command = new CommandHome();
