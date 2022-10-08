@@ -11,6 +11,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
+import oolala.Views.ViewComponents.ViewUtils;
 
 import java.util.ResourceBundle;
 
@@ -22,6 +23,7 @@ import static oolala.Views.ViewComponents.ViewUtils.makeButton;
  * @author Jerry Worthy
  */
 public class StartingView {
+    private ViewUtils viewUtils;
     private BorderPane root;
     private ComboBox<String> languageSelector;
     public static ResourceBundle myResources;
@@ -32,6 +34,7 @@ public class StartingView {
     public Scene setUpScene(int sizeWidth, int sizeHeight, EventHandler<ActionEvent> startApp) {
         root = new BorderPane();
         myResources = ResourceBundle.getBundle(DEFAULT_RESOURCE_PACKAGE + STARTING_LANGUAGE);
+        viewUtils = new ViewUtils(myResources);
         languageSelector = makeLanguageSelector("LanguageSelector");
         Label languageLabel = new Label("Select Language");
         languageLabel.getStyleClass().add("start-label");
