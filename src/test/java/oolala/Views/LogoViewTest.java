@@ -52,7 +52,7 @@ public class LogoViewTest extends DukeApplicationTest {
 
     @Override
     public void start (Stage stage) {
-        logoView = new LogoAppView(stage, "English", DEFAULT_RESOURCE_FOLDER, STYLESHEET, DARK_MODE_STYLESHEET);
+        logoView = new LogoAppView(stage, "English");
         Scene startScene = new Scene(logoView.setUpRootBorderPane(), SIZE_WIDTH, SIZE_HEIGHT);
         startScene.getStylesheets().add(getClass().getResource(DEFAULT_RESOURCE_FOLDER + STYLESHEET).toExternalForm());
         stage.setTitle(TITLE);

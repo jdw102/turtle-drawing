@@ -19,8 +19,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 
 public class LogoModelTest extends DukeApplicationTest {
-    private static final String DEFAULT_RESOURCE_PACKAGE = "Properties.";
-    private static final String DEFAULT_LANGUAGE = "English";
+    public static final String DEFAULT_RESOURCE_PACKAGE = "Properties.";
+    public static final String DEFAULT_LANGUAGE = "English";
     TurtleModel turtleModel;
     TurtleView turtleView;
     CanvasScreen canvasScreen;

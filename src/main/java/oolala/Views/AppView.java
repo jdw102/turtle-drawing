@@ -1,17 +1,34 @@
 package oolala.Views;
 
+import javax.imageio.ImageIO;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.List;
+import java.util.ResourceBundle;
+
 import javafx.animation.SequentialTransition;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.TextField;
+import javafx.scene.control.ColorPicker;
+import javafx.scene.control.Slider;
+import javafx.scene.control.Label;
+import javafx.scene.control.Tooltip;
+import javafx.scene.control.Alert;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
-import javafx.scene.layout.*;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -20,14 +37,17 @@ import oolala.Views.ViewComponents.CanvasScreen;
 import oolala.Command.Command;
 import oolala.Views.ViewComponents.Terminal;
 import oolala.Views.ViewComponents.ViewUtils;
+import javafx.scene.control.ComboBox;
 
-import javax.imageio.ImageIO;
-import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.*;
 
-import static oolala.Views.ViewComponents.ViewUtils.*;
+import static oolala.Main.DARK_MODE_STYLESHEET;
+import static oolala.Main.DEFAULT_RESOURCE_FOLDER;
+import static oolala.Main.STYLESHEET;
+import static oolala.Views.ViewComponents.ViewUtils.makeButton;
+import static oolala.Views.ViewComponents.ViewUtils.makeColorPicker;
+import static oolala.Views.ViewComponents.ViewUtils.makeImageSelector;
+import static oolala.Views.ViewComponents.ViewUtils.makeTextField;
+import static oolala.Views.ViewComponents.ViewUtils.makeToggleBar;
 
 /**
  * @Author Luyao Wang
@@ -38,7 +58,7 @@ public abstract class AppView {
     private final BorderPane root;
     protected Terminal terminal;
     protected ResourceBundle myResources;
-    private static final String DEFAULT_RESOURCE_PACKAGE = "Properties.";
+    public static final String DEFAULT_RESOURCE_PACKAGE = "Properties.";
     private final FileChooser fileChooser;
     private final Stage stage;
     protected CanvasScreen canvasScreen;
@@ -52,14 +72,8 @@ public abstract class AppView {
     protected VBox leftVBox;
     private Button runButton;
     protected SequentialTransition animation;
-    private final String STYLESHEET;
-    private final String DARK_MODE_STYLESHEET;
-    private final String DEFAULT_RESOURCE_FOLDER;
 
-    public AppView(Stage stage, String language, String defaultResourceFolder, String styleSheet, String darkModeStyleSheet) {
-        STYLESHEET = styleSheet;
-        DARK_MODE_STYLESHEET = darkModeStyleSheet;
-        DEFAULT_RESOURCE_FOLDER = defaultResourceFolder;
+    public AppView(Stage stage, String language) {
         myResources = ResourceBundle.getBundle(DEFAULT_RESOURCE_PACKAGE + language);
         viewUtils = new ViewUtils(myResources);
         this.stage = stage;
@@ -159,7 +173,7 @@ public abstract class AppView {
                 animation.play();
                 animation.getChildren().removeAll(animation.getChildren());
             }
-        } catch (Exception e) {
+        } catch (IllegalStateException e) {
             showError(e.getMessage());
         }
     }
@@ -180,7 +194,7 @@ public abstract class AppView {
                     String content = Files.readString(filePath);
                     terminal.setText(content);
                 } catch (IOException e) {
-                    throw new RuntimeException(e);
+                    showError(e.getMessage());
                 }
             }
         };
@@ -199,7 +213,7 @@ public abstract class AppView {
                     writer.write(terminal.getTextArea().getText().toLowerCase());
                     writer.close();
                 } catch (IOException e) {
-                    throw new RuntimeException(e);
+                    showError(e.getMessage());
                 }
             }
         };
@@ -217,7 +231,7 @@ public abstract class AppView {
                 try {
                     ImageIO.write(SwingFXUtils.fromFXImage(snapshot, null), "png", file);
                 } catch (IOException e) {
-                    throw new RuntimeException(e);
+                    showError(e.getMessage());
                 }
             }
         };

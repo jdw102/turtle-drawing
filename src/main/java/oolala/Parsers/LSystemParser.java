@@ -8,14 +8,14 @@ import oolala.Command.Command;
 public class LSystemParser extends Parser {
 
     public static final char[] ALPHA_SYM = {'f', 'g', 'a', 'b', '+', '-', 'x'};
-    public static final String[] ALPHA_COMM = {"pd fd length", "pu fd length", "pu bk length", "pd bk length",
+    public final String[] ALPHA_COMM = {"pd fd length", "pu fd length", "pu bk length", "pd bk length",
             "rt angle", "lt angle", "stamp"};
     public static final int DEFAULT_DIST = 10;
     public static final int DEFAULT_ANGLE = 30;
     public static final int DEFAULT_LEVEL = 3;
-    public static final String LENGTH_MARKER = "length";
-    public static final String ANGLE_MARKER = "angle";
-    public static final String QUOTE_REGEX = "([\"'])(?:(?=(\\\\?))\\2.)*?\\1";
+    public final String LENGTH_MARKER = "length";
+    public final String ANGLE_MARKER = "angle";
+    public final String QUOTE_REGEX = "([\"'])(?:(?=(\\\\?))\\2.)*?\\1";
 
     private boolean usingRandomDist = false;
     private boolean usingRandomAngle = false;

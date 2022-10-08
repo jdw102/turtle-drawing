@@ -13,8 +13,8 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 class LSystemParserTest {
-  private static final String DEFAULT_RESOURCE_PACKAGE = "Properties.";
-  private static final String DEFAULT_LANGUAGE = "English";
+  public static final String DEFAULT_RESOURCE_PACKAGE = "Properties.";
+  public static final String DEFAULT_LANGUAGE = "English";
 
   LSystemParser lparser = new LSystemParser(ResourceBundle.getBundle(DEFAULT_RESOURCE_PACKAGE + DEFAULT_LANGUAGE));
 

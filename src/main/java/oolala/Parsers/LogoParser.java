@@ -41,14 +41,15 @@ public class LogoParser extends Parser {
                 continue;
             }
             c = switch (prefix) {
-                case "fd", "bk", "rt", "lt" -> parseCommandWithOneParameter(scan, prefix);
+                case "fd", "bk", "rt", "lt", "forward", "backward", "left", "right" ->
+                        parseCommandWithOneParameter(scan, prefix);
                 case "goto", "towards" -> parseCommandNParameters(scan, prefix, 2);
                 case "tell" -> parseCommandTell(scan);
-                case "cs" -> new CommandClear();
-                case "pd" -> new CommandPenDown();
-                case "pu" -> new CommandPenUp();
-                case "st" -> new CommandShowTurtle();
-                case "ht" -> new CommandHideTurtle();
+                case "cs", "clearscreen" -> new CommandClear();
+                case "pd", "pendown" -> new CommandPenDown();
+                case "pu", "penup" -> new CommandPenUp();
+                case "st", "show", "showt" -> new CommandShowTurtle();
+                case "ht", "hide", "hidet" -> new CommandHideTurtle();
                 case "home" -> new CommandHome();
                 case "stamp" -> new CommandStamp();
                 default -> throw new IllegalStateException(myResources.getString("InvalidCommand"));
@@ -69,7 +70,7 @@ public class LogoParser extends Parser {
             if (param > 0)
                 c.getParams().add(param);
             else
-                throw new IllegalStateException(">0 plz");
+                throw new IllegalStateException(myResources.getString("InvalidNegativeParameter"));
         }
 
         return c;
@@ -79,7 +80,7 @@ public class LogoParser extends Parser {
         Command c;
         int paramCount = 0;
         if (!scan.hasNextInt()) {
-            throw new IllegalStateException(String.format(myResources.getString("MissingParameter"), "goto"));
+            throw new IllegalStateException(String.format(myResources.getString("MissingParameter"), prefix));
         }
         switch (prefix) {
             case "goto" -> c = new CommandGoto();
@@ -93,7 +94,7 @@ public class LogoParser extends Parser {
             c.getParams().add(scan.nextInt());
         }
         if (paramCount != numOfParams)
-            throw new IllegalStateException("Please type in 2 parameters for goto command");
+            throw new IllegalStateException(String.format(myResources.getString("InvalidNumberOfParameters"), numOfParams, prefix));
 
         return c;
     }
@@ -106,10 +107,10 @@ public class LogoParser extends Parser {
         else
             throw new IllegalStateException(String.format(myResources.getString("MissingParameter"), prefix));
         switch (prefix) {
-            case "fd" -> c = new CommandForward();
-            case "bk" -> c = new CommandBackward();
-            case "lt" -> c = new CommandLeft();
-            case "rt" -> c = new CommandRight();
+            case "fd", "forward" -> c = new CommandForward();
+            case "bk", "backward" -> c = new CommandBackward();
+            case "lt", "left" -> c = new CommandLeft();
+            case "rt", "right" -> c = new CommandRight();
             default -> throw new IllegalStateException(myResources.getString("InvalidCommand"));
         }
         c.setParam(param);

@@ -41,7 +41,7 @@ public class LSystemViewTest extends DukeApplicationTest {
 
     @Override
     public void start (Stage stage) {
-        lSystemView = new LSystemAppView(stage, "English", DEFAULT_RESOURCE_FOLDER, STYLESHEET, STYLESHEET);
+        lSystemView = new LSystemAppView(stage, "English");
         Scene startScene = new Scene(lSystemView.setUpRootBorderPane(), SIZE_WIDTH, SIZE_HEIGHT);
         startScene.getStylesheets().add(getClass().getResource(DEFAULT_RESOURCE_FOLDER + STYLESHEET).toExternalForm());
         stage.setTitle(TITLE);

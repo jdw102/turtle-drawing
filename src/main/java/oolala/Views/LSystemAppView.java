@@ -14,8 +14,8 @@ import java.util.List;
 public class LSystemAppView extends AppView {
     public final List<String> stampLabels = new ArrayList<>(Arrays.asList("SimpleLeafStamp", "OakLeafStamp", "MapleLeafStamp", "FireworkStamp"));
 
-    public LSystemAppView(Stage stage, String language, String defaultResourceFolder, String styleSheet, String darkModeStyleSheet) {
-        super(stage, language, defaultResourceFolder, styleSheet, darkModeStyleSheet);
+    public LSystemAppView(Stage stage, String language) {
+        super(stage, language);
         currentAppModel = new LSystemModel(canvasScreen, myResources, "SimpleLeafStamp", animation);
         terminal = new LSystemTerminal(myResources, (LSystemParser) currentAppModel.getParser());
         imageSelector = makeAppViewImageSelector("StampChange", stampLabels);

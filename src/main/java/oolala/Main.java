@@ -19,15 +19,15 @@ import oolala.Views.StartingView;
  * Feel free to completely change this code or delete it entirely.
  */
 public class Main extends Application {
-    private final int SIZE_WIDTH = 840;
-    private final int SIZE_HEIGHT = 650;
-    private final int START_WIDTH = 400;
-    private final int START_HEIGHT = 500;
+    public static final int SIZE_WIDTH = 840;
+    public static final int SIZE_HEIGHT = 650;
+    public static final int START_WIDTH = 400;
+    public static final int START_HEIGHT = 500;
     private StartingView startingView;
-    private final String TITLE = "Oolala";
-    private final String STYLESHEET = "default.css";
-    private final String DARK_MODE_STYLESHEET = "darkmode.css";
-    private final String DEFAULT_RESOURCE_FOLDER = "/Properties/";
+    public static final String TITLE = "Oolala";
+    public static final String STYLESHEET = "default.css";
+    public static final String DARK_MODE_STYLESHEET = "darkmode.css";
+    public static final String DEFAULT_RESOURCE_FOLDER = "/Properties/";
 
     /**
      * A method to test (and a joke :).
@@ -47,8 +47,8 @@ public class Main extends Application {
 
             TabPane tabPane = new TabPane();
             Scene scene = new Scene(tabPane, SIZE_WIDTH, SIZE_HEIGHT);
-            AppView view1 = new LogoAppView(stage, language, DEFAULT_RESOURCE_FOLDER, STYLESHEET, DARK_MODE_STYLESHEET);
-            AppView view2 = new LSystemAppView(stage, language, DEFAULT_RESOURCE_FOLDER, STYLESHEET, DARK_MODE_STYLESHEET);
+            AppView view1 = new LogoAppView(stage, language);
+            AppView view2 = new LSystemAppView(stage, language);
             Tab tab1 = new Tab("Logo", view1.setUpRootBorderPane());
             Tab tab2 = new Tab("L-System", view2.setUpRootBorderPane());
             tabPane.getTabs().add(tab1);
