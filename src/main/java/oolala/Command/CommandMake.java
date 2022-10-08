@@ -4,6 +4,13 @@ import javafx.animation.SequentialTransition;
 import oolala.Views.ViewComponents.CanvasScreen;
 import oolala.Views.TurtleView;
 
+/**
+ * A dummy class for the make command.
+ * Used to track recent "make" commands
+ * in our command tracking buffer.
+ *
+ * @author Aditya Paul
+ */
 public class CommandMake extends Command {
 
     private String var;

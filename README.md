@@ -18,7 +18,7 @@ Hours Spent: 36
 
 ### Primary Roles
 
-Aditya Paul: parsers of LOGO and L-Syetem, functionality of multiple turtles.
+Aditya Paul: parsers of LOGO and L-System, turtle functionalities.
 
 Luyao Wang: the model, GUI, different languages.
 
@@ -99,7 +99,11 @@ The order in which previous commands are placed in command history might not be 
 
 When shapes get beyond the canvas in the L-System app, the brush still move around the border.
 
+`clearscreen` is unable to clear lines from the screen
+
 Extra features:
+
+`push` and `pop` are able to push turtle states onto a stack in the Logo app
 
 ### Impressions
 

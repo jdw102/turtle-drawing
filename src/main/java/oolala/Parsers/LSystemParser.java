@@ -64,7 +64,7 @@ public class LSystemParser extends Parser {
     }
 
     /**
-     * A function that expands the given root according to the given rules.
+     * A function that expands the pre-set root according to the given rules.
      *
      * @return a String object containing the root string expanded the specified number of times
      */
@@ -91,6 +91,13 @@ public class LSystemParser extends Parser {
         return expanded;
     }
 
+    /**
+     * Interprets the expanded root into a string of logo commands that can
+     * be passed to a LogoParser object.
+     *
+     * @param expansion - The expanded seed, a string of symbols
+     * @return a Logo program
+     */
     public String getCommandString(String expansion) {
         String commandString = "";
         for (Integer turtle : turtles) {
@@ -209,6 +216,12 @@ public class LSystemParser extends Parser {
         this.level = (int) level;
     }
 
+    /**
+     * A wrapper for parsing purposes: resets, configures, and parses input.
+     *
+     * @param input The input string from the GUI
+     * @return a list of Command objects to be executed by turtles.
+     */
     public List<Command> parse(String input) {
         reset();
         parseConfiguration(input);

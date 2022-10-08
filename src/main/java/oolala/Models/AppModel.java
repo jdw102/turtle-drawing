@@ -14,7 +14,8 @@ import oolala.Parsers.Parser;
 import oolala.Views.TurtleView;
 
 /**
- * A model class to hold information about the commands running of the app. TurtleView instances are created in this class when a command is run.
+ * A model class to hold information about the commands running of the app.
+ * TurtleView instances are created in this class when a command is run.
  *
  * @author
  */

@@ -65,6 +65,15 @@ public class LogoParser extends Parser {
         return program;
     }
 
+    /**
+     * Handler for make command; adds/modifies variables in IDE
+     *
+     * @param scan - scanner for current command string
+     * @param prefix - prefix string for exception-handling purposes
+     * @return Command object containing the information for this make command
+     * @throws IllegalStateException - If input parameters for make command are bad
+     * @author Aditya Paul
+     */
     private Command parseMake(Scanner scan, String prefix) throws IllegalStateException {
         CommandMake c = new CommandMake();
         String token = scan.next();
@@ -84,7 +93,15 @@ public class LogoParser extends Parser {
         return c;
     }
 
-
+    /**
+     * Handler for TELL command, scans for variables in map and
+     * replaces them before creating a tell object
+     *
+     * @param scan - scanner for current command string
+     * @return Command object containing tell information
+     * @throws IllegalStateException - if input is malformed
+     * @author Aditya Paul
+     */
     private Command parseCommandTell(Scanner scan) throws IllegalStateException {
         CommandTell c = new CommandTell();
         int param = 0;
@@ -101,6 +118,17 @@ public class LogoParser extends Parser {
         return c;
     }
 
+    /**
+     * Parser for multi-input commands. Loops through expected
+     * number of params, and throws exception if too many.
+     *
+     * @param scan - scanner for current command string
+     * @param prefix - prefix for exception handling/command object purposes
+     * @param numOfParams - number of expected parameters
+     * @return a Command object containing the information for the multi-input command
+     * @throws IllegalStateException - If input is malformed
+     * @author Aditya Paul
+     */
     private Command parseCommandNParameters(Scanner scan, String prefix, int numOfParams) throws IllegalStateException {
         Command c;
         int paramCount = 0;
@@ -123,6 +151,16 @@ public class LogoParser extends Parser {
         return c;
     }
 
+    /**
+     * Handler for single-parameter commands. Verifies if variables are
+     * in the map, and checks command syntax as well.
+     *
+     * @param scan - scanner for current command string
+     * @param prefix - command prefix for Command instantiation and error handling purposes
+     * @return a Command object with command information within it
+     * @throws IllegalStateException
+     * @author Aditya Paul
+     */
     private Command parseCommandWithOneParameter(Scanner scan, String prefix) throws IllegalStateException {
         Command c;
         int param;
@@ -153,6 +191,13 @@ public class LogoParser extends Parser {
         return recent;
     }
 
+    /**
+     * Checks the variable map for variables that can be used to represent data.
+     *
+     * @param scan - Scanner for current command string
+     * @return boolean indicating whether next token is a variable in the map
+     * @author Aditya Paul
+     */
     private boolean hasNextVariable(Scanner scan) {
         boolean isValid = false;
         for (String var : variables.keySet()) {
