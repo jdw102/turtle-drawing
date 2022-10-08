@@ -4,6 +4,8 @@ import java.util.*;
 
 import javafx.scene.control.Alert;
 import oolala.Command.Command;
+import oolala.Command.CommandTell;
+import oolala.Models.TurtleModel;
 
 public class LSystemParser extends Parser {
 
@@ -13,9 +15,10 @@ public class LSystemParser extends Parser {
     public static final int DEFAULT_DIST = 10;
     public static final int DEFAULT_ANGLE = 30;
     public static final int DEFAULT_LEVEL = 3;
-    public final String LENGTH_MARKER = "length";
-    public final String ANGLE_MARKER = "angle";
-    public final String QUOTE_REGEX = "([\"'])(?:(?=(\\\\?))\\2.)*?\\1";
+    public static final int DEFAULT_LSF = 1;
+    public static final String LENGTH_MARKER = "length";
+    public static final String ANGLE_MARKER = "angle";
+    public static final String QUOTE_REGEX = "([\"'])(?:(?=(\\\\?))\\2.)*?\\1";
 
     private boolean usingRandomDist = false;
     private boolean usingRandomAngle = false;
@@ -26,22 +29,31 @@ public class LSystemParser extends Parser {
     private int dist = DEFAULT_DIST;
     private int ang = DEFAULT_ANGLE;
     private int level = DEFAULT_LEVEL;
+    private int lsf = DEFAULT_LSF;
     private Map<Character, String> alphabet;
     private Map<Character, String> rules;
+    private Map<Character, String> altRules;
+    private Map<Character, Double> ruleProbs;
     private String start;
     private LogoParser logoParser;
     private ResourceBundle myResources;
     private List<String> seenCommands;
+    private List<Integer> turtles;
 
     public LSystemParser(ResourceBundle resources) {
         myResources = resources;
+        turtles = new ArrayList<>();
         seenCommands = new ArrayList<>();
         alphabet = new HashMap<>();
+        start = "";
         for (int i = 0; i < ALPHA_COMM.length; i++) {
             alphabet.put(ALPHA_SYM[i], ALPHA_COMM[i]);
         }
         rules = new HashMap<>();
+        altRules = new HashMap<>();
+        ruleProbs = new HashMap<>();
         logoParser = new LogoParser(myResources);
+        turtles.add(1);
     }
     private void reset(){
         usingRandomAngle = false;
@@ -59,13 +71,20 @@ public class LSystemParser extends Parser {
      */
     public String applyRules() {
         String expanded = start;
+        Random rand = new Random();
         for (int i = 0; i < getLevel(); i++) {
             String nextLevel = "";
             for (int j = 0; j < expanded.length(); j++) {
-                if (rules.containsKey(expanded.charAt(j))) {
-                    nextLevel = nextLevel.concat(rules.get(expanded.charAt(j)));
-                }  else {
-                    nextLevel = nextLevel.concat(Character.toString(expanded.charAt(j)));
+                char symbol = expanded.charAt(j);
+                if (rules.containsKey(symbol)) {
+                    if (altRules.containsKey(symbol)) // TODO: refactor
+                        nextLevel = (rand.nextDouble(1) < ruleProbs.get(symbol))
+                            ? nextLevel.concat(altRules.get(symbol))
+                            : nextLevel.concat(rules.get(symbol));
+                    else
+                        nextLevel = nextLevel.concat(rules.get(symbol));
+                } else {
+                    nextLevel = nextLevel.concat(Character.toString(symbol));
                 }
             }
             expanded = nextLevel;
@@ -75,20 +94,33 @@ public class LSystemParser extends Parser {
 
     public String getCommandString(String expansion) {
         String commandString = "";
-        for (int i = 0; i < expansion.length(); i++) {
-            char currChar = expansion.charAt(i);
-            if (alphabet.containsKey(currChar)) {
-                seenCommands.add(Character.toString(currChar).toUpperCase());
-                String cmd = alphabet.get(currChar);
-                if (usingRandomDist)
-                    dist = (int) Math.round(Math.random() * (distMax - distMin) + distMin);
-                if (usingRandomAngle)
-                    ang = (int) Math.round(Math.random() * (angMax - angMin) + angMin);
-                cmd = cmd.replace(LENGTH_MARKER, Integer.toString(this.getDist()));
-                cmd = cmd.replace(ANGLE_MARKER, Integer.toString(this.getAng()));
-                commandString = commandString.concat(cmd).concat(" ");
+        for (Integer turtle : turtles) {
+            int lsfPowers = 0;
+            commandString = commandString.concat("tell " + turtle + " ");
+            for (int i = 0; i < expansion.length(); i++) {
+                char currChar = expansion.charAt(i);
+                if (alphabet.containsKey(currChar)) {
+                    seenCommands.add(Character.toString(currChar).toUpperCase());
+                    String cmd = alphabet.get(currChar);
+                    if (usingRandomDist)
+                        dist = (int) Math.round(Math.random() * (distMax - distMin) + distMin)
+                            * (int) Math.pow(lsf, lsfPowers);
+                    if (usingRandomAngle)
+                        ang = (int) Math.round(Math.random() * (angMax - angMin) + angMin)
+                            * (int) Math.pow(lsf, lsfPowers);
+                    cmd = cmd.replace(LENGTH_MARKER,
+                        Integer.toString(this.getDist() * (int) Math.pow(lsf, lsfPowers)));
+                    cmd = cmd.replace(ANGLE_MARKER, Integer.toString(this.getAng()));
+                    commandString = commandString.concat(cmd).concat(" ");
+                } else {
+                    switch (currChar) {
+                        case '<' -> lsfPowers++;
+                        case '>' -> lsfPowers--;
+                    }
+                }
             }
         }
+        System.out.println(commandString);
         return commandString;
     }
 
@@ -105,6 +137,7 @@ public class LSystemParser extends Parser {
         Scanner scan = new Scanner(configString);
 
         char symbol;
+        double prob;
         String expansion;
         while (scan.hasNext()) {
             String prefix = scan.next();
@@ -129,11 +162,27 @@ public class LSystemParser extends Parser {
                     angMin = scan.nextInt();
                     angMax = scan.nextInt();
                 }
+                case "randomp" -> {
+                    symbol = scan.next().charAt(0);
+                    prob = scan.nextInt();
+                    expansion = scan.next();
+                    ruleProbs.put(symbol, prob);
+                    altRules.put(symbol, expansion);
+                }
                 case "set" -> {
                     symbol = scan.next().charAt(0);
                     expansion = scan.findInLine(QUOTE_REGEX);
                     expansion = expansion.substring(1, expansion.length() - 1);
                     alphabet.put(symbol, expansion);
+                }
+                case "tell" -> {
+                    turtles.clear();
+                    if (!scan.hasNextInt()) {
+                        // TODO: Handle
+                        System.err.println("Missing parameters for TELL command!");
+                    }
+                    while (scan.hasNextInt())
+                        turtles.add(scan.nextInt());
                 }
                 default -> {
                     // TODO: Handle bad input
@@ -172,10 +221,17 @@ public class LSystemParser extends Parser {
     public List<Command> parse(String input) {
         reset();
         parseConfig(input);
-        System.out.println(getCommandString(applyRules()));
         return logoParser.parse(getCommandString(applyRules()));
     }
     public List<String> getRecentCommandStrings(){
         return seenCommands;
+    }
+
+    public int getLsf() {
+        return lsf;
+    }
+
+    public void setLsf(int lsf) {
+        this.lsf = lsf;
     }
 }

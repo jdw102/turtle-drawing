@@ -94,8 +94,8 @@ public class TurtleModel {
     public void rotate(double newAngle) {
         angle -= newAngle;
     }
-
-    public void putPenDown() {
+    public void turn(double newAngle) { angle = (int) newAngle; }
+    public void putPenDown(){
         penDown = true;
     }
 

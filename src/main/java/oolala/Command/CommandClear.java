@@ -11,4 +11,3 @@ public class CommandClear extends Command{
         turtle.clearTurtle();
     }
 }
-

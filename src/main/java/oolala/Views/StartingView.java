@@ -23,8 +23,8 @@ import static oolala.Views.ViewComponents.ViewUtils.makeButton;
  * @author Jerry Worthy
  */
 public class StartingView {
-    private BorderPane root;
     private ViewUtils viewUtils;
+    private BorderPane root;
     private ComboBox<String> languageSelector;
     public static ResourceBundle myResources;
     private final String DEFAULT_RESOURCE_PACKAGE = "Properties.";

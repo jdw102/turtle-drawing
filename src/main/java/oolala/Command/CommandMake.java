@@ -30,4 +30,3 @@ public class CommandMake extends Command {
         return "make :" + var + " " + super.param;
     }
 }
-

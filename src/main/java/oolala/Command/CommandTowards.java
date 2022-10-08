@@ -1,7 +1,6 @@
 package oolala.Command;
 
 import java.util.ArrayList;
-
 import javafx.animation.SequentialTransition;
 import oolala.Views.TurtleView;
 import oolala.Views.ViewComponents.CanvasScreen;
@@ -16,4 +15,3 @@ public class CommandTowards extends Command {
         turtle.turnTurtle(params.get(0), params.get(1));
     }
 }
-

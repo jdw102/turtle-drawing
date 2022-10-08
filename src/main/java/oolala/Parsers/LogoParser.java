@@ -1,6 +1,11 @@
 package oolala.Parsers;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.ResourceBundle;
+import java.util.Scanner;
 
 import oolala.Command.*;
 
@@ -41,6 +46,142 @@ public class LogoParser extends Parser {
                 scan.nextLine();
                 continue;
             }
+//<<<<<<< HEAD
+//            switch (prefix) {
+//                case "fd": case "forward":
+//                    c = new CommandForward();
+//                    if (scan.hasNextInt())
+//                        c.setParam(scan.nextInt());
+//                    else {
+//                        tkn = scan.next();
+//                        if (variables.containsKey(tkn))
+//                            c.setParam(variables.get(tkn));
+//                        else
+//                            return errorAndExit("Missing parameters for FD command!");
+//                    }
+//                    break;
+//                case "bk": case "back":
+//                    c = new CommandBackward();
+//                    System.out.println("Current token " + prefix);
+//                    if (scan.hasNextInt())
+//                        c.setParam(scan.nextInt());
+//                    else {
+//                        tkn = scan.next();
+//                        if (variables.containsKey(tkn))
+//                            c.setParam(variables.get(tkn));
+//                        else
+//                            return errorAndExit("Missing parameters for BK command!");
+//                    }
+//                    break;
+//                case "lt": case "left":
+//                    c = new CommandLeft();
+//                    if (scan.hasNextInt())
+//                        c.setParam(scan.nextInt());
+//                    else {
+//                        tkn = scan.next();
+//                        if (variables.containsKey(tkn))
+//                            c.setParam(variables.get(tkn));
+//                        else
+//                            return errorAndExit("Missing parameters for LT command!");
+//                    }
+//                    break;
+//                case "rt": case "right":
+//                    c = new CommandRight();
+//                    if (scan.hasNextInt())
+//                        c.setParam(scan.nextInt());
+//                    else {
+//                        tkn = scan.next();
+//                        if (variables.containsKey(tkn))
+//                            c.setParam(variables.get(tkn));
+//                        else
+//                            return errorAndExit("Missing parameters for RT command!");
+//                    }
+//                    break;
+//                case "pd": case "pendown":
+//                    c = new CommandPenDown();
+//                    break;
+//                case "pu": case "penup":
+//                    c = new CommandPenUp();
+//                    break;
+//                case "st": case "show": case "showt":
+//                    c = new CommandShowTurtle();
+//                    break;
+//                case "ht": case "hide": case "hidet":
+//                    c = new CommandHideTurtle();
+//                    break;
+//                case "clearscreen": case "cs":
+//                    c = new CommandClear();
+//                    break;
+//                case "home":
+//                    c = new CommandHome();
+//                    break;
+//                case "stamp":
+//                    c = new CommandStamp();
+//                    break;
+//                case "towards":
+//                    c = new CommandTowards();
+//                    for(int i = 0; i < 2; i++) {
+//                        if (scan.hasNextInt())
+//                            ((CommandTowards) c).getParams().add(scan.nextInt());
+//                        else {
+//                            tkn = scan.next();
+//                            if (variables.containsKey(tkn))
+//                                ((CommandTowards) c).getParams().add(variables.get(tkn));
+//                            else
+//                                return errorAndExit("Missing parameters for TOWARDS command!");
+//                        }
+//                    }
+//                    break;
+//                case "goto": case "setxy":
+//                    c = new CommandGoto();
+//                    for(int i = 0; i < 2; i++) {
+//                        if (scan.hasNextInt())
+//                            ((CommandGoto) c).getParams().add(scan.nextInt());
+//                        else {
+//                            tkn = scan.next();
+//                            if (variables.containsKey(tkn))
+//                                ((CommandGoto) c).getParams().add(variables.get(tkn));
+//                            else
+//                                return errorAndExit("Missing parameters for GOTO/SETXY command!");
+//                        }
+//                    }
+//                    break;
+//                case "make": case "set":
+//                    // Get name
+//                    c = new CommandMake();
+//                    tkn = scan.next();
+//                    if(tkn.charAt(0) != ':')
+//                        return errorAndExit("Incorrect variable name for make command!");
+//                    System.out.println("Got token " + tkn);
+//                    // TODO: refactor this into a single function
+//                    if (scan.hasNextInt())
+//                        variables.put(tkn.substring(1), scan.nextInt());
+//                    else {
+//                        tkn = scan.next();
+//                        if (variables.containsKey(tkn))
+//                            variables.put(tkn.substring(1), variables.get(tkn));
+//                        else
+//                            return errorAndExit("Incorrect variable value for make command!");
+//                    }
+//                    ((CommandMake) c).setVar(tkn.substring(1));
+//                    c.setParam(variables.get(tkn));
+//                    break;
+//                case "tell":
+//                    c = new CommandTell();
+//                    if (!(scan.hasNextInt() || hasNextVariable(scan)))
+//                        return errorAndExit("Missing parameters for TELL command!");
+//                    while (scan.hasNextInt() || hasNextVariable(scan)) {
+//                        if(scan.hasNextInt())
+//                            ((CommandTell) c).getParams().add(scan.nextInt());
+//                        else if(hasNextVariable(scan))
+//                            ((CommandTell) c).getParams().add(variables.get(scan.next()));
+//                    }
+//                    break;
+//                default:
+//                    // TODO: Handle bad input
+//                    return errorAndExit("Bad prefix: " + prefix);
+//            }
+//=======
             c = switch (prefix) {
                 case "fd", "bk", "rt", "lt", "forward", "backward", "left", "right" ->
                         parseCommandWithOneParameter(scan, prefix);
@@ -129,6 +270,7 @@ public class LogoParser extends Parser {
 
     private Command parseCommandWithOneParameter(Scanner scan, String prefix) throws IllegalStateException {
         Command c;
+        String tkn;
         int param;
         if (scan.hasNextInt())
             param = scan.nextInt();
@@ -146,7 +288,15 @@ public class LogoParser extends Parser {
             case "rt", "right" -> c = new CommandRight();
             default -> throw new IllegalStateException(myResources.getString("InvalidCommand"));
         }
-        c.setParam(param);
+        if (scan.hasNextInt()) {
+            c.setParam(scan.nextInt());
+        } else {
+            tkn = scan.next();
+            if (variables.containsKey(tkn))
+                c.setParam(variables.get(tkn));
+            else
+                throw new IllegalStateException(String.format(myResources.getString("MissingParameter"), prefix));
+        }
         return c;
     }
 
