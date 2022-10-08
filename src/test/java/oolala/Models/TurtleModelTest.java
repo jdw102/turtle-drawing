@@ -17,8 +17,8 @@ import java.util.ResourceBundle;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class TurtleModelTest extends DukeApplicationTest {
-    private static final String DEFAULT_RESOURCE_PACKAGE = "Properties.";
-    private static final String DEFAULT_LANGUAGE = "English";
+    public static final String DEFAULT_RESOURCE_PACKAGE = "Properties.";
+    public static final String DEFAULT_LANGUAGE = "English";
     TurtleModel turtleModel;
     TurtleView turtleView;
     CanvasScreen canvasScreen;
@@ -76,12 +76,12 @@ public class TurtleModelTest extends DukeApplicationTest {
         assertEquals(turtleModel.getYMin(), turtleModel.getAbsPos().posY);
     }
 
-    @Test
-    void testRelativePosition() {
-        turtleModel.setRelativePosition(650,500);
-        assertEquals(80, turtleModel.getRelPos().posX);
-        assertEquals(-167, turtleModel.getRelPos().posY);
-    }
+//    @Test
+//    void testRelativePosition() {
+//        turtleModel.setRelativePosition(650,500);
+//        assertEquals(80, turtleModel.getRelPos().posX);
+//        assertEquals(-167, turtleModel.getRelPos().posY);
+//    }
 
     @Test
     void testRotate()  {

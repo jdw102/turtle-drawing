@@ -1,22 +1,17 @@
 package oolala.Views.ViewComponents;
 
-import javafx.embed.swing.SwingFXUtils;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.ResourceBundle;
+
 import javafx.scene.Group;
-import javafx.scene.control.*;
+import javafx.scene.control.Alert;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
-import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
-import oolala.Views.TurtleView;
 
-import javax.imageio.ImageIO;
-import java.io.File;
-import java.io.IOException;
-import java.util.*;
 
 /**
  * A class to contain the rectangle to act as the canvas and a group of shapes that the turtle will add lines and stamps
@@ -54,6 +49,7 @@ public class CanvasScreen {
     public void setBrushColor(Color color) {
         brushColor = color;
     }
+
     /**
      * A method to change the thickness of the line drawn, if it is not a valid number an alert is displayed.
      *
@@ -81,6 +77,7 @@ public class CanvasScreen {
         WritableImage snapshot = shapes.snapshot(null, null);
         return snapshot;
     }
+
     /**
      * A method to clear all shapes except for the rectangle.
      *
@@ -94,22 +91,28 @@ public class CanvasScreen {
     public Group getShapes() {
         return shapes;
     }
+
     public Rectangle getBorderRectangle() {
         return borderRectangle;
     }
+
     public Double getThickness() {
         return thickness;
     }
+
     public Color getBrushColor() {
         return brushColor;
     }
-    public boolean isClear(){
+
+    public boolean isClear() {
         return !(shapes.getChildren().size() > 2);
     }
-    public void addLine(Line line){
+
+    public void addLine(Line line) {
         lines.add(line);
     }
-    public List<Line> getLines(){
+
+    public List<Line> getLines() {
         return lines;
     }
 }

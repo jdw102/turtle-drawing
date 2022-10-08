@@ -36,7 +36,7 @@ import org.testfx.util.WaitForAsyncUtils;
  */
 public class DukeApplicationTest extends ApplicationTest {
     // typical dialog box submit button text, perhaps should be a parameter?
-    private static final String SUBMIT = "OK";
+    public static final String SUBMIT = "OK";
 
 
     // standard steps for all test applications so factor out here

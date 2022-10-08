@@ -1,13 +1,18 @@
 package oolala.Views;
 
-import javafx.animation.*;
+import javafx.animation.FadeTransition;
+import javafx.animation.RotateTransition;
+import javafx.animation.SequentialTransition;
+import javafx.animation.PathTransition;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.shape.*;
+import javafx.scene.shape.Line;
+import javafx.scene.shape.Circle;
+import javafx.scene.shape.StrokeLineCap;
 import javafx.util.Duration;
 import oolala.Models.AppModel;
 import oolala.Models.Position;
@@ -286,7 +291,7 @@ public class TurtleView {
     }
 
     public void clearTurtle() {
-        for (String id: lineIDs) {
+        for (String id : lineIDs) {
             canvasScreen.getShapes().getChildren().removeIf(i -> id.equals(i.getId()));
         }
         lineIDs.clear();

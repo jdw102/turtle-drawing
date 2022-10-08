@@ -1,5 +1,11 @@
 package oolala.Views.ViewComponents;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.ResourceBundle;
+import java.util.Set;
+
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;
@@ -7,12 +13,11 @@ import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
-import javafx.scene.input.*;
+
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import oolala.Command.Command;
 
-import java.util.*;
 
 /**
  * A terminal abstract class that contains the text area for typing program, and the command history of the programs.
@@ -43,21 +48,23 @@ public abstract class Terminal {
         box = new VBox(textArea, historyTitle, recentlyUsed);
         box.setSpacing(5);
     }
+
     /**
      * A method to create the command history list view.
      *
      * @param maxHeight - The maximum allowed height of the list view.
-     * @param handler - The action to be performed when clicking a list item.
+     * @param handler   - The action to be performed when clicking a list item.
      * @return A ListView of strings
      * @author Jerry Worthy
      */
-    public ListView<String> makeListView(int maxHeight, EventHandler<MouseEvent> handler){
+    public ListView<String> makeListView(int maxHeight, EventHandler<MouseEvent> handler) {
         ListView<String> listView = new ListView<String>();
         listView.setOnMouseClicked(handler);
         listView.setMaxHeight(maxHeight);
         listView.setId("CommandHistoryListView");
         return listView;
     }
+
     /**
      * A method to update the previous commands displayed by the list view.
      *
@@ -80,19 +87,23 @@ public abstract class Terminal {
         }
         recentlyUsed.setItems(displayedLines);
     }
+
     public void addLine(String s, TextArea textArea) {
         if (s != null) {
             textArea.appendText("\n");
             textArea.appendText(s);
         }
     }
-    public VBox getBox(){
+
+    public VBox getBox() {
         return box;
     }
-    public void setText(String content){
+
+    public void setText(String content) {
         textArea.setText(content);
     }
-    public TextArea getTextArea(){
+
+    public TextArea getTextArea() {
         return textArea;
     }
 }

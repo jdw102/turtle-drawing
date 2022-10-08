@@ -1,12 +1,16 @@
 package oolala.Models;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.ResourceBundle;
+
 import javafx.animation.SequentialTransition;
 import oolala.Views.ViewComponents.CanvasScreen;
 import oolala.Command.Command;
 import oolala.Parsers.Parser;
 import oolala.Views.TurtleView;
-
-import java.util.*;
 
 /**
  * A model class to hold information about the commands running of the app. TurtleView instances are created in this class when a command is run.

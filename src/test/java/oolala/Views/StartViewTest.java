@@ -23,9 +23,6 @@ public class StartViewTest extends DukeApplicationTest {
     private final int START_HEIGHT = 500;
     private StartingView startingView;
     private final String TITLE = "Oolala";
-    private final String STYLESHEET = "default.css";
-    private final String DARK_MODE_STYLESHEET = "darkmode.css";
-    private final String DEFAULT_RESOURCE_FOLDER = "/Properties/";
 
     @Override
     public void start (Stage stage) {
@@ -35,8 +32,8 @@ public class StartViewTest extends DukeApplicationTest {
 
             TabPane tabPane = new TabPane();
             Scene scene = new Scene(tabPane, SIZE_WIDTH, SIZE_HEIGHT);
-            AppView view1 = new LogoAppView(stage, language, DEFAULT_RESOURCE_FOLDER, STYLESHEET, DARK_MODE_STYLESHEET);
-            AppView view2 = new LSystemAppView(stage, language, DEFAULT_RESOURCE_FOLDER, STYLESHEET, DARK_MODE_STYLESHEET);
+            AppView view1 = new LogoAppView(stage, language);
+            AppView view2 = new LSystemAppView(stage, language);
             Tab tab1 = new Tab("Logo", view1.setUpRootBorderPane());
             Tab tab2 = new Tab("L-System", view2.setUpRootBorderPane());
             tabPane.getTabs().add(tab1);

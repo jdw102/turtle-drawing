@@ -11,8 +11,8 @@ import java.util.List;
 public class LogoAppView extends AppView {
     public final List<String> iconLabels = new ArrayList<>(Arrays.asList("TurtleIcon", "SimpleTurtleIcon", "TriangleArrowIcon"));
 
-    public LogoAppView(Stage stage, String language, String defaultResourceFolder, String styleSheet, String darkModeStyleSheet) {
-        super(stage, language, defaultResourceFolder, styleSheet, darkModeStyleSheet);
+    public LogoAppView(Stage stage, String language) {
+        super(stage, language);
         currentAppModel = new LogoModel(canvasScreen, myResources, "TurtleIcon", animation);
         terminal = new LogoTerminal(myResources);
         imageSelector = makeAppViewImageSelector("IconChange", iconLabels);
