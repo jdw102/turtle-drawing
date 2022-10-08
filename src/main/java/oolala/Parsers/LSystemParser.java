@@ -32,6 +32,8 @@ public class LSystemParser extends Parser {
     private int lsf = DEFAULT_LSF;
     private Map<Character, String> alphabet;
     private Map<Character, String> rules;
+    private Map<Character, String> altRules;
+    private Map<Character, Double> ruleProbs;
     private String start;
     private LogoParser logoParser;
     private ResourceBundle myResources;
@@ -48,6 +50,8 @@ public class LSystemParser extends Parser {
             alphabet.put(ALPHA_SYM[i], ALPHA_COMM[i]);
         }
         rules = new HashMap<>();
+        altRules = new HashMap<>();
+        ruleProbs = new HashMap<>();
         logoParser = new LogoParser(myResources);
         turtles.add(1);
     }
@@ -65,13 +69,20 @@ public class LSystemParser extends Parser {
      */
     public String applyRules() {
         String expanded = start;
+        Random rand = new Random();
         for (int i = 0; i < getLevel(); i++) {
             String nextLevel = "";
             for (int j = 0; j < expanded.length(); j++) {
-                if (rules.containsKey(expanded.charAt(j))) {
-                    nextLevel = nextLevel.concat(rules.get(expanded.charAt(j)));
+                char symbol = expanded.charAt(j);
+                if (rules.containsKey(symbol)) {
+                    if (altRules.containsKey(symbol)) // TODO: refactor
+                        nextLevel = (rand.nextDouble(1) < ruleProbs.get(symbol))
+                            ? nextLevel.concat(altRules.get(symbol))
+                            : nextLevel.concat(rules.get(symbol));
+                    else
+                        nextLevel = nextLevel.concat(rules.get(symbol));
                 } else {
-                    nextLevel = nextLevel.concat(Character.toString(expanded.charAt(j)));
+                    nextLevel = nextLevel.concat(Character.toString(symbol));
                 }
             }
             expanded = nextLevel;
@@ -124,6 +135,7 @@ public class LSystemParser extends Parser {
         Scanner scan = new Scanner(configString);
 
         char symbol;
+        double prob;
         String expansion;
         while (scan.hasNext()) {
             String prefix = scan.next();
@@ -144,10 +156,16 @@ public class LSystemParser extends Parser {
                     distMax = scan.nextInt();
                 }
                 case "randoma" -> {
-                    System.out.println("Randomizing angle");
                     usingRandomAngle = true;
                     angMin = scan.nextInt();
                     angMax = scan.nextInt();
+                }
+                case "randomp" -> {
+                    symbol = scan.next().charAt(0);
+                    prob = scan.nextInt();
+                    expansion = scan.next();
+                    ruleProbs.put(symbol, prob);
+                    altRules.put(symbol, expansion);
                 }
                 case "set" -> {
                     symbol = scan.next().charAt(0);
