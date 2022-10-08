@@ -9,7 +9,6 @@ import java.util.ArrayList;
 
 /**
  * A single class containing the information of each command.
- * Might refactor later into separate classes for each command.
  *
  * @author Aditya Paul
  */

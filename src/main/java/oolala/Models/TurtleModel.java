@@ -146,10 +146,23 @@ public class TurtleModel {
         absPosY = y;
     }
 
+    /**
+     * Convert from relative position in frame to absolute position in frame.
+     *
+     * @param relXArg - relative x-position to center of frame
+     * @param relYArg - relative y-position to center of frame
+     * @return Luyao Wang
+     */
     public Position relToAbs(double relXArg, double relYArg) {
         return new Position(relXArg + originAbsX, - relYArg + originAbsY);
     }
 
+    /**
+     * Convert from absolute position in frame to position relative to frame center.
+     *
+     * @param absXArg - absolute x-position in frame
+     * @param absYArg - absolute y-position in frame
+     */
     public Position absToRel(double absXArg, double absYArg) {
         return new Position(absXArg - originAbsX, - absYArg + originAbsY);
     }
