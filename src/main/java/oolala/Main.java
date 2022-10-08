@@ -29,6 +29,7 @@ public class Main extends Application {
     public static final String DARK_MODE_STYLESHEET = "darkmode.css";
     public static final String DEFAULT_RESOURCE_FOLDER = "/Properties/";
 
+
     /**
      * A method to test (and a joke :).
      */

@@ -20,6 +20,8 @@ public class TurtleModel {
     private double xMinAbs;
     private double yMaxABs;
     private double yMinAbs;
+    private double xBoundRel;
+    private double yBoundRel;
     private double relX;
     private double relY;
     private double homeX;
@@ -28,8 +30,7 @@ public class TurtleModel {
     private double originAbsY;
     private boolean inBounds;
     private boolean isShown;
-    private double width;
-    private double height;
+
 
     public TurtleModel(double relPosX, double relPosY, Rectangle border, double iconSize) {
         calcBounds(border, iconSize);
@@ -48,14 +49,17 @@ public class TurtleModel {
      * @author Jerry Worthy
      */
     public void calcBounds(Rectangle r, double iconSize) {
-        xMinAbs = r.getX() + iconSize / 2;
-        xMaxAbs = r.getX() + r.getWidth() - iconSize / 2;
-        yMinAbs = r.getY() + iconSize / 2;
-        yMaxABs = r.getY() + r.getHeight() - iconSize / 2;
-        width = xMaxAbs - xMinAbs;
-        height = yMaxABs - yMinAbs;
+        xMinAbs = r.getX();
+        xMaxAbs = r.getX() + r.getWidth();
+        yMinAbs = r.getY();
+        yMaxABs = r.getY() + r.getHeight();
+        double width = xMaxAbs - xMinAbs;
+        double height = yMaxABs - yMinAbs;
+        xBoundRel = width / 2 - iconSize / 2;
+        yBoundRel = height / 2 - iconSize / 2;
         originAbsX = r.getX() + width / 2;
         originAbsY = r.getY() + height / 2;
+
     }
 
     /**
@@ -72,21 +76,21 @@ public class TurtleModel {
         double x = relX + dist * Math.cos(Math.toRadians(this.angle + 90));
         double y = relY + dist * Math.sin(Math.toRadians(this.angle + 90));
 
-        inBounds = !(relX > width/2 || relX < -width/2 || relY > height/2 || relY < -height/2);
-        if (x > width/2) {
-            x = width/2;
+        inBounds = !(x > xBoundRel || x < -xBoundRel || y > yBoundRel|| y < -yBoundRel);
+        if (x > xBoundRel) {
+            x = xBoundRel;
             y = relY;
         }
-        if (x < -width/2) {
-            x = -width/2;
+        if (x < -xBoundRel) {
+            x = -xBoundRel;
             y = relY;
         }
-        if (y > height/2) {
-            y = height/2;
+        if (y > yBoundRel) {
+            y = yBoundRel;
             x = relX;
         }
-        if (y < -height/2) {
-            y = -height/2;
+        if (y < -yBoundRel) {
+            y = -yBoundRel;
             x = relX;
         }
         return new Position(x, y);

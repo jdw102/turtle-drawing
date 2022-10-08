@@ -178,7 +178,7 @@ public abstract class AppView {
     public void setUpTextAreaKeyCombination() {
         KeyCombination keyCombination = new KeyCodeCombination(KeyCode.ENTER, KeyCombination.ALT_DOWN);
         terminal.getTextArea().setOnKeyPressed(event -> {
-            if (keyCombination.match(event)) runModel();
+            if (keyCombination.match(event) && !runButton.isDisabled()) runModel();
         });
     }
     /**
