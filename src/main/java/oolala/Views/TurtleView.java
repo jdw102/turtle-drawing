@@ -193,10 +193,6 @@ public class TurtleView {
         double angle = -1 * Math.atan2(relY - this.getModel().getRelPos().posY,
                 relX - this.getModel().getRelPos().posX) / Math.PI * 180 + 90;
         rotateTurtle(angle + model.getAngle());
-//        RotateTransition rotate = new RotateTransition(Duration.seconds(0.5), icon);
-//        rotate.setByAngle(angle + model.getAngle());
-//        model.rotate(angle + model.getAngle());
-//        animation.getChildren().add(rotate);
     }
 
     /**
